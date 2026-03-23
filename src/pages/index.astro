@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout>
+  <section class="max-w-6xl mx-auto px-6 py-24">
+    <h1 class="text-foreground mb-4">MP Staton</h1>
+    <p class="text-xl text-muted-foreground max-w-2xl mb-8">
+      Investor, builder, and writer. Exploring venture, technology, and the systems that connect them.
+    </p>
+    <div class="flex gap-4">
+      <a href="/portfolio" class="inline-flex items-center px-5 py-2.5 rounded-md bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity">
+        View Portfolio
+      </a>
+      <a href="/blog" class="inline-flex items-center px-5 py-2.5 rounded-md border border-border text-foreground font-medium hover:bg-muted transition-colors">
+        Read Blog
+      </a>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-6 py-16 border-t border-border">
+    <h2 class="text-foreground mb-8">Latest Posts</h2>
+    <p class="text-muted-foreground">Posts coming soon. Check back for updates on investing, building, and the evolving tech landscape.</p>
+  </section>
+</BaseLayout>

@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// Portfolio data - replace with content collection or external data source
+const companies = [
+  { name: 'Example Co', sector: 'SaaS', stage: 'Series A', year: 2024, status: 'Active' },
+];
+---
+<BaseLayout title="Investment Portfolio - MP Staton" description="MP Staton's investment portfolio across venture and technology.">
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <h1 class="text-foreground mb-4">Investment Portfolio</h1>
+    <p class="text-lg text-muted-foreground mb-12 max-w-2xl">
+      A curated view of investments across venture capital and technology.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {companies.map((company) => (
+        <div class="rounded-lg border border-border bg-card p-6 hover:border-primary/50 transition-colors">
+          <div class="flex items-start justify-between mb-3">
+            <h3 class="text-card-foreground font-semibold">{company.name}</h3>
+            <span class="text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary">
+              {company.status}
+            </span>
+          </div>
+          <div class="space-y-1 text-sm text-muted-foreground">
+            <p>Sector: {company.sector}</p>
+            <p>Stage: {company.stage}</p>
+            <p>Year: {company.year}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-12 p-6 rounded-lg border border-border bg-muted/50 text-center">
+      <p class="text-muted-foreground">
+        More portfolio details available upon request. For confidential access, please reach out directly.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
