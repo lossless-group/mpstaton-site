@@ -78,6 +78,19 @@
     "tags": []
   },
   {
+    "company": "General Assembly",
+    "vehicle": "Learn Capital II",
+    "countries": "US",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2013,
+    "costOfInvestment": 750000,
+    "stage": "Seed",
+    "exit": "Acquired",
+    "multiple": "5.6x",
+    "relevantValuation": 375000000,
+    "tags": ["Dragon"]
+  },
+  {
     "company": "Cobalt",
     "vehicle": "Angel",
     "countries": "US",
@@ -806,6 +819,19 @@
     "tags": []
   },
   {
+    "company": "Brave Health",
+    "vehicle": "Alpha Partners III",
+    "countries": "US",
+    "sector": "HealthTech, Mental Health, Services Network",
+    "initialInvestmentDate": 2021,
+    "costOfInvestment": 3000000,
+    "stage": "Series B",
+    "exit": "FMV",
+    "multiple": "2.1x",
+    "relevantValuation": null,
+    "tags": []
+  },
+  {
     "company": "Yassir",
     "vehicle": "Angel",
     "countries": "Algeria",
@@ -939,7 +965,7 @@
     "company": "Workback",
     "vehicle": "Avalanche II",
     "countries": "US",
-    "sector": "Edtech",
+    "sector": "Vertical AI Wrapper, DevTools",
     "initialInvestmentDate": 2025,
     "costOfInvestment": 100000,
     "stage": "Pre-Seed",
