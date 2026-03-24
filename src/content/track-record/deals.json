@@ -1,0 +1,932 @@
+[
+  {
+    "company": "NearPod",
+    "vehicle": "NewSchools Venture Fund",
+    "countries": "US/Brazil",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2012,
+    "costOfInvestment": 300000,
+    "stage": "Seed",
+    "exit": "Acquired",
+    "tags": [
+      "Dragon"
+    ]
+  },
+  {
+    "company": "Sano",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "Medical Device",
+    "initialInvestmentDate": 2012,
+    "costOfInvestment": 10000,
+    "stage": "Pre-Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Plethora",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "Industrial Manufacturing, Advanced Manufacturing",
+    "initialInvestmentDate": 2013,
+    "costOfInvestment": 25000,
+    "stage": "Pre-Seed",
+    "exit": "Recapped",
+    "tags": []
+  },
+  {
+    "company": "Clever",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "Edtech, Integration Platform",
+    "initialInvestmentDate": 2012,
+    "costOfInvestment": 10000,
+    "stage": "Seed",
+    "exit": "Acquired",
+    "tags": [
+      "Dragon"
+    ]
+  },
+  {
+    "company": "Udemy",
+    "vehicle": "Learn Capital II",
+    "countries": "US/Turkey",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2012,
+    "costOfInvestment": 1500000,
+    "stage": "Seed",
+    "exit": "IPO",
+    "tags": [
+      "IPO",
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "BRCK",
+    "vehicle": "Angel",
+    "countries": "Kenya",
+    "sector": "Edge Hardware",
+    "initialInvestmentDate": 2014,
+    "costOfInvestment": 10000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Cobalt",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "Private Markets Platform, Data as a Service",
+    "initialInvestmentDate": 2013,
+    "costOfInvestment": 10000,
+    "stage": "Seed",
+    "exit": "Acquired",
+    "tags": []
+  },
+  {
+    "company": "ClassDojo",
+    "vehicle": "Learn Capital II",
+    "countries": "US",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2013,
+    "costOfInvestment": 250000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": [
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "Coursera",
+    "vehicle": "Learn Capital SPV",
+    "countries": "US",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2013,
+    "costOfInvestment": 15000000,
+    "stage": "Series B",
+    "exit": "IPO",
+    "tags": [
+      "IPO",
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "Andela",
+    "vehicle": "Angel",
+    "countries": "US/Nigeria",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2014,
+    "costOfInvestment": 10000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": [
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "Andela",
+    "vehicle": "Learn Capital III",
+    "countries": "US/Nigeria",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2014,
+    "costOfInvestment": 3000000,
+    "stage": "Series A",
+    "exit": "FMV",
+    "tags": [
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "Disruption Corporation",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "Fundraising Platform",
+    "initialInvestmentDate": 2014,
+    "costOfInvestment": 10000,
+    "stage": "Seed",
+    "exit": "Acquired",
+    "tags": []
+  },
+  {
+    "company": "HipCamp",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "Marketplace",
+    "initialInvestmentDate": 2014,
+    "costOfInvestment": 10000,
+    "stage": "Pre-Seed",
+    "exit": "FMV",
+    "tags": [
+      "Dragon"
+    ]
+  },
+  {
+    "company": "Brainly",
+    "vehicle": "Learn Capital III",
+    "countries": "Poland",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2014,
+    "costOfInvestment": 2000000,
+    "stage": "Series A",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Jibu",
+    "vehicle": "Angel",
+    "countries": "Kenya",
+    "sector": "Water Distribution",
+    "initialInvestmentDate": 2014,
+    "costOfInvestment": 10000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "KidAdmit",
+    "vehicle": "Learn Capital III",
+    "countries": "US",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2014,
+    "costOfInvestment": 100000,
+    "stage": "Pre-Seed",
+    "exit": "Write-Off",
+    "tags": []
+  },
+  {
+    "company": "Brilliant.org",
+    "vehicle": "Learn Capital III",
+    "countries": "US",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2015,
+    "costOfInvestment": 6000000,
+    "stage": "Series A",
+    "exit": "FMV",
+    "tags": [
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "Maker's Row",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "Network Marketplace, Advanced Manufacturing",
+    "initialInvestmentDate": 2015,
+    "costOfInvestment": 10000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Standard Cyborg",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "3D Data",
+    "initialInvestmentDate": 2015,
+    "costOfInvestment": 10000,
+    "stage": "Seed",
+    "exit": "Write-Off",
+    "tags": []
+  },
+  {
+    "company": "SoloLearn",
+    "vehicle": "Learn Capital III",
+    "countries": "Armenia",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2015,
+    "costOfInvestment": 750000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Ontra",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "LegalTech, Legal AI Wrapper",
+    "initialInvestmentDate": 2015,
+    "costOfInvestment": 5000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": [
+      "Dragon"
+    ]
+  },
+  {
+    "company": "Willing",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "LegalTech",
+    "initialInvestmentDate": 2015,
+    "costOfInvestment": 10000,
+    "stage": "Seed",
+    "exit": "Acquired",
+    "tags": []
+  },
+  {
+    "company": "Village Market",
+    "vehicle": "Angel",
+    "countries": "UK",
+    "sector": "Marketplace",
+    "initialInvestmentDate": 2015,
+    "costOfInvestment": 10000,
+    "stage": "Seed",
+    "exit": "Write-Off",
+    "tags": []
+  },
+  {
+    "company": "Trusted",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "Childcare",
+    "initialInvestmentDate": 2015,
+    "costOfInvestment": 2500,
+    "stage": "Seed",
+    "exit": "Acquired",
+    "tags": []
+  },
+  {
+    "company": "VIPKid",
+    "vehicle": "Learn Capital III",
+    "countries": "China",
+    "sector": "EdTech",
+    "initialInvestmentDate": 2016,
+    "costOfInvestment": 6000000,
+    "stage": "Series B",
+    "exit": "FMV",
+    "tags": [
+      "Unicorn (then Down Round)"
+    ]
+  },
+  {
+    "company": "Binti",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "GovTech",
+    "initialInvestmentDate": 2016,
+    "costOfInvestment": 10000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": [
+      "Dragon"
+    ]
+  },
+  {
+    "company": "Bitty Foods",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "CPG Food",
+    "initialInvestmentDate": 2016,
+    "costOfInvestment": 10000,
+    "stage": "Seed",
+    "exit": "Write-Off",
+    "tags": []
+  },
+  {
+    "company": "Photomath",
+    "vehicle": "Learn Capital III",
+    "countries": "Croatia",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2016,
+    "costOfInvestment": 3000000,
+    "stage": "Seed",
+    "exit": "Acquired",
+    "tags": [
+      "Dragon"
+    ]
+  },
+  {
+    "company": "Wish",
+    "vehicle": "Alpha Partners II",
+    "countries": "USA",
+    "sector": "E-commerce",
+    "initialInvestmentDate": 2015,
+    "costOfInvestment": 14150000,
+    "stage": "Series E",
+    "exit": "IPO",
+    "tags": [
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "Vroom",
+    "vehicle": "Alpha Partners II",
+    "countries": "US",
+    "sector": "Mobility",
+    "initialInvestmentDate": 2015,
+    "costOfInvestment": 750000,
+    "stage": "Series C",
+    "exit": "IPO",
+    "tags": [
+      "IPO",
+      "Exit",
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "Coupang",
+    "vehicle": "Alpha Partners II",
+    "countries": "Korea",
+    "sector": "E-commerce",
+    "initialInvestmentDate": 2016,
+    "costOfInvestment": 25000000,
+    "stage": "Series D",
+    "exit": "IPO",
+    "tags": [
+      "IPO",
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "Careem",
+    "vehicle": "Alpha Partners II",
+    "countries": "UAE",
+    "sector": "Mobility",
+    "initialInvestmentDate": 2016,
+    "costOfInvestment": 5000000,
+    "stage": "Series D",
+    "exit": "Acquired",
+    "tags": [
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "Vessel Health",
+    "vehicle": "LearnStart I",
+    "countries": "US",
+    "sector": "Medical Device, MedTech",
+    "initialInvestmentDate": 2017,
+    "costOfInvestment": 500000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Coral Vita",
+    "vehicle": "Syndicate",
+    "countries": "US",
+    "sector": "OceanTech",
+    "initialInvestmentDate": 2017,
+    "costOfInvestment": 2000000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Compass",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "Business Analytics",
+    "initialInvestmentDate": 2017,
+    "costOfInvestment": 10000,
+    "stage": "Bridge",
+    "exit": "Acquired",
+    "tags": []
+  },
+  {
+    "company": "Minerva",
+    "vehicle": "Learn Capital III",
+    "countries": "US",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2015,
+    "costOfInvestment": 5000000,
+    "stage": "Series B",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Ligandal",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "BioTech",
+    "initialInvestmentDate": 2017,
+    "costOfInvestment": 25000,
+    "stage": "Pre-Seed",
+    "exit": "MtM",
+    "tags": []
+  },
+  {
+    "company": "Explorer Surgical",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "MedTech",
+    "initialInvestmentDate": 2017,
+    "costOfInvestment": 10000,
+    "stage": "Pre-Seed",
+    "exit": "Acquired",
+    "tags": []
+  },
+  {
+    "company": "Maven Clinic",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "MedTech",
+    "initialInvestmentDate": 2017,
+    "costOfInvestment": 10000,
+    "stage": "Pre-Seed",
+    "exit": "FMV",
+    "tags": [
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "CottageClass",
+    "vehicle": "Learn Capital III",
+    "countries": "US",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2017,
+    "costOfInvestment": 50000,
+    "stage": "Pre-Seed",
+    "exit": "Write-Off",
+    "tags": []
+  },
+  {
+    "company": "Outschool",
+    "vehicle": "Learn Capital III",
+    "countries": "US",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2017,
+    "costOfInvestment": 50000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": [
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "Hack Reactor",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2017,
+    "costOfInvestment": 25000,
+    "stage": "Seed",
+    "exit": "Acquired",
+    "tags": []
+  },
+  {
+    "company": "Pinch",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "FinTech",
+    "initialInvestmentDate": 2017,
+    "costOfInvestment": 25000,
+    "stage": "Pre-Seed",
+    "exit": "Acquired",
+    "tags": []
+  },
+  {
+    "company": "Henry the Dentist",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "MedTech",
+    "initialInvestmentDate": 2017,
+    "costOfInvestment": 10000,
+    "stage": "Pre-Seed",
+    "exit": "Acquired",
+    "tags": []
+  },
+  {
+    "company": "Varsity Tutors",
+    "vehicle": "Learn Capital SPV",
+    "countries": "US",
+    "sector": "EdTech",
+    "initialInvestmentDate": 2018,
+    "costOfInvestment": 5000000,
+    "stage": "Series C",
+    "exit": "IPO, SPAC",
+    "tags": [
+      "IPO",
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "Bold Health",
+    "vehicle": "LearnStart I",
+    "countries": "UK",
+    "sector": "Digital Therapeutics",
+    "initialInvestmentDate": 2018,
+    "costOfInvestment": 50000,
+    "stage": "Pre-Seed",
+    "exit": "Write-Off",
+    "tags": []
+  },
+  {
+    "company": "Sana Labs",
+    "vehicle": "LearnStart I",
+    "countries": "Sweden",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2018,
+    "costOfInvestment": 100000,
+    "stage": "Pre-Seed",
+    "exit": "Acquired",
+    "tags": [
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "Osmosis",
+    "vehicle": "LearnStart I",
+    "countries": "US",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2018,
+    "costOfInvestment": 1000000,
+    "stage": "Pre-Seed",
+    "exit": "Acquired",
+    "tags": []
+  },
+  {
+    "company": "Bedu",
+    "vehicle": "LearnStart I",
+    "countries": "Mexico",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2018,
+    "costOfInvestment": 500000,
+    "stage": "Pre-Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "WonderSchool",
+    "vehicle": "LearnStart I",
+    "countries": "US",
+    "sector": "Edtech, Childcare",
+    "initialInvestmentDate": 2018,
+    "costOfInvestment": 800000,
+    "stage": "Series A",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Podium Education",
+    "vehicle": "LearnStart I",
+    "countries": "US",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2018,
+    "costOfInvestment": 1000000,
+    "stage": "Pre-Seed",
+    "exit": "FMV",
+    "tags": [
+      "Dragon"
+    ]
+  },
+  {
+    "company": "Equal Play",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "Childcare",
+    "initialInvestmentDate": 2019,
+    "costOfInvestment": 15000,
+    "stage": "Pre-Seed",
+    "exit": "Write-Off",
+    "tags": []
+  },
+  {
+    "company": "SpotHero",
+    "vehicle": "Alpha Partners II",
+    "countries": "US",
+    "sector": "Mobility",
+    "initialInvestmentDate": 2019,
+    "costOfInvestment": 2000000,
+    "stage": "Series C",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Gecko Robotics",
+    "vehicle": "Alpha Partners II",
+    "countries": "US",
+    "sector": "Industrial Drones",
+    "initialInvestmentDate": 2019,
+    "costOfInvestment": 3000000,
+    "stage": "Series C",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Prenda",
+    "vehicle": "LearnStart I",
+    "countries": "US",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2019,
+    "costOfInvestment": 400000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "CreatorUp",
+    "vehicle": "LearnStart I",
+    "countries": "US",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2019,
+    "costOfInvestment": 600000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Chime",
+    "vehicle": "Acquired Angel Investment",
+    "countries": "US",
+    "sector": "FinTech",
+    "initialInvestmentDate": 2020,
+    "costOfInvestment": 40000,
+    "stage": "Series D",
+    "exit": "IPO",
+    "tags": [
+      "IPO",
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "TeachMint",
+    "vehicle": "Learn Capital IV",
+    "countries": "India",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2020,
+    "costOfInvestment": 4000000,
+    "stage": "Series A",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "NovaKid",
+    "vehicle": "LearnStart I",
+    "countries": "Poland",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2020,
+    "costOfInvestment": 250000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Shikho",
+    "vehicle": "LearnStart II",
+    "countries": "Bangladesh",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2020,
+    "costOfInvestment": 100000,
+    "stage": "Pre-Seed",
+    "exit": "FMV",
+    "tags": [
+      "Dragon"
+    ]
+  },
+  {
+    "company": "Copper Banking",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "FinTech",
+    "initialInvestmentDate": 2021,
+    "costOfInvestment": 50000,
+    "stage": "Series A",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Yassir",
+    "vehicle": "Angel",
+    "countries": "Algeria",
+    "sector": "Mobility, Super App",
+    "initialInvestmentDate": 2021,
+    "costOfInvestment": 10000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": [
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "Allocate",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "Private Markets Marketplace, Marketplace, Data Platform",
+    "initialInvestmentDate": 2021,
+    "costOfInvestment": 10000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Trela",
+    "vehicle": "Angel",
+    "countries": "Brazil",
+    "sector": "E-commerce",
+    "initialInvestmentDate": 2021,
+    "costOfInvestment": 10000,
+    "stage": "Pre-Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Seabound",
+    "vehicle": "Angel",
+    "countries": "US/UK",
+    "sector": "Shipping, Cleantech, OceanTech",
+    "initialInvestmentDate": 2021,
+    "costOfInvestment": 25000000,
+    "stage": "Pre-Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Vana",
+    "vehicle": "Angel",
+    "countries": "US",
+    "sector": "Web3",
+    "initialInvestmentDate": 2021,
+    "costOfInvestment": 30000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Cybernut",
+    "vehicle": "Avalanche II",
+    "countries": "US",
+    "sector": "Cybersecurity",
+    "initialInvestmentDate": 2023,
+    "costOfInvestment": 150000,
+    "stage": "Pre-Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "BlueLayer",
+    "vehicle": "Hypernova SPV",
+    "countries": "US",
+    "sector": "Climate Tech, Carbon Markets",
+    "initialInvestmentDate": 2021,
+    "costOfInvestment": 275000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Harmonic.fun",
+    "vehicle": "Hypernova I",
+    "countries": "US",
+    "sector": "AI Models",
+    "initialInvestmentDate": 2024,
+    "costOfInvestment": 500000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Thinking Machines",
+    "vehicle": "Hypernova I",
+    "countries": "US",
+    "sector": "AI Models",
+    "initialInvestmentDate": 2025,
+    "costOfInvestment": 50000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": [
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "Aalo Atomics",
+    "vehicle": "AngelList Syndicate Lead",
+    "countries": "US",
+    "sector": "Energy",
+    "initialInvestmentDate": 2025,
+    "costOfInvestment": 1100000,
+    "stage": "Series B",
+    "exit": "Convert Cap",
+    "tags": [
+      "Unicorn"
+    ]
+  },
+  {
+    "company": "Workback",
+    "vehicle": "Avalanche II",
+    "countries": "US",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2025,
+    "costOfInvestment": 100000,
+    "stage": "Pre-Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Bruin",
+    "vehicle": "Hypernova I",
+    "countries": "Europe",
+    "sector": "Data Ops",
+    "initialInvestmentDate": 2025,
+    "costOfInvestment": 75000,
+    "stage": "Series A",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Star Catcher",
+    "vehicle": "Hypernova I",
+    "countries": "US",
+    "sector": "Spacetech",
+    "initialInvestmentDate": 2025,
+    "costOfInvestment": 100000,
+    "stage": "Series A",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Science.xyz",
+    "vehicle": "Avalanche II",
+    "countries": "US",
+    "sector": "Brain Computer Interface",
+    "initialInvestmentDate": 2025,
+    "costOfInvestment": 200000,
+    "stage": "Series B",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Science.xyz",
+    "vehicle": "Avalanche II",
+    "countries": "US",
+    "sector": "Brain Computer Interface",
+    "initialInvestmentDate": 2026,
+    "costOfInvestment": 50000,
+    "stage": "Series C",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Science.xyz",
+    "vehicle": "Hypernova I",
+    "countries": "US",
+    "sector": "Brain Computer Interface",
+    "initialInvestmentDate": 2026,
+    "costOfInvestment": 50000,
+    "stage": "Series C",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Sava",
+    "vehicle": "Avalanche II",
+    "countries": "US",
+    "sector": "Legal AI Wrapper, LegalTech",
+    "initialInvestmentDate": 2026,
+    "costOfInvestment": 50000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Sava",
+    "vehicle": "Hypernova I",
+    "countries": "US",
+    "sector": "Legal AI Wrapper, LegalTech",
+    "initialInvestmentDate": 2026,
+    "costOfInvestment": 50000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  }
+]

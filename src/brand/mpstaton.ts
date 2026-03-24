@@ -3,13 +3,13 @@ import type { BrandConfig } from "../types/brand";
 const brand: BrandConfig = {
   name: "mpstaton",
   colors: {
-    primary: "#1e40af",
-    secondary: "#3b82f6",
-    accent: "#f59e0b",
+    primary: "#9138E0",
+    secondary: "#22A6B5",
+    accent: "#F59C49",
   },
   assets: {
-    logoLight: "/trademarks/logo-light.svg",
-    logoDark: "/trademarks/logo-dark.svg",
+    logoLight: "/trademarks/logo-v5-tag.svg",
+    logoDark: "/trademarks/logo-v5-tag.svg",
     favicon: "/favicon.svg",
   },
 };

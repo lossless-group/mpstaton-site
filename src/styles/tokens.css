@@ -2,39 +2,52 @@
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-size: 16px;
 
-  /* Light mode defaults */
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --card: #f8fafc;
-  --card-foreground: #0f172a;
-  --primary: #1e40af;
+  /* Lossless Group brand gradient */
+  --gradient-brand: linear-gradient(112deg, #22A6B5 6%, #9138E0 24%, #D9233B 48%, #F59C49 72%);
+  --gradient-brand-text: linear-gradient(112deg, #22A6B5 6%, #9138E0 24%, #D9233B 48%, #F59C49 72%);
+  --gradient-brand-subtle: linear-gradient(135deg, rgba(34,166,181,0.15) 0%, rgba(145,56,224,0.1) 30%, rgba(217,35,59,0.1) 60%, rgba(245,156,73,0.08) 100%);
+
+  /* Lossless brand stops */
+  --brand-cyan: #22A6B5;
+  --brand-purple: #9138E0;
+  --brand-crimson: #D9233B;
+  --brand-orange: #F59C49;
+  --brand-lime: #BFEF47;
+  --brand-aqua: #04E5E5;
+
+  /* Light mode */
+  --background: #E8F3F5;
+  --foreground: #1A0D33;
+  --card: #ffffff;
+  --card-foreground: #1A0D33;
+  --primary: #9138E0;
   --primary-foreground: #ffffff;
-  --secondary: #3b82f6;
+  --secondary: #22A6B5;
   --secondary-foreground: #ffffff;
-  --accent: #f59e0b;
-  --accent-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #3b82f6;
+  --accent: #D9233B;
+  --accent-foreground: #ffffff;
+  --muted: #D9F1F5;
+  --muted-foreground: #5E1B5E;
+  --border: rgba(145,56,224,0.15);
+  --input: rgba(145,56,224,0.12);
+  --ring: #9138E0;
   --radius: 0.5rem;
 }
 
 [data-theme='dark'] {
-  --background: #0f172a;
-  --foreground: #f1f5f9;
-  --card: #1e293b;
-  --card-foreground: #f1f5f9;
-  --primary: #3b82f6;
+  --background: #080005;
+  --foreground: #D9F1F5;
+  --card: #1A0F2B;
+  --card-foreground: #E8F3F5;
+  --primary: #9138E0;
   --primary-foreground: #ffffff;
-  --secondary: #60a5fa;
-  --secondary-foreground: #0f172a;
-  --accent: #f59e0b;
-  --accent-foreground: #0f172a;
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
-  --border: #334155;
-  --input: #334155;
-  --ring: #3b82f6;
+  --secondary: #22A6B5;
+  --secondary-foreground: #ffffff;
+  --accent: #F59C49;
+  --accent-foreground: #1A0D33;
+  --muted: #1A2940;
+  --muted-foreground: #A8D9E8;
+  --border: rgba(145,56,224,0.25);
+  --input: rgba(145,56,224,0.2);
+  --ring: #9138E0;
 }
