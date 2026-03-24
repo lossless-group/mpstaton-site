@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config'
 import tailwind from '@tailwindcss/vite'
 import { fileURLToPath } from 'node:url'
 import { existsSync } from 'node:fs'
-import node from '@astrojs/node'
+import vercel from '@astrojs/vercel'
 
 // Detect if we're in the monorepo with local workspace packages available.
 const workspaceRootUrl = new URL('../../..', import.meta.url)
@@ -25,9 +25,7 @@ const aliases = {
 
 export default defineConfig({
   output: 'server',
-  adapter: node({
-    mode: 'standalone'
-  }),
+  adapter: vercel(),
   vite: {
     plugins: [tailwind()],
     server: hasWorkspaceTokensCss
