@@ -68,3 +68,29 @@ p {
   font-weight: 400;
   line-height: 1.7;
 }
+
+/* Lossless brand gradient utilities */
+.gradient-text {
+  background: var(--gradient-brand-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-border {
+  border-image: var(--gradient-brand) 1;
+}
+
+.gradient-bg {
+  background: var(--gradient-brand);
+}
+
+.gradient-bg-subtle {
+  background: var(--gradient-brand-subtle);
+}
+
+.gradient-line {
+  height: 2px;
+  background: var(--gradient-brand);
+  border: none;
+}

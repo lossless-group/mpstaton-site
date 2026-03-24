@@ -1,0 +1,112 @@
+[
+  {
+    "fund": "Reach Capital Fund I",
+    "countries": "International",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2013,
+    "costOfInvestment": 10000000,
+    "stages": "Pre-Seed to Seed",
+    "exit": "FMV",
+    "multiple": "6.3x"
+  },
+  {
+    "fund": "Alpha Partners II",
+    "countries": "International",
+    "sector": "Pro-Rata Fund",
+    "initialInvestmentDate": 2016,
+    "costOfInvestment": 30000000,
+    "stages": "Series C to E",
+    "exit": "FMV",
+    "multiple": "3.8x"
+  },
+  {
+    "fund": "LearnStart I",
+    "countries": "International",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2017,
+    "costOfInvestment": 25000000,
+    "stages": "Seed",
+    "exit": "FMV",
+    "multiple": "2.4x"
+  },
+  {
+    "fund": "Learn Capital Fund II",
+    "countries": "International",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2012,
+    "costOfInvestment": 50000000,
+    "stages": "Seed to Series A",
+    "exit": "FMV",
+    "multiple": "2.7x"
+  },
+  {
+    "fund": "Learn Capital Fund III",
+    "countries": "International",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2015,
+    "costOfInvestment": 150000000,
+    "stages": "Series A to B",
+    "exit": "FMV",
+    "multiple": "2.8x"
+  },
+  {
+    "fund": "Alpha Partners III",
+    "countries": "International",
+    "sector": "Pro-Rata Fund",
+    "initialInvestmentDate": 2018,
+    "costOfInvestment": 75000000,
+    "stages": "Series C to E",
+    "exit": "FMV",
+    "multiple": "4.1x"
+  },
+  {
+    "fund": "LearnStart II",
+    "countries": "International",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2019,
+    "costOfInvestment": 25000000,
+    "stages": "Seed",
+    "exit": "FMV",
+    "multiple": "1.8x"
+  },
+  {
+    "fund": "Learn Capital Fund IV",
+    "countries": "International",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2020,
+    "costOfInvestment": 250000000,
+    "stages": "Series A to B",
+    "exit": "FMV",
+    "multiple": "1.9x"
+  },
+  {
+    "fund": "Avalanche II",
+    "countries": "International",
+    "sector": "US",
+    "initialInvestmentDate": 2023,
+    "costOfInvestment": 4000000,
+    "stages": "Pre-Seed to Seed",
+    "exit": "FMV",
+    "multiple": "1.45x"
+  },
+  {
+    "fund": "Hypernova I",
+    "countries": "International",
+    "sector": "Co-Investment Fund",
+    "initialInvestmentDate": 2025,
+    "costOfInvestment": 8000000,
+    "stages": "Seed to Series B",
+    "exit": "FMV",
+    "multiple": "3.2x"
+  },
+  {
+    "fund": "Angel Portfolio",
+    "countries": "International",
+    "sector": "Diverse",
+    "initialInvestmentDate": "2013-2023",
+    "costOfInvestment": 1200000,
+    "stages": "Pre-Seed",
+    "exit": "FMV",
+    "multiple": "7.2x"
+  }
+]

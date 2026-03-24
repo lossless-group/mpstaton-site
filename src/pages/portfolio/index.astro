@@ -1,40 +1,443 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import rawDeals from '../../content/track-record/deals.json';
+import funds from '../../content/track-record/funds.json';
 
-// Portfolio data - replace with content collection or external data source
-const companies = [
-  { name: 'Example Co', sector: 'SaaS', stage: 'Series A', year: 2024, status: 'Active' },
-];
+// Default sort: year ascending, then vehicle alphabetically
+const deals = [...rawDeals].sort((a, b) => {
+  const yearDiff = Number(a.initialInvestmentDate) - Number(b.initialInvestmentDate);
+  if (yearDiff !== 0) return yearDiff;
+  return a.vehicle.localeCompare(b.vehicle);
+});
+
+// Group deals by company name
+type Deal = typeof deals[number];
+type GroupedDeal = { primary: Deal; subDeals: Deal[]; hasMultiple: boolean };
+
+const groupMap = new Map<string, Deal[]>();
+for (const deal of deals) {
+  const existing = groupMap.get(deal.company) || [];
+  existing.push(deal);
+  groupMap.set(deal.company, existing);
+}
+
+// For each group, primary = largest investment; rest = sub-rows sorted by cost desc
+const groupedDeals: GroupedDeal[] = [];
+const seenCompanies = new Set<string>();
+for (const deal of deals) {
+  if (seenCompanies.has(deal.company)) continue;
+  seenCompanies.add(deal.company);
+  const group = groupMap.get(deal.company)!;
+  const sorted = [...group].sort((a, b) => b.costOfInvestment - a.costOfInvestment);
+  groupedDeals.push({
+    primary: sorted[0],
+    subDeals: sorted.slice(1),
+    hasMultiple: sorted.length > 1,
+  });
+}
+
+// Extract unique filter options from ALL deals (not grouped)
+const vehicles = [...new Set(deals.map(d => d.vehicle))].sort();
+const sectors = [...new Set(deals.flatMap(d => d.sector.split(/,\s*/)))].sort();
+const exits = [...new Set(deals.flatMap(d => d.exit.split(/,\s*/)))].sort();
+const years = [...new Set(deals.map(d => d.initialInvestmentDate))].sort();
+const allTags = [...new Set(deals.flatMap(d => d.tags).filter(Boolean))].sort();
+
+function formatCurrency(value: number | null): string {
+  if (!value) return '—';
+  if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(1)}B`;
+  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
+  if (value >= 1_000) return `$${(value / 1_000).toFixed(0)}K`;
+  return `$${value.toLocaleString()}`;
+}
+
+function formatValuation(value: number | null): string {
+  if (!value) return '—';
+  if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(1)}B`;
+  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(0)}M`;
+  return `$${value.toLocaleString()}`;
+}
+
+const tagColors: Record<string, string> = {
+  'Unicorn': 'bg-[#9138E0]/15 text-[#9138E0]',
+  'Dragon': 'bg-[#D9233B]/15 text-[#D9233B]',
+  'IPO': 'bg-[#22A6B5]/15 text-[#22A6B5]',
+  'Exit': 'bg-[#F59C49]/15 text-[#F59C49]',
+};
+
+function getTagClass(tag: string): string {
+  for (const [key, cls] of Object.entries(tagColors)) {
+    if (tag.includes(key)) return cls;
+  }
+  return 'bg-muted text-muted-foreground';
+}
+
+// Merge tags from all deals in a group for the primary row display
+function mergedTags(group: GroupedDeal): string[] {
+  const all = [group.primary, ...group.subDeals];
+  return [...new Set(all.flatMap(d => d.tags))].filter(Boolean);
+}
 ---
-<BaseLayout title="Investment Portfolio - MP Staton" description="MP Staton's investment portfolio across venture and technology.">
-  <section class="max-w-6xl mx-auto px-6 py-16">
-    <h1 class="text-foreground mb-4">Investment Portfolio</h1>
-    <p class="text-lg text-muted-foreground mb-12 max-w-2xl">
-      A curated view of investments across venture capital and technology.
+<BaseLayout title="Track Record - MP Staton" description="Investment track record across angel investing, venture funds, and co-investment vehicles.">
+  <section class="max-w-[90rem] mx-auto px-6 py-16">
+    <h1 class="gradient-text mb-2">Track Record</h1>
+    <p class="text-lg text-muted-foreground mb-12 max-w-3xl">
+      Investment track record across angel investing, venture funds, and co-investment vehicles spanning 2012 to present.
     </p>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {companies.map((company) => (
-        <div class="rounded-lg border border-border bg-card p-6 hover:border-primary/50 transition-colors">
-          <div class="flex items-start justify-between mb-3">
-            <h3 class="text-card-foreground font-semibold">{company.name}</h3>
-            <span class="text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary">
-              {company.status}
-            </span>
-          </div>
-          <div class="space-y-1 text-sm text-muted-foreground">
-            <p>Sector: {company.sector}</p>
-            <p>Stage: {company.stage}</p>
-            <p>Year: {company.year}</p>
-          </div>
-        </div>
-      ))}
+    <!-- Deals Table -->
+    <div class="mb-16">
+      <h2 class="text-foreground mb-6">Deal History</h2>
+
+      <!-- Filters -->
+      <div class="flex flex-wrap gap-3 mb-4" id="filters">
+        <select id="filter-vehicle" class="filter-select">
+          <option value="">All Vehicles</option>
+          {vehicles.map(v => <option value={v}>{v}</option>)}
+        </select>
+        <select id="filter-sector" class="filter-select">
+          <option value="">All Sectors</option>
+          {sectors.map(s => <option value={s}>{s}</option>)}
+        </select>
+        <select id="filter-exit" class="filter-select">
+          <option value="">All Exits</option>
+          {exits.map(e => <option value={e}>{e}</option>)}
+        </select>
+        <select id="filter-year" class="filter-select">
+          <option value="">All Years</option>
+          {years.map(y => <option value={String(y)}>{y}</option>)}
+        </select>
+        <select id="filter-tag" class="filter-select">
+          <option value="">All Tags</option>
+          {allTags.map(t => <option value={t}>{t}</option>)}
+        </select>
+        <button id="clear-filters" class="text-xs font-medium px-3 py-1.5 rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors hidden">
+          Clear filters
+        </button>
+        <span id="filter-count" class="self-center text-xs text-muted-foreground ml-auto"></span>
+      </div>
+
+      <div class="overflow-x-auto rounded-lg border border-border">
+        <table class="w-full text-sm" id="deals-table">
+          <thead>
+            <tr class="border-b border-border bg-muted/50">
+              <th class="text-left px-4 py-3 font-semibold text-foreground w-5"></th>
+              <th class="text-left px-4 py-3 font-semibold text-foreground">Company</th>
+              <th class="text-left px-4 py-3 font-semibold text-foreground">Vehicle</th>
+              <th class="text-left px-4 py-3 font-semibold text-foreground">Country</th>
+              <th class="text-left px-4 py-3 font-semibold text-foreground">Sector</th>
+              <th class="text-center px-4 py-3 font-semibold text-foreground">Year</th>
+              <th class="text-right px-4 py-3 font-semibold text-foreground">Investment</th>
+              <th class="text-left px-4 py-3 font-semibold text-foreground">Stage</th>
+              <th class="text-left px-4 py-3 font-semibold text-foreground">Exit</th>
+              <th class="text-right px-4 py-3 font-semibold text-foreground cursor-pointer select-none hover:text-primary transition-colors" id="sort-multiple">Multiple <span class="sort-arrow text-xs opacity-50">&#8597;</span></th>
+              <th class="text-right px-4 py-3 font-semibold text-foreground">Valuation</th>
+              <th class="text-left px-4 py-3 font-semibold text-foreground">Tags</th>
+            </tr>
+          </thead>
+          <tbody>
+            {groupedDeals.map((group) => {
+              const deal = group.primary;
+              const tags = mergedTags(group);
+              const groupId = deal.company.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+              return (
+                <>
+                  {/* Primary row */}
+                  <tr
+                    class="deal-row deal-primary border-b border-border/50 hover:bg-muted/30 transition-colors"
+                    data-company={deal.company}
+                    data-vehicle={deal.vehicle}
+                    data-sector={deal.sector}
+                    data-exit={deal.exit}
+                    data-year={String(deal.initialInvestmentDate)}
+                    data-tags={tags.join(',')}
+                    data-multiple={parseFloat(deal.multiple) || 0}
+                    data-group={groupId}
+                    data-has-children={group.hasMultiple ? 'true' : 'false'}
+                  >
+                    <td class="px-4 py-2.5 w-5">
+                      {group.hasMultiple && (
+                        <button
+                          class="expand-toggle text-muted-foreground hover:text-foreground transition-colors text-xs leading-none"
+                          data-target={groupId}
+                          aria-expanded="false"
+                          aria-label={`Expand ${deal.company} sub-investments`}
+                        >
+                          <span class="expand-icon">&#9654;</span>
+                        </button>
+                      )}
+                    </td>
+                    <td class="px-4 py-2.5 font-medium text-foreground whitespace-nowrap">
+                      {deal.company}
+                      {group.hasMultiple && (
+                        <span class="ml-1.5 text-xs text-muted-foreground font-normal">({group.subDeals.length + 1})</span>
+                      )}
+                    </td>
+                    <td class="px-4 py-2.5 text-muted-foreground whitespace-nowrap">{deal.vehicle}</td>
+                    <td class="px-4 py-2.5 text-muted-foreground">{deal.countries}</td>
+                    <td class="px-4 py-2.5 text-muted-foreground whitespace-nowrap">{deal.sector}</td>
+                    <td class="px-4 py-2.5 text-center text-muted-foreground">{deal.initialInvestmentDate}</td>
+                    <td class="px-4 py-2.5 text-right font-mono text-muted-foreground">{formatCurrency(deal.costOfInvestment)}</td>
+                    <td class="px-4 py-2.5 text-muted-foreground whitespace-nowrap">{deal.stage}</td>
+                    <td class="px-4 py-2.5 text-muted-foreground">{deal.exit}</td>
+                    <td class="px-4 py-2.5 text-right font-mono font-semibold text-foreground">{deal.multiple}</td>
+                    <td class="px-4 py-2.5 text-right font-mono text-muted-foreground">{formatValuation(deal.relevantValuation)}</td>
+                    <td class="px-4 py-2.5">
+                      <div class="flex gap-1 flex-wrap">
+                        {tags.map((tag: string) => (
+                          <span class={`text-xs font-medium px-1.5 py-0.5 rounded ${getTagClass(tag)}`}>{tag}</span>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+
+                  {/* Sub-rows (hidden by default) */}
+                  {group.subDeals.map((sub) => (
+                    <tr
+                      class="deal-row deal-sub border-b border-border/50 hover:bg-muted/30 transition-colors"
+                      style="display:none"
+                      data-company={sub.company}
+                      data-vehicle={sub.vehicle}
+                      data-sector={sub.sector}
+                      data-exit={sub.exit}
+                      data-year={String(sub.initialInvestmentDate)}
+                      data-tags={sub.tags.join(',')}
+                      data-multiple={parseFloat(sub.multiple) || 0}
+                      data-parent-group={groupId}
+                    >
+                      <td class="px-4 py-2 w-5">
+                        <span class="block w-px h-4 bg-border mx-auto"></span>
+                      </td>
+                      <td class="px-4 py-2 pl-8 font-medium text-foreground/70 whitespace-nowrap text-xs">
+                        <span class="text-border mr-1">&#9492;</span>{sub.company}
+                      </td>
+                      <td class="px-4 py-2 text-muted-foreground/80 whitespace-nowrap text-xs">{sub.vehicle}</td>
+                      <td class="px-4 py-2 text-muted-foreground/80 text-xs">{sub.countries}</td>
+                      <td class="px-4 py-2 text-muted-foreground/80 whitespace-nowrap text-xs">{sub.sector}</td>
+                      <td class="px-4 py-2 text-center text-muted-foreground/80 text-xs">{sub.initialInvestmentDate}</td>
+                      <td class="px-4 py-2 text-right font-mono text-muted-foreground/80 text-xs">{formatCurrency(sub.costOfInvestment)}</td>
+                      <td class="px-4 py-2 text-muted-foreground/80 whitespace-nowrap text-xs">{sub.stage}</td>
+                      <td class="px-4 py-2 text-muted-foreground/80 text-xs">{sub.exit}</td>
+                      <td class="px-4 py-2 text-right font-mono font-semibold text-foreground/70 text-xs">{sub.multiple}</td>
+                      <td class="px-4 py-2 text-right font-mono text-muted-foreground/80 text-xs">{formatValuation(sub.relevantValuation)}</td>
+                      <td class="px-4 py-2">
+                        <div class="flex gap-1 flex-wrap">
+                          {sub.tags.map((tag: string) => (
+                            <span class={`text-xs font-medium px-1.5 py-0.5 rounded ${getTagClass(tag)}`}>{tag}</span>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <div class="mt-12 p-6 rounded-lg border border-border bg-muted/50 text-center">
-      <p class="text-muted-foreground">
-        More portfolio details available upon request. For confidential access, please reach out directly.
-      </p>
+    <!-- Funds Table -->
+    <div>
+      <h2 class="text-foreground mb-6">Fund Involvements</h2>
+      <div class="overflow-x-auto rounded-lg border border-border">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-border bg-muted/50">
+              <th class="text-left px-4 py-3 font-semibold text-foreground">Fund</th>
+              <th class="text-left px-4 py-3 font-semibold text-foreground">Sector</th>
+              <th class="text-center px-4 py-3 font-semibold text-foreground">Year</th>
+              <th class="text-right px-4 py-3 font-semibold text-foreground">Fund Size</th>
+              <th class="text-left px-4 py-3 font-semibold text-foreground">Stages</th>
+              <th class="text-left px-4 py-3 font-semibold text-foreground">Status</th>
+              <th class="text-right px-4 py-3 font-semibold text-foreground">Multiple</th>
+            </tr>
+          </thead>
+          <tbody>
+            {funds.map((fund, i) => (
+              <tr class={`border-b border-border/50 hover:bg-muted/30 transition-colors ${i % 2 === 0 ? '' : 'bg-muted/10'}`}>
+                <td class="px-4 py-2.5 font-medium text-foreground whitespace-nowrap">{fund.fund}</td>
+                <td class="px-4 py-2.5 text-muted-foreground">{fund.sector}</td>
+                <td class="px-4 py-2.5 text-center text-muted-foreground">{fund.initialInvestmentDate}</td>
+                <td class="px-4 py-2.5 text-right font-mono text-muted-foreground">{formatCurrency(fund.costOfInvestment)}</td>
+                <td class="px-4 py-2.5 text-muted-foreground whitespace-nowrap">{fund.stages}</td>
+                <td class="px-4 py-2.5 text-muted-foreground">{fund.exit}</td>
+                <td class="px-4 py-2.5 text-right font-mono font-semibold text-foreground">{fund.multiple}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 </BaseLayout>
+
+<style is:global>
+  .filter-select {
+    appearance: none;
+    background-color: var(--card);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    padding: 0.375rem 2rem 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s, background-color 0.15s;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+  }
+  .filter-select:hover {
+    border-color: var(--ring);
+  }
+  .filter-select:focus {
+    outline: 2px solid var(--ring);
+    outline-offset: 1px;
+  }
+  .filter-select.active {
+    border-color: var(--primary);
+    background-color: color-mix(in srgb, var(--primary) 8%, var(--card));
+  }
+  .expand-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.15s;
+  }
+  .expand-toggle:hover {
+    background-color: var(--muted);
+  }
+  .expand-icon {
+    display: inline-block;
+    transition: transform 0.15s;
+  }
+  .expand-toggle[aria-expanded='true'] .expand-icon {
+    transform: rotate(90deg);
+  }
+  .deal-sub {
+    background-color: color-mix(in srgb, var(--primary) 3%, var(--background));
+  }
+  .deal-sub:hover {
+    background-color: color-mix(in srgb, var(--primary) 6%, var(--background)) !important;
+  }
+</style>
+
+<script>
+  const selects = document.querySelectorAll('.filter-select') as NodeListOf<HTMLSelectElement>;
+  const tbody = document.querySelector('#deals-table tbody') as HTMLTableSectionElement;
+  const primaryRows = Array.from(document.querySelectorAll('.deal-primary')) as HTMLTableRowElement[];
+  const allRows = Array.from(document.querySelectorAll('.deal-row')) as HTMLTableRowElement[];
+  const clearBtn = document.getElementById('clear-filters') as HTMLButtonElement;
+  const countEl = document.getElementById('filter-count') as HTMLSpanElement;
+  const sortBtn = document.getElementById('sort-multiple') as HTMLTableCellElement;
+  const sortArrow = sortBtn.querySelector('.sort-arrow') as HTMLSpanElement;
+  const totalCompanies = primaryRows.length;
+
+  // Expand/collapse toggles
+  document.querySelectorAll('.expand-toggle').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      applyFilters();
+    });
+  });
+
+  // Sort state
+  let sortDir: string | null = null;
+  const originalOrder = [...allRows];
+
+  function sortRows() {
+    if (sortDir === null) {
+      originalOrder.forEach((row) => tbody.appendChild(row));
+      sortArrow.innerHTML = '&#8597;';
+      sortArrow.style.opacity = '0.5';
+      sortBtn.classList.remove('text-primary');
+    } else {
+      const groups: { primary: HTMLTableRowElement; subs: HTMLTableRowElement[] }[] = [];
+
+      primaryRows.forEach((row) => {
+        const groupId = row.dataset.group;
+        const subs = Array.from(document.querySelectorAll(`[data-parent-group="${groupId}"]`)) as HTMLTableRowElement[];
+        groups.push({ primary: row, subs });
+      });
+
+      groups.sort((a, b) => {
+        const aVal = parseFloat(a.primary.dataset.multiple || '0');
+        const bVal = parseFloat(b.primary.dataset.multiple || '0');
+        return sortDir === 'desc' ? bVal - aVal : aVal - bVal;
+      });
+
+      groups.forEach((g) => {
+        tbody.appendChild(g.primary);
+        g.subs.forEach((s) => tbody.appendChild(s));
+      });
+
+      sortArrow.innerHTML = sortDir === 'desc' ? '&#9660;' : '&#9650;';
+      sortArrow.style.opacity = '1';
+      sortBtn.classList.add('text-primary');
+    }
+    applyFilters();
+  }
+
+  sortBtn.addEventListener('click', () => {
+    if (sortDir === null) sortDir = 'desc';
+    else if (sortDir === 'desc') sortDir = 'asc';
+    else sortDir = null;
+    sortRows();
+  });
+
+  function applyFilters() {
+    const vehicle = (document.getElementById('filter-vehicle') as HTMLSelectElement).value;
+    const sector = (document.getElementById('filter-sector') as HTMLSelectElement).value;
+    const exit = (document.getElementById('filter-exit') as HTMLSelectElement).value;
+    const year = (document.getElementById('filter-year') as HTMLSelectElement).value;
+    const tag = (document.getElementById('filter-tag') as HTMLSelectElement).value;
+
+    const hasFilter = vehicle || sector || exit || year || tag;
+    clearBtn.classList.toggle('hidden', !hasFilter);
+
+    let visible = 0;
+
+    primaryRows.forEach((row) => {
+      const groupId = row.dataset.group!;
+      const subs = Array.from(document.querySelectorAll(`[data-parent-group="${groupId}"]`)) as HTMLTableRowElement[];
+      const allInGroup = [row, ...subs];
+
+      const groupMatch = allInGroup.some((r) => {
+        const matchVehicle = !vehicle || r.dataset.vehicle === vehicle;
+        const matchSector = !sector || (r.dataset.sector || '').split(/,\s*/).includes(sector);
+        const matchExit = !exit || (r.dataset.exit || '').split(/,\s*/).includes(exit);
+        const matchYear = !year || r.dataset.year === year;
+        const matchTag = !tag || (r.dataset.tags || '').split(',').some((t) => t.includes(tag));
+        return matchVehicle && matchSector && matchExit && matchYear && matchTag;
+      });
+
+      row.style.display = groupMatch ? '' : 'none';
+      if (groupMatch) visible++;
+
+      const expandBtn = row.querySelector('.expand-toggle');
+      const expanded = expandBtn && expandBtn.getAttribute('aria-expanded') === 'true';
+      subs.forEach((sub) => {
+        sub.style.display = (groupMatch && expanded) ? '' : 'none';
+      });
+    });
+
+    selects.forEach((s) => s.classList.toggle('active', !!s.value));
+    countEl.textContent = hasFilter ? `${visible} of ${totalCompanies} companies` : `${totalCompanies} companies`;
+  }
+
+  selects.forEach((s) => s.addEventListener('change', applyFilters));
+
+  clearBtn.addEventListener('click', () => {
+    selects.forEach((s) => { s.value = ''; });
+    applyFilters();
+  });
+
+  applyFilters();
+</script>

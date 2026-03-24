@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const pages = [
+  { title: 'Logo Variants', href: '/design-system/logos', description: 'All logo concepts and trademark options for mpstaton brand.' },
+  { title: 'Theme & Tokens', href: '/design-system/theme', description: 'Color palette, typography, spacing, and dark/light mode tokens.' },
+];
+---
+<BaseLayout title="Design System - MP Staton">
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <h1 class="text-foreground mb-2">Design System</h1>
+    <p class="text-lg text-muted-foreground mb-12">Component library, brand assets, and theme reference for mpstaton-site.</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {pages.map((page) => (
+        <a href={page.href} class="group rounded-lg border border-border bg-card p-6 hover:border-primary/50 transition-all hover:-translate-y-0.5">
+          <h3 class="text-card-foreground font-semibold mb-2 group-hover:text-primary transition-colors">
+            {page.title}
+            <span class="inline-block ml-1 opacity-0 group-hover:opacity-100 transition-opacity">&rarr;</span>
+          </h3>
+          <p class="text-sm text-muted-foreground">{page.description}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
