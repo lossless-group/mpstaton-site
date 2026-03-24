@@ -100,7 +100,7 @@
     "stage": "Seed",
     "exit": "FMV",
     "multiple": "14x",
-    "relevantValuation": null,
+    "relevantValuation": 1100000000,
     "tags": ["Unicorn"]
   },
   {
@@ -328,7 +328,7 @@
     "company": "Binti",
     "vehicle": "Angel",
     "countries": "US",
-    "sector": "GovTech",
+    "sector": "GovTech, Childcare",
     "initialInvestmentDate": 2016,
     "costOfInvestment": 10000,
     "stage": "Seed",
@@ -767,6 +767,19 @@
     "tags": []
   },
   {
+    "company": "Avela",
+    "vehicle": "LearnStart II",
+    "countries": "US",
+    "sector": "Edtech",
+    "initialInvestmentDate": 2022,
+    "costOfInvestment": 100000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "multiple": "2.3x",
+    "relevantValuation": null,
+    "tags": []
+  },
+  {
     "company": "Shikho",
     "vehicle": "LearnStart II",
     "countries": "Bangladesh",
@@ -809,7 +822,7 @@
     "company": "Allocate",
     "vehicle": "Angel",
     "countries": "US",
-    "sector": "Private Markets Marketplace, Marketplace, Data Platform",
+    "sector": "Private Markets Marketplace, Marketplace, Data Platform, Data as a Service",
     "initialInvestmentDate": 2021,
     "costOfInvestment": 10000,
     "stage": "Seed",

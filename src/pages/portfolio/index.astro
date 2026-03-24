@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import rawDeals from '../../content/track-record/deals.json';
-import funds from '../../content/track-record/funds.json';
+import rawDeals from '../../data/track-record/deals.json';
+import funds from '../../data/track-record/funds.json';
 
 // Default sort: year ascending, then vehicle alphabetically
 const deals = [...rawDeals].sort((a, b) => {

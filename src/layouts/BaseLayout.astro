@@ -2,6 +2,7 @@
 import '../styles/globals.css';
 import brand from '@brand';
 import { SITE_SEO } from '../config/seo';
+import Header from '../components/basics/Header.astro';
 
 interface Props {
   title?: string;
@@ -24,20 +25,7 @@ const SITE_MODE = import.meta.env.SITE_MODE ?? 'dark';
     <title>{title}</title>
   </head>
   <body class="min-h-screen flex flex-col">
-    <header class="px-6 py-4">
-      <div class="gradient-line mb-0"></div>
-      <nav class="max-w-6xl mx-auto flex items-center justify-between">
-        <a href="/" class="hover:opacity-80 transition-opacity">
-          <img src={brand.assets?.logoDark} alt={brand.name} class="h-8 w-auto" />
-        </a>
-        <div class="flex gap-6 text-sm font-medium">
-          <a href="/portfolio" class="text-muted-foreground hover:text-foreground transition-colors">Portfolio</a>
-          <a href="/blog" class="text-muted-foreground hover:text-foreground transition-colors">Blog</a>
-          <a href="/posts" class="text-muted-foreground hover:text-foreground transition-colors">Posts</a>
-          <a href="/about" class="text-muted-foreground hover:text-foreground transition-colors">About</a>
-        </div>
-      </nav>
-    </header>
+    <Header />
     <main class="flex-1">
       <slot />
     </main>
