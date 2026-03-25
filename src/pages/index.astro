@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import DataSummaryDisplay from '../components/ui/DataSummaryDisplay.astro';
+import RolesDisplay from '../components/ui/RolesDisplay.astro';
 import TagRowTableSummary from '../components/ui/TagRow--TableSummary.astro';
 import deals from '../data/track-record/deals.json';
 
@@ -22,7 +23,7 @@ const totalCompanies = new Set(deals.map(d => d.company)).size;
   description="VC, Investor, Angel, Cofounder, Catalyst. 12 fund cycles, 70+ investments, and a track record spanning edtech, fintech, climate, AI, and beyond."
   meta={{ subtitle: 'Personal Site' }}
 >
-  <section class="max-w-6xl mx-auto px-6 py-24">
+  <section class="max-w-6xl mx-auto px-6 pt-16 pb-8">
     <div class="flex flex-col md:flex-row items-center md:items-start gap-10">
       <img
         src="/photos/headshotOf__Michael-Staton.jpeg"
@@ -44,11 +45,17 @@ const totalCompanies = new Set(deals.map(d => d.company)).size;
         </div>
       </div>
     </div>
+
+    <div class="mt-10">
+      <h3 class="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Experience</h3>
+      <RolesDisplay />
+    </div>
   </section>
 
-  <div class="max-w-6xl mx-auto px-6"><hr class="gradient-line" /></div>
+  <div class="max-w-6xl mx-auto px-6 py-4"><hr class="gradient-line" /></div>
 
-  <section class="max-w-6xl mx-auto px-6 py-16">
+  <section class="max-w-6xl mx-auto px-6 pt-4 pb-16">
+    <h3 class="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Track Record Highlights</h3>
     <DataSummaryDisplay />
     <div class="mt-8">
       <TagRowTableSummary tags={tagSummary} totalCompanies={totalCompanies} linkBase="/portfolio" />

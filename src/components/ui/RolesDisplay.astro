@@ -1,0 +1,19 @@
+---
+// Colors sampled along the brand gradient: purple → teal → orange
+const roles = [
+  { multiplier: '3x', label: 'Startup Cofounder', color: '#22A6B5' },
+  { multiplier: '2x', label: 'Startup CEO', color: '#6A5CCA' },
+  { multiplier: '3.5x', label: 'Venture Firm Catalyst', color: '#9138E0' },
+  { multiplier: '3x', label: 'General Partner', color: '#c83c42' },
+  { multiplier: '4x', label: 'Venture Partner', color: '#F59C49' },
+];
+---
+
+<div class="flex flex-wrap gap-3">
+  {roles.map((role) => (
+    <div class="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-card">
+      <span class="text-lg font-bold font-mono" style={`color: ${role.color};`}>{role.multiplier}</span>
+      <span class="text-sm text-muted-foreground font-medium">{role.label}</span>
+    </div>
+  ))}
+</div>
