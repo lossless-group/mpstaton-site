@@ -1,6 +1,7 @@
 [
   {
     "fund": "Reach Capital Fund I",
+    "role": "Community Advisor, Venture Partner",
     "countries": "International",
     "sector": "Edtech",
     "initialInvestmentDate": 2013,
@@ -11,9 +12,10 @@
   },
   {
     "fund": "Alpha Partners II",
+    "role": "Venture Partner",
     "countries": "International",
     "sector": "Pro-Rata Fund",
-    "initialInvestmentDate": 2016,
+    "initialInvestmentDate": 2015,
     "costOfInvestment": 30000000,
     "stages": "Series C to E",
     "exit": "FMV",
@@ -21,6 +23,7 @@
   },
   {
     "fund": "LearnStart I",
+    "role": "Cofounder, General Partner",
     "countries": "International",
     "sector": "Edtech",
     "initialInvestmentDate": 2017,
@@ -31,6 +34,7 @@
   },
   {
     "fund": "Learn Capital Fund II",
+    "role": "Partner",
     "countries": "International",
     "sector": "Edtech",
     "initialInvestmentDate": 2012,
@@ -41,6 +45,7 @@
   },
   {
     "fund": "Learn Capital Fund III",
+    "role": "General Partner",
     "countries": "International",
     "sector": "Edtech",
     "initialInvestmentDate": 2015,
@@ -51,6 +56,7 @@
   },
   {
     "fund": "Alpha Partners III",
+    "role": "Venture Partner",
     "countries": "International",
     "sector": "Pro-Rata Fund",
     "initialInvestmentDate": 2018,
@@ -61,6 +67,7 @@
   },
   {
     "fund": "LearnStart II",
+    "role": "Cofounder, General Partner",
     "countries": "International",
     "sector": "Edtech",
     "initialInvestmentDate": 2019,
@@ -71,6 +78,7 @@
   },
   {
     "fund": "Learn Capital Fund IV",
+    "role": "Venture Partner",
     "countries": "International",
     "sector": "Edtech",
     "initialInvestmentDate": 2020,
@@ -80,7 +88,19 @@
     "multiple": "1.9x"
   },
   {
+    "fund": "Laerdal Million Lives Fund I",
+    "role": "Catalyst, Venture Advisor",
+    "countries": "International",
+    "sector": "HealthTech",
+    "initialInvestmentDate": 2020,
+    "costOfInvestment": 100000000,
+    "stages": "Seed to Series A",
+    "exit": "FMV",
+    "multiple": "1.8x"
+  },
+  {
     "fund": "Avalanche II",
+    "role": "Venture Partner",
     "countries": "International",
     "sector": "US",
     "initialInvestmentDate": 2023,
@@ -91,6 +111,7 @@
   },
   {
     "fund": "Hypernova I",
+    "role": "Catalyst, Venture Partner",
     "countries": "International",
     "sector": "Co-Investment Fund",
     "initialInvestmentDate": 2025,
@@ -101,6 +122,7 @@
   },
   {
     "fund": "Angel Portfolio",
+    "role": "Principal",
     "countries": "International",
     "sector": "Diverse",
     "initialInvestmentDate": "2013-2023",

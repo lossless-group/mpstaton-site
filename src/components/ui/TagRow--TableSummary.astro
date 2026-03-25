@@ -1,0 +1,99 @@
+---
+interface Props {
+  tags: { name: string; count: number }[];
+  /** When set, clicking a tag navigates to this URL with ?tag= instead of filtering in-page */
+  linkBase?: string;
+}
+
+const tagOrder = ['IPO', 'Unicorn', 'Dragon', 'Exit'];
+
+const tagColors: Record<string, { bg: string; text: string; border: string }> = {
+  IPO:     { bg: 'rgba(34,166,181,0.12)', text: '#22A6B5', border: 'rgba(34,166,181,0.3)' },
+  Unicorn: { bg: 'rgba(145,56,224,0.12)', text: '#9138E0', border: 'rgba(145,56,224,0.3)' },
+  Dragon:  { bg: 'rgba(217,35,59,0.12)',  text: '#D9233B', border: 'rgba(217,35,59,0.3)' },
+  Exit:    { bg: 'rgba(245,156,73,0.12)', text: '#F59C49', border: 'rgba(245,156,73,0.3)' },
+};
+
+const { tags, linkBase } = Astro.props;
+
+// Sort tags into the defined order, ignore any not in tagOrder
+const sorted = tagOrder
+  .map((name) => tags.find((t) => t.name === name))
+  .filter(Boolean) as { name: string; count: number }[];
+---
+
+<div class="flex flex-wrap gap-3 mb-6" id="tag-summary-row">
+  {sorted.map((tag) => {
+    const colors = tagColors[tag.name] || { bg: 'rgba(128,128,128,0.12)', text: '#888', border: 'rgba(128,128,128,0.3)' };
+    const Tag = linkBase ? 'a' : 'button';
+    const href = linkBase ? `${linkBase}?tag=${encodeURIComponent(tag.name)}` : undefined;
+    return (
+      <Tag
+        class="tag-summary-btn flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm cursor-pointer transition-all duration-150 hover:scale-105"
+        style={`background:${colors.bg}; color:${colors.text}; border:1px solid ${colors.border};`}
+        data-tag={tag.name}
+        href={href}
+      >
+        <span class="tag-summary-name">{tag.name}</span>
+        <span
+          class="tag-summary-count inline-flex items-center justify-center min-w-[1.5rem] h-6 px-1.5 rounded-full text-xs font-bold"
+          style={`background:${colors.text}; color:#fff;`}
+        >
+          {tag.count}
+        </span>
+      </Tag>
+    );
+  })}
+</div>
+
+<script>
+  const tagBtns = document.querySelectorAll('.tag-summary-btn') as NodeListOf<HTMLElement>;
+  const filterTagSelect = document.getElementById('filter-tag') as HTMLSelectElement | null;
+
+  // Only wire up in-page filtering if the filter select exists
+  if (filterTagSelect) {
+    tagBtns.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        // If it's a link (has href), let it navigate
+        if (btn.tagName === 'A') return;
+
+        e.preventDefault();
+        const tag = btn.dataset.tag!;
+        const isActive = btn.classList.contains('tag-active');
+
+        tagBtns.forEach((b) => b.classList.remove('tag-active'));
+
+        if (isActive) {
+          filterTagSelect.value = '';
+          filterTagSelect.dispatchEvent(new Event('change'));
+        } else {
+          btn.classList.add('tag-active');
+          filterTagSelect.value = tag;
+          filterTagSelect.dispatchEvent(new Event('change'));
+        }
+      });
+    });
+
+    // Keep tag summary buttons in sync when the select filter changes externally
+    filterTagSelect.addEventListener('change', () => {
+      const val = filterTagSelect.value;
+      tagBtns.forEach((b) => {
+        b.classList.toggle('tag-active', b.dataset.tag === val);
+      });
+    });
+
+    // On page load, check URL for ?tag= param and apply it
+    const urlTag = new URLSearchParams(window.location.search).get('tag');
+    if (urlTag) {
+      filterTagSelect.value = urlTag;
+      filterTagSelect.dispatchEvent(new Event('change'));
+    }
+  }
+</script>
+
+<style>
+  .tag-summary-btn.tag-active {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 2px currentColor;
+  }
+</style>

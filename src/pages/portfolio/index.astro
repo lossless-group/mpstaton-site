@@ -1,11 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import TagRowTableSummary from '../../components/ui/TagRow--TableSummary.astro';
 import rawDeals from '../../data/track-record/deals.json';
 import funds from '../../data/track-record/funds.json';
 
-// Default sort: year ascending, then vehicle alphabetically
+// Default sort: year descending (most recent first), then vehicle alphabetically
 const deals = [...rawDeals].sort((a, b) => {
-  const yearDiff = Number(a.initialInvestmentDate) - Number(b.initialInvestmentDate);
+  const yearDiff = Number(b.initialInvestmentDate) - Number(a.initialInvestmentDate);
   if (yearDiff !== 0) return yearDiff;
   return a.vehicle.localeCompare(b.vehicle);
 });
@@ -42,6 +43,17 @@ const sectors = [...new Set(deals.flatMap(d => d.sector.split(/,\s*/)))].sort();
 const exits = [...new Set(deals.flatMap(d => d.exit.split(/,\s*/)))].sort();
 const years = [...new Set(deals.map(d => d.initialInvestmentDate))].sort();
 const allTags = [...new Set(deals.flatMap(d => d.tags).filter(Boolean))].sort();
+
+// Count unique companies per tag (not individual deal rows)
+const tagCountMap = new Map<string, Set<string>>();
+for (const deal of deals) {
+  for (const tag of deal.tags) {
+    if (!tag) continue;
+    if (!tagCountMap.has(tag)) tagCountMap.set(tag, new Set());
+    tagCountMap.get(tag)!.add(deal.company);
+  }
+}
+const tagSummary = allTags.map(t => ({ name: t, count: tagCountMap.get(t)?.size ?? 0 }));
 
 function formatCurrency(value: number | null): string {
   if (!value) return '—';
@@ -89,6 +101,8 @@ function mergedTags(group: GroupedDeal): string[] {
     <div class="mb-16">
       <h2 class="text-foreground mb-6">Deal History</h2>
 
+      <TagRowTableSummary tags={tagSummary} />
+
       <!-- Filters -->
       <div class="flex flex-wrap gap-3 mb-4" id="filters">
         <select id="filter-vehicle" class="filter-select">
@@ -114,7 +128,10 @@ function mergedTags(group: GroupedDeal): string[] {
         <button id="clear-filters" class="text-xs font-medium px-3 py-1.5 rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors hidden">
           Clear filters
         </button>
-        <span id="filter-count" class="self-center text-xs text-muted-foreground ml-auto"></span>
+        <span class="self-center text-xs text-muted-foreground ml-auto flex gap-4">
+          <span id="filter-count"></span>
+          <span id="total-invested" class="font-mono font-semibold"></span>
+        </span>
       </div>
 
       <div class="overflow-x-auto rounded-lg border border-border">
@@ -126,13 +143,13 @@ function mergedTags(group: GroupedDeal): string[] {
               <th class="text-left px-4 py-3 font-semibold text-foreground">Vehicle</th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Country</th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Sector</th>
-              <th class="text-center px-4 py-3 font-semibold text-foreground">Year</th>
+              <th class="text-center px-4 py-3 font-semibold text-foreground cursor-pointer select-none hover:text-primary transition-colors" id="sort-year">Year <span class="sort-arrow-year text-xs opacity-50">&#9660;</span></th>
+              <th class="text-left px-4 py-3 font-semibold text-foreground">Tags</th>
               <th class="text-right px-4 py-3 font-semibold text-foreground">Investment</th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Stage</th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Exit</th>
               <th class="text-right px-4 py-3 font-semibold text-foreground cursor-pointer select-none hover:text-primary transition-colors" id="sort-multiple">Multiple <span class="sort-arrow text-xs opacity-50">&#8597;</span></th>
               <th class="text-right px-4 py-3 font-semibold text-foreground">Valuation</th>
-              <th class="text-left px-4 py-3 font-semibold text-foreground">Tags</th>
             </tr>
           </thead>
           <tbody>
@@ -152,6 +169,7 @@ function mergedTags(group: GroupedDeal): string[] {
                     data-year={String(deal.initialInvestmentDate)}
                     data-tags={tags.join(',')}
                     data-multiple={parseFloat(deal.multiple) || 0}
+                    data-cost={deal.costOfInvestment || 0}
                     data-group={groupId}
                     data-has-children={group.hasMultiple ? 'true' : 'false'}
                   >
@@ -177,11 +195,6 @@ function mergedTags(group: GroupedDeal): string[] {
                     <td class="px-4 py-2.5 text-muted-foreground">{deal.countries}</td>
                     <td class="px-4 py-2.5 text-muted-foreground whitespace-nowrap">{deal.sector}</td>
                     <td class="px-4 py-2.5 text-center text-muted-foreground">{deal.initialInvestmentDate}</td>
-                    <td class="px-4 py-2.5 text-right font-mono text-muted-foreground">{formatCurrency(deal.costOfInvestment)}</td>
-                    <td class="px-4 py-2.5 text-muted-foreground whitespace-nowrap">{deal.stage}</td>
-                    <td class="px-4 py-2.5 text-muted-foreground">{deal.exit}</td>
-                    <td class="px-4 py-2.5 text-right font-mono font-semibold text-foreground">{deal.multiple}</td>
-                    <td class="px-4 py-2.5 text-right font-mono text-muted-foreground">{formatValuation(deal.relevantValuation)}</td>
                     <td class="px-4 py-2.5">
                       <div class="flex gap-1 flex-wrap">
                         {tags.map((tag: string) => (
@@ -189,6 +202,11 @@ function mergedTags(group: GroupedDeal): string[] {
                         ))}
                       </div>
                     </td>
+                    <td class="px-4 py-2.5 text-right font-mono text-muted-foreground">{formatCurrency(deal.costOfInvestment)}</td>
+                    <td class="px-4 py-2.5 text-muted-foreground whitespace-nowrap">{deal.stage}</td>
+                    <td class="px-4 py-2.5 text-muted-foreground">{deal.exit}</td>
+                    <td class="px-4 py-2.5 text-right font-mono font-semibold text-foreground">{deal.multiple}</td>
+                    <td class="px-4 py-2.5 text-right font-mono text-muted-foreground">{formatValuation(deal.relevantValuation)}</td>
                   </tr>
 
                   {/* Sub-rows (hidden by default) */}
@@ -203,6 +221,7 @@ function mergedTags(group: GroupedDeal): string[] {
                       data-year={String(sub.initialInvestmentDate)}
                       data-tags={sub.tags.join(',')}
                       data-multiple={parseFloat(sub.multiple) || 0}
+                      data-cost={sub.costOfInvestment || 0}
                       data-parent-group={groupId}
                     >
                       <td class="px-4 py-2 w-5">
@@ -215,11 +234,6 @@ function mergedTags(group: GroupedDeal): string[] {
                       <td class="px-4 py-2 text-muted-foreground/80 text-xs">{sub.countries}</td>
                       <td class="px-4 py-2 text-muted-foreground/80 whitespace-nowrap text-xs">{sub.sector}</td>
                       <td class="px-4 py-2 text-center text-muted-foreground/80 text-xs">{sub.initialInvestmentDate}</td>
-                      <td class="px-4 py-2 text-right font-mono text-muted-foreground/80 text-xs">{formatCurrency(sub.costOfInvestment)}</td>
-                      <td class="px-4 py-2 text-muted-foreground/80 whitespace-nowrap text-xs">{sub.stage}</td>
-                      <td class="px-4 py-2 text-muted-foreground/80 text-xs">{sub.exit}</td>
-                      <td class="px-4 py-2 text-right font-mono font-semibold text-foreground/70 text-xs">{sub.multiple}</td>
-                      <td class="px-4 py-2 text-right font-mono text-muted-foreground/80 text-xs">{formatValuation(sub.relevantValuation)}</td>
                       <td class="px-4 py-2">
                         <div class="flex gap-1 flex-wrap">
                           {sub.tags.map((tag: string) => (
@@ -227,6 +241,11 @@ function mergedTags(group: GroupedDeal): string[] {
                           ))}
                         </div>
                       </td>
+                      <td class="px-4 py-2 text-right font-mono text-muted-foreground/80 text-xs">{formatCurrency(sub.costOfInvestment)}</td>
+                      <td class="px-4 py-2 text-muted-foreground/80 whitespace-nowrap text-xs">{sub.stage}</td>
+                      <td class="px-4 py-2 text-muted-foreground/80 text-xs">{sub.exit}</td>
+                      <td class="px-4 py-2 text-right font-mono font-semibold text-foreground/70 text-xs">{sub.multiple}</td>
+                      <td class="px-4 py-2 text-right font-mono text-muted-foreground/80 text-xs">{formatValuation(sub.relevantValuation)}</td>
                     </tr>
                   ))}
                 </>
@@ -245,6 +264,7 @@ function mergedTags(group: GroupedDeal): string[] {
           <thead>
             <tr class="border-b border-border bg-muted/50">
               <th class="text-left px-4 py-3 font-semibold text-foreground">Fund</th>
+              <th class="text-left px-4 py-3 font-semibold text-foreground">Role</th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Sector</th>
               <th class="text-center px-4 py-3 font-semibold text-foreground">Vintage</th>
               <th class="text-right px-4 py-3 font-semibold text-foreground">Fund Size</th>
@@ -257,6 +277,7 @@ function mergedTags(group: GroupedDeal): string[] {
             {funds.map((fund, i) => (
               <tr class={`border-b border-border/50 hover:bg-muted/30 transition-colors ${i % 2 === 0 ? '' : 'bg-muted/10'}`}>
                 <td class="px-4 py-2.5 font-medium text-foreground whitespace-nowrap">{fund.fund}</td>
+                <td class="px-4 py-2.5 text-muted-foreground whitespace-nowrap">{fund.role}</td>
                 <td class="px-4 py-2.5 text-muted-foreground">{fund.sector}</td>
                 <td class="px-4 py-2.5 text-center text-muted-foreground">{fund.initialInvestmentDate}</td>
                 <td class="px-4 py-2.5 text-right font-mono text-muted-foreground">{formatCurrency(fund.costOfInvestment)}</td>
@@ -334,6 +355,7 @@ function mergedTags(group: GroupedDeal): string[] {
   const allRows = Array.from(document.querySelectorAll('.deal-row')) as HTMLTableRowElement[];
   const clearBtn = document.getElementById('clear-filters') as HTMLButtonElement;
   const countEl = document.getElementById('filter-count') as HTMLSpanElement;
+  const totalInvestedEl = document.getElementById('total-invested') as HTMLSpanElement;
   const sortBtn = document.getElementById('sort-multiple') as HTMLTableCellElement;
   const sortArrow = sortBtn.querySelector('.sort-arrow') as HTMLSpanElement;
   const totalCompanies = primaryRows.length;
@@ -349,27 +371,62 @@ function mergedTags(group: GroupedDeal): string[] {
   });
 
   // Sort state
-  let sortDir: string | null = null;
-  const originalOrder = [...allRows];
+  const sortYearBtn = document.getElementById('sort-year') as HTMLTableCellElement;
+  const sortYearArrow = sortYearBtn.querySelector('.sort-arrow-year') as HTMLSpanElement;
 
-  function sortRows() {
-    if (sortDir === null) {
-      originalOrder.forEach((row) => tbody.appendChild(row));
+  type SortCol = 'year' | 'multiple';
+  let activeSort: SortCol = 'year';
+  let sortDir: string | null = 'desc'; // default: year descending (most recent first)
+
+  function getGroups() {
+    const groups: { primary: HTMLTableRowElement; subs: HTMLTableRowElement[] }[] = [];
+    primaryRows.forEach((row) => {
+      const groupId = row.dataset.group;
+      const subs = Array.from(document.querySelectorAll(`[data-parent-group="${groupId}"]`)) as HTMLTableRowElement[];
+      groups.push({ primary: row, subs });
+    });
+    return groups;
+  }
+
+  function updateSortUI() {
+    // Year arrow
+    if (activeSort === 'year' && sortDir) {
+      sortYearArrow.innerHTML = sortDir === 'desc' ? '&#9660;' : '&#9650;';
+      sortYearArrow.style.opacity = '1';
+      sortYearBtn.classList.add('text-primary');
+    } else {
+      sortYearArrow.innerHTML = '&#8597;';
+      sortYearArrow.style.opacity = '0.5';
+      sortYearBtn.classList.remove('text-primary');
+    }
+
+    // Multiple arrow
+    if (activeSort === 'multiple' && sortDir) {
+      sortArrow.innerHTML = sortDir === 'desc' ? '&#9660;' : '&#9650;';
+      sortArrow.style.opacity = '1';
+      sortBtn.classList.add('text-primary');
+    } else {
       sortArrow.innerHTML = '&#8597;';
       sortArrow.style.opacity = '0.5';
       sortBtn.classList.remove('text-primary');
+    }
+  }
+
+  function sortRows() {
+    const groups = getGroups();
+
+    if (sortDir === null) {
+      originalOrder.forEach((row) => tbody.appendChild(row));
     } else {
-      const groups: { primary: HTMLTableRowElement; subs: HTMLTableRowElement[] }[] = [];
-
-      primaryRows.forEach((row) => {
-        const groupId = row.dataset.group;
-        const subs = Array.from(document.querySelectorAll(`[data-parent-group="${groupId}"]`)) as HTMLTableRowElement[];
-        groups.push({ primary: row, subs });
-      });
-
       groups.sort((a, b) => {
-        const aVal = parseFloat(a.primary.dataset.multiple || '0');
-        const bVal = parseFloat(b.primary.dataset.multiple || '0');
+        let aVal: number, bVal: number;
+        if (activeSort === 'year') {
+          aVal = parseFloat(a.primary.dataset.year || '0');
+          bVal = parseFloat(b.primary.dataset.year || '0');
+        } else {
+          aVal = parseFloat(a.primary.dataset.multiple || '0');
+          bVal = parseFloat(b.primary.dataset.multiple || '0');
+        }
         return sortDir === 'desc' ? bVal - aVal : aVal - bVal;
       });
 
@@ -377,20 +434,28 @@ function mergedTags(group: GroupedDeal): string[] {
         tbody.appendChild(g.primary);
         g.subs.forEach((s) => tbody.appendChild(s));
       });
-
-      sortArrow.innerHTML = sortDir === 'desc' ? '&#9660;' : '&#9650;';
-      sortArrow.style.opacity = '1';
-      sortBtn.classList.add('text-primary');
     }
+
+    updateSortUI();
     applyFilters();
   }
 
-  sortBtn.addEventListener('click', () => {
-    if (sortDir === null) sortDir = 'desc';
-    else if (sortDir === 'desc') sortDir = 'asc';
-    else sortDir = null;
+  function cycleSortFor(col: SortCol) {
+    if (activeSort !== col) {
+      activeSort = col;
+      sortDir = 'desc';
+    } else if (sortDir === 'desc') {
+      sortDir = 'asc';
+    } else if (sortDir === 'asc') {
+      sortDir = null;
+    } else {
+      sortDir = 'desc';
+    }
     sortRows();
-  });
+  }
+
+  sortBtn.addEventListener('click', () => cycleSortFor('multiple'));
+  sortYearBtn.addEventListener('click', () => cycleSortFor('year'));
 
   function applyFilters() {
     const vehicle = (document.getElementById('filter-vehicle') as HTMLSelectElement).value;
@@ -403,6 +468,7 @@ function mergedTags(group: GroupedDeal): string[] {
     clearBtn.classList.toggle('hidden', !hasFilter);
 
     let visible = 0;
+    let totalCost = 0;
 
     primaryRows.forEach((row) => {
       const groupId = row.dataset.group!;
@@ -419,7 +485,12 @@ function mergedTags(group: GroupedDeal): string[] {
       });
 
       row.style.display = groupMatch ? '' : 'none';
-      if (groupMatch) visible++;
+      if (groupMatch) {
+        visible++;
+        allInGroup.forEach((r) => {
+          totalCost += parseFloat(r.dataset.cost || '0');
+        });
+      }
 
       const expandBtn = row.querySelector('.expand-toggle');
       const expanded = expandBtn && expandBtn.getAttribute('aria-expanded') === 'true';
@@ -428,8 +499,17 @@ function mergedTags(group: GroupedDeal): string[] {
       });
     });
 
+    const formattedTotal = totalCost >= 1_000_000_000
+      ? `$${(totalCost / 1_000_000_000).toFixed(1)}B`
+      : totalCost >= 1_000_000
+      ? `$${(totalCost / 1_000_000).toFixed(1)}M`
+      : totalCost >= 1_000
+      ? `$${(totalCost / 1_000).toFixed(0)}K`
+      : `$${totalCost}`;
+
     selects.forEach((s) => s.classList.toggle('active', !!s.value));
     countEl.textContent = hasFilter ? `${visible} of ${totalCompanies} companies` : `${totalCompanies} companies`;
+    totalInvestedEl.textContent = `Total Invested: ${formattedTotal}`;
   }
 
   selects.forEach((s) => s.addEventListener('change', applyFilters));
@@ -439,5 +519,6 @@ function mergedTags(group: GroupedDeal): string[] {
     applyFilters();
   });
 
+  updateSortUI();
   applyFilters();
 </script>

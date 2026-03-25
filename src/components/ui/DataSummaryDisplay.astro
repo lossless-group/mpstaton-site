@@ -1,0 +1,39 @@
+---
+import deals from '../../data/track-record/deals.json';
+import funds from '../../data/track-record/funds.json';
+
+// Count unique companies
+const uniqueCompanies = new Set(deals.map(d => d.company)).size;
+
+// Total invested across all deals
+const totalInvested = deals.reduce((sum, d) => sum + (d.costOfInvestment || 0), 0);
+
+// Number of fund cycles
+const fundCycles = funds.length;
+
+// Cumulative AUM (sum of all fund sizes)
+const cumulativeAUM = funds.reduce((sum, f) => sum + f.costOfInvestment, 0);
+
+function formatLarge(value: number): string {
+  if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(1)}B`;
+  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(0)}M`;
+  if (value >= 1_000) return `$${(value / 1_000).toFixed(0)}K`;
+  return `$${value}`;
+}
+
+const stats = [
+  { label: 'Investments', value: String(uniqueCompanies) },
+  { label: 'Total Deployed', value: formatLarge(totalInvested) },
+  { label: 'Fund Cycles', value: String(fundCycles) },
+  { label: 'Cumulative AUM', value: formatLarge(cumulativeAUM) },
+];
+---
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+  {stats.map((stat) => (
+    <div class="flex flex-col gap-1 px-5 py-4 rounded-lg border border-border bg-card">
+      <span class="text-2xl md:text-3xl font-bold gradient-text font-mono">{stat.value}</span>
+      <span class="text-sm text-muted-foreground font-medium">{stat.label}</span>
+    </div>
+  ))}
+</div>

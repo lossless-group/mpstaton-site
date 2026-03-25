@@ -1,26 +1,72 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import DataSummaryDisplay from '../components/ui/DataSummaryDisplay.astro';
+import TagRowTableSummary from '../components/ui/TagRow--TableSummary.astro';
+import deals from '../data/track-record/deals.json';
+
+// Compute tag counts (unique companies per tag)
+const tagCountMap = new Map<string, Set<string>>();
+for (const deal of deals) {
+  for (const tag of deal.tags) {
+    if (!tag) continue;
+    if (!tagCountMap.has(tag)) tagCountMap.set(tag, new Set());
+    tagCountMap.get(tag)!.add(deal.company);
+  }
+}
+const allTags = [...new Set(deals.flatMap(d => d.tags).filter(Boolean))];
+const tagSummary = allTags.map(t => ({ name: t, count: tagCountMap.get(t)?.size ?? 0 }));
 ---
 <BaseLayout>
   <section class="max-w-6xl mx-auto px-6 py-24">
-    <h1 class="gradient-text mb-4">MP Staton</h1>
-    <p class="text-xl text-muted-foreground max-w-2xl mb-8">
-      Investor, builder, and writer. Exploring venture, technology, and the systems that connect them.
-    </p>
-    <div class="flex gap-4">
-      <a href="/portfolio" class="inline-flex items-center px-5 py-2.5 rounded-md gradient-bg text-white font-medium hover:opacity-90 transition-opacity">
-        View Portfolio
-      </a>
-      <a href="/blog" class="inline-flex items-center px-5 py-2.5 rounded-md border border-border text-foreground font-medium hover:bg-muted transition-colors">
-        Read Blog
-      </a>
+    <div class="flex flex-col md:flex-row items-center md:items-start gap-10">
+      <img
+        src="/photos/headshotOf__Michael-Staton.jpeg"
+        alt="Michael P. Staton"
+        class="w-40 h-40 md:w-48 md:h-48 rounded-full object-cover border-2 border-border shadow-lg shrink-0"
+      />
+      <div>
+        <h1 class="gradient-text mb-4">Michael P. Staton</h1>
+        <p class="text-xl text-muted-foreground max-w-2xl mb-8">
+          VC, Investor, Angel, Cofounder, Catalyst. Lifelong exploration of venture, innovation, technology, and company building. Compulsive learner. Consistent tinkerer.
+        </p>
+        <div class="flex gap-4">
+          <a href="/portfolio" class="hero-btn">
+            View Portfolio
+          </a>
+          <a href="/cv" class="hero-btn">
+            View CV
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 
   <div class="max-w-6xl mx-auto px-6"><hr class="gradient-line" /></div>
 
   <section class="max-w-6xl mx-auto px-6 py-16">
-    <h2 class="text-foreground mb-8">Latest Posts</h2>
-    <p class="text-muted-foreground">Posts coming soon. Check back for updates on investing, building, and the evolving tech landscape.</p>
+    <DataSummaryDisplay />
+    <div class="mt-8">
+      <TagRowTableSummary tags={tagSummary} linkBase="/portfolio" />
+    </div>
   </section>
 </BaseLayout>
+
+<style>
+  .hero-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    color: var(--foreground);
+    background: transparent;
+    position: relative;
+    transition: color 0.2s, border-color 0.2s, background 0.3s;
+  }
+  .hero-btn:hover {
+    background: var(--gradient-brand);
+    border-color: transparent;
+    color: #fff;
+  }
+</style>
