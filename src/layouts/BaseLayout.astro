@@ -2,15 +2,23 @@
 import '../styles/globals.css';
 import brand from '@brand';
 import { SITE_SEO } from '../config/seo';
+import type { ShareMetaInput } from '../config/seo';
+import { buildOgMeta } from '../utils/og';
 import Header from '../components/basics/Header.astro';
 
 interface Props {
   title?: string;
   description?: string;
+  meta?: ShareMetaInput;
 }
 
-const { title = SITE_SEO.defaultTitle, description = SITE_SEO.defaultDescription } = Astro.props;
+const { title = SITE_SEO.defaultTitle, description = SITE_SEO.defaultDescription, meta = {} } = Astro.props;
 const SITE_MODE = import.meta.env.SITE_MODE ?? 'dark';
+
+const ogMeta = buildOgMeta(
+  { title: meta.title ?? title, description: meta.description ?? description, ...meta },
+  Astro.url.origin
+);
 ---
 <html lang="en" data-theme={SITE_MODE} style={`--primary:${brand.colors.primary};--secondary:${brand.colors.secondary};--accent:${brand.colors.accent};`}>
   <head>
@@ -18,10 +26,14 @@ const SITE_MODE = import.meta.env.SITE_MODE ?? 'dark';
     <link rel="icon" type="image/svg+xml" href={brand.assets?.favicon ?? '/favicon.svg'} />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="description" content={description} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    {ogMeta.map((tag) => (
+      tag.property
+        ? <meta property={tag.property} content={tag.content} />
+        : <meta name={tag.name} content={tag.content} />
+    ))}
     <title>{title}</title>
   </head>
   <body class="min-h-screen flex flex-col">
@@ -31,7 +43,7 @@ const SITE_MODE = import.meta.env.SITE_MODE ?? 'dark';
     </main>
     <footer class="border-t border-border px-6 py-8">
       <div class="max-w-6xl mx-auto text-center text-muted-foreground text-sm">
-        &copy; {new Date().getFullYear()} MP Staton. All rights reserved.
+        &copy; {new Date().getFullYear()} Michael P. Staton. All rights reserved.
       </div>
     </footer>
   </body>
