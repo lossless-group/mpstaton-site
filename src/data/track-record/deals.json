@@ -9,7 +9,8 @@
     "stage": "Seed",
     "exit": "Acquired",
     "tags": [
-      "Dragon"
+      "Dragon",
+      "Exit"
     ]
   },
   {
@@ -27,7 +28,7 @@
     "company": "Plethora",
     "vehicle": "Angel",
     "countries": "US",
-    "sector": "Industrial Manufacturing, Advanced Manufacturing",
+    "sector": "Advanced Manufacturing",
     "initialInvestmentDate": 2013,
     "costOfInvestment": 25000,
     "stage": "Pre-Seed",
@@ -44,7 +45,8 @@
     "stage": "Seed",
     "exit": "Acquired",
     "tags": [
-      "Dragon"
+      "Dragon",
+      "Exit"
     ]
   },
   {
@@ -58,7 +60,8 @@
     "exit": "IPO",
     "tags": [
       "IPO",
-      "Unicorn"
+      "Unicorn",
+      "Exit"
     ]
   },
   {
@@ -82,7 +85,8 @@
     "stage": "Seed",
     "exit": "Acquired",
     "tags": [
-      "Dragon"
+      "Dragon",
+      "Exit"
     ]
   },
   {
@@ -94,7 +98,9 @@
     "costOfInvestment": 10000,
     "stage": "Seed",
     "exit": "Acquired",
-    "tags": []
+    "tags": [
+      "Exit"
+    ]
   },
   {
     "company": "ClassDojo",
@@ -120,7 +126,8 @@
     "exit": "IPO",
     "tags": [
       "IPO",
-      "Unicorn"
+      "Unicorn",
+      "Exit"
     ]
   },
   {
@@ -158,7 +165,9 @@
     "costOfInvestment": 10000,
     "stage": "Seed",
     "exit": "Acquired",
-    "tags": []
+    "tags": [
+      "Exit"
+    ]
   },
   {
     "company": "HipCamp",
@@ -274,7 +283,9 @@
     "costOfInvestment": 10000,
     "stage": "Seed",
     "exit": "Acquired",
-    "tags": []
+    "tags": [
+      "Exit"
+    ]
   },
   {
     "company": "Village Market",
@@ -296,7 +307,9 @@
     "costOfInvestment": 2500,
     "stage": "Seed",
     "exit": "Acquired",
-    "tags": []
+    "tags": [
+      "Exit"
+    ]
   },
   {
     "company": "VIPKid",
@@ -308,7 +321,7 @@
     "stage": "Series B",
     "exit": "FMV",
     "tags": [
-      "Unicorn (then Down Round)"
+      "Unicorn"
     ]
   },
   {
@@ -345,7 +358,8 @@
     "stage": "Seed",
     "exit": "Acquired",
     "tags": [
-      "Dragon"
+      "Dragon",
+      "Exit"
     ]
   },
   {
@@ -358,7 +372,9 @@
     "stage": "Series E",
     "exit": "IPO",
     "tags": [
-      "Unicorn"
+      "IPO",
+      "Unicorn",
+      "Exit"
     ]
   },
   {
@@ -382,12 +398,13 @@
     "countries": "Korea",
     "sector": "E-commerce",
     "initialInvestmentDate": 2016,
-    "costOfInvestment": 25000000,
+    "costOfInvestment": 5000000,
     "stage": "Series D",
     "exit": "IPO",
     "tags": [
       "IPO",
-      "Unicorn"
+      "Unicorn",
+      "Exit"
     ]
   },
   {
@@ -400,8 +417,20 @@
     "stage": "Series D",
     "exit": "Acquired",
     "tags": [
-      "Unicorn"
+      "Unicorn",
+      "Exit"
     ]
+  },
+  {
+    "company": "Pathrise",
+    "vehicle": "LearnStart I",
+    "countries": "US",
+    "sector": "Edtech, CareerTech",
+    "initialInvestmentDate": 2017,
+    "costOfInvestment": 500000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
   },
   {
     "company": "Vessel Health",
@@ -434,7 +463,9 @@
     "costOfInvestment": 10000,
     "stage": "Bridge",
     "exit": "Acquired",
-    "tags": []
+    "tags": [
+      "Exit"
+    ]
   },
   {
     "company": "Minerva",
@@ -467,7 +498,9 @@
     "costOfInvestment": 10000,
     "stage": "Pre-Seed",
     "exit": "Acquired",
-    "tags": []
+    "tags": [
+      "Exit"
+    ]
   },
   {
     "company": "Maven Clinic",
@@ -481,6 +514,30 @@
     "tags": [
       "Unicorn"
     ]
+  },
+  {
+    "company": "Teachable",
+    "vehicle": "Learn Capital III",
+    "countries": "US",
+    "sector": "Edtech, Content Platform",
+    "initialInvestmentDate": 2017,
+    "costOfInvestment": 1000000,
+    "stage": "Series A",
+    "exit": "Acquired",
+    "tags": [
+      "Exit"
+    ]
+  },
+  {
+    "company": "MakeSchool",
+    "vehicle": "Learn Capital III",
+    "countries": "US",
+    "sector": "Edtech, Full-Stack Schools",
+    "initialInvestmentDate": 2017,
+    "costOfInvestment": 8000000,
+    "stage": "Series A",
+    "exit": "Write-Off",
+    "tags": []
   },
   {
     "company": "CottageClass",
@@ -515,7 +572,9 @@
     "costOfInvestment": 25000,
     "stage": "Seed",
     "exit": "Acquired",
-    "tags": []
+    "tags": [
+      "Exit"
+    ]
   },
   {
     "company": "Pinch",
@@ -526,7 +585,9 @@
     "costOfInvestment": 25000,
     "stage": "Pre-Seed",
     "exit": "Acquired",
-    "tags": []
+    "tags": [
+      "Exit"
+    ]
   },
   {
     "company": "Henry the Dentist",
@@ -537,7 +598,9 @@
     "costOfInvestment": 10000,
     "stage": "Pre-Seed",
     "exit": "Acquired",
-    "tags": []
+    "tags": [
+      "Exit"
+    ]
   },
   {
     "company": "Varsity Tutors",
@@ -550,7 +613,8 @@
     "exit": "IPO, SPAC",
     "tags": [
       "IPO",
-      "Unicorn"
+      "Unicorn",
+      "Exit"
     ]
   },
   {
@@ -574,7 +638,8 @@
     "stage": "Pre-Seed",
     "exit": "Acquired",
     "tags": [
-      "Unicorn"
+      "Unicorn",
+      "Exit"
     ]
   },
   {
@@ -586,7 +651,10 @@
     "costOfInvestment": 1000000,
     "stage": "Pre-Seed",
     "exit": "Acquired",
-    "tags": []
+    "tags": [
+      "Dragon",
+      "Exit"
+    ]
   },
   {
     "company": "Bedu",
@@ -608,7 +676,9 @@
     "costOfInvestment": 800000,
     "stage": "Series A",
     "exit": "FMV",
-    "tags": []
+    "tags": [
+      "Dragon"
+    ]
   },
   {
     "company": "Podium Education",
@@ -633,6 +703,19 @@
     "stage": "Pre-Seed",
     "exit": "Write-Off",
     "tags": []
+  },
+  {
+    "company": "GoPuff",
+    "vehicle": "Alpha Partners III",
+    "countries": "US",
+    "sector": "E-Commerce",
+    "initialInvestmentDate": 2019,
+    "costOfInvestment": 2000000,
+    "stage": "Series D",
+    "exit": "FMV",
+    "tags": [
+      "Unicorn"
+    ]
   },
   {
     "company": "SpotHero",
@@ -689,7 +772,8 @@
     "exit": "IPO",
     "tags": [
       "IPO",
-      "Unicorn"
+      "Unicorn",
+      "Exit"
     ]
   },
   {
@@ -710,6 +794,17 @@
     "sector": "Edtech",
     "initialInvestmentDate": 2020,
     "costOfInvestment": 250000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Our Ritual",
+    "vehicle": "LearnStart II",
+    "countries": "US",
+    "sector": "Augmented Therapy, Mental Health",
+    "initialInvestmentDate": 2021,
+    "costOfInvestment": 1000000,
     "stage": "Seed",
     "exit": "FMV",
     "tags": []
@@ -750,6 +845,20 @@
     "tags": []
   },
   {
+    "company": "Thirty Madison",
+    "vehicle": "Alpha Partners III",
+    "countries": "US",
+    "sector": "HealthTech, MedTech",
+    "initialInvestmentDate": 2021,
+    "costOfInvestment": 3000000,
+    "stage": "Series C",
+    "exit": "Acquired",
+    "tags": [
+      "Unicorn",
+      "Exit"
+    ]
+  },
+  {
     "company": "Brave Health",
     "vehicle": "Alpha Partners III",
     "countries": "US",
@@ -777,7 +886,7 @@
     "company": "Allocate",
     "vehicle": "Angel",
     "countries": "US",
-    "sector": "Private Markets Marketplace, Marketplace, Data Platform, Data as a Service",
+    "sector": "Private Markets Marketplace, Data as a Service",
     "initialInvestmentDate": 2021,
     "costOfInvestment": 10000,
     "stage": "Seed",
@@ -801,7 +910,7 @@
     "countries": "US/UK",
     "sector": "Shipping, Cleantech, OceanTech",
     "initialInvestmentDate": 2021,
-    "costOfInvestment": 25000000,
+    "costOfInvestment": 25000,
     "stage": "Pre-Seed",
     "exit": "FMV",
     "tags": []
@@ -918,7 +1027,9 @@
     "costOfInvestment": 200000,
     "stage": "Series B",
     "exit": "FMV",
-    "tags": []
+    "tags": [
+      "Unicorn"
+    ]
   },
   {
     "company": "Science.xyz",
@@ -929,7 +1040,9 @@
     "costOfInvestment": 50000,
     "stage": "Series C",
     "exit": "FMV",
-    "tags": []
+    "tags": [
+      "Unicorn"
+    ]
   },
   {
     "company": "Science.xyz",
@@ -940,7 +1053,9 @@
     "costOfInvestment": 50000,
     "stage": "Series C",
     "exit": "FMV",
-    "tags": []
+    "tags": [
+      "Unicorn"
+    ]
   },
   {
     "company": "Sava",
