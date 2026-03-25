@@ -16,7 +16,11 @@ for (const deal of deals) {
 const allTags = [...new Set(deals.flatMap(d => d.tags).filter(Boolean))];
 const tagSummary = allTags.map(t => ({ name: t, count: tagCountMap.get(t)?.size ?? 0 }));
 ---
-<BaseLayout>
+<BaseLayout
+  title="Michael P. Staton — VC, Investor, Builder"
+  description="VC, Investor, Angel, Cofounder, Catalyst. 12 fund cycles, 70+ investments, and a track record spanning edtech, fintech, climate, AI, and beyond."
+  meta={{ subtitle: 'Personal Site' }}
+>
   <section class="max-w-6xl mx-auto px-6 py-24">
     <div class="flex flex-col md:flex-row items-center md:items-start gap-10">
       <img

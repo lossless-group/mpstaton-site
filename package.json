@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@astrojs/vercel": "^10.0.2",
-    "astro": "^6.0.8"
+    "@resvg/resvg-js": "^2.6.2",
+    "astro": "^6.0.8",
+    "satori": "^0.26.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.14",
