@@ -105,7 +105,7 @@ function mergedTags(group: GroupedDeal): string[] {
     <div class="mb-16">
       <h2 class="text-foreground mb-6">Deal History</h2>
 
-      <TagRowTableSummary tags={tagSummary} />
+      <TagRowTableSummary tags={tagSummary} totalCompanies={seenCompanies.size} />
 
       <!-- Filters -->
       <div class="flex flex-wrap gap-3 mb-4" id="filters">
