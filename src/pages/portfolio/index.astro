@@ -22,14 +22,14 @@ for (const deal of deals) {
   groupMap.set(deal.company, existing);
 }
 
-// For each group, primary = largest investment; rest = sub-rows sorted by cost desc
+// For each group, primary = earliest investment (most VC credit); rest sorted by date asc
 const groupedDeals: GroupedDeal[] = [];
 const seenCompanies = new Set<string>();
 for (const deal of deals) {
   if (seenCompanies.has(deal.company)) continue;
   seenCompanies.add(deal.company);
   const group = groupMap.get(deal.company)!;
-  const sorted = [...group].sort((a, b) => b.costOfInvestment - a.costOfInvestment);
+  const sorted = [...group].sort((a, b) => Number(a.initialInvestmentDate) - Number(b.initialInvestmentDate));
   groupedDeals.push({
     primary: sorted[0],
     subDeals: sorted.slice(1),

@@ -897,6 +897,32 @@
     "tags": []
   },
   {
+    "company": "Coursera",
+    "vehicle": "Alpha Partners III",
+    "countries": "US",
+    "sector": "Edtech, Content Marketplace",
+    "initialInvestmentDate": 2021,
+    "costOfInvestment": 3000000,
+    "stage": "Series C",
+    "exit": "IPO",
+    "multiple": "3.5x",
+    "relevantValuation": null,
+    "tags": ["IPO", "Unicorn", "Exit"]
+  },
+  {
+    "company": "Udemy",
+    "vehicle": "Alpha Partners III",
+    "countries": "US/Turkey",
+    "sector": "Edtech, Content Marketplace",
+    "initialInvestmentDate": 2021,
+    "costOfInvestment": 3000000,
+    "stage": "Series C",
+    "exit": "IPO",
+    "multiple": "3.5x",
+    "relevantValuation": null,
+    "tags": ["IPO", "Unicorn", "Exit"]
+  },
+  {
     "company": "Thirty Madison",
     "vehicle": "Alpha Partners III",
     "countries": "US",
