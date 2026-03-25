@@ -15,6 +15,7 @@ for (const deal of deals) {
 }
 const allTags = [...new Set(deals.flatMap(d => d.tags).filter(Boolean))];
 const tagSummary = allTags.map(t => ({ name: t, count: tagCountMap.get(t)?.size ?? 0 }));
+const totalCompanies = new Set(deals.map(d => d.company)).size;
 ---
 <BaseLayout
   title="Michael P. Staton — VC, Investor, Builder"
@@ -50,7 +51,7 @@ const tagSummary = allTags.map(t => ({ name: t, count: tagCountMap.get(t)?.size 
   <section class="max-w-6xl mx-auto px-6 py-16">
     <DataSummaryDisplay />
     <div class="mt-8">
-      <TagRowTableSummary tags={tagSummary} linkBase="/portfolio" />
+      <TagRowTableSummary tags={tagSummary} totalCompanies={totalCompanies} linkBase="/portfolio" />
     </div>
   </section>
 </BaseLayout>

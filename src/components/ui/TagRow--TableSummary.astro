@@ -1,6 +1,8 @@
 ---
 interface Props {
   tags: { name: string; count: number }[];
+  /** Total unique companies in the portfolio, used for percentage calculation */
+  totalCompanies: number;
   /** When set, clicking a tag navigates to this URL with ?tag= instead of filtering in-page */
   linkBase?: string;
 }
@@ -14,7 +16,7 @@ const tagColors: Record<string, { bg: string; text: string; border: string }> = 
   Exit:    { bg: 'rgba(245,156,73,0.12)', text: '#F59C49', border: 'rgba(245,156,73,0.3)' },
 };
 
-const { tags, linkBase } = Astro.props;
+const { tags, totalCompanies, linkBase } = Astro.props;
 
 // Sort tags into the defined order, ignore any not in tagOrder
 const sorted = tagOrder
@@ -27,6 +29,7 @@ const sorted = tagOrder
     const colors = tagColors[tag.name] || { bg: 'rgba(128,128,128,0.12)', text: '#888', border: 'rgba(128,128,128,0.3)' };
     const Tag = linkBase ? 'a' : 'button';
     const href = linkBase ? `${linkBase}?tag=${encodeURIComponent(tag.name)}` : undefined;
+    const pct = totalCompanies > 0 ? Math.round((tag.count / totalCompanies) * 100) : 0;
     return (
       <Tag
         class="tag-summary-btn flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm cursor-pointer transition-all duration-150 hover:scale-105"
@@ -41,6 +44,7 @@ const sorted = tagOrder
         >
           {tag.count}
         </span>
+        <span class="text-xs opacity-70">{pct}%</span>
       </Tag>
     );
   })}

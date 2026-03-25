@@ -8,11 +8,12 @@ const uniqueCompanies = new Set(deals.map(d => d.company)).size;
 // Total invested across all deals
 const totalInvested = deals.reduce((sum, d) => sum + (d.costOfInvestment || 0), 0);
 
-// Number of fund cycles
-const fundCycles = funds.length;
+// Number of fund cycles (exclude Angel Portfolio — not a fund cycle)
+const fundEntries = funds.filter(f => f.fund !== 'Angel Portfolio');
+const fundCycles = fundEntries.length;
 
-// Cumulative AUM (sum of all fund sizes)
-const cumulativeAUM = funds.reduce((sum, f) => sum + f.costOfInvestment, 0);
+// Cumulative AUM (sum of all fund sizes, excluding Angel Portfolio)
+const cumulativeAUM = fundEntries.reduce((sum, f) => sum + f.costOfInvestment, 0);
 
 function formatLarge(value: number): string {
   if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(1)}B`;
