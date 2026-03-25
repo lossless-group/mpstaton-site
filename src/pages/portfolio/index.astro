@@ -143,16 +143,22 @@ function mergedTags(group: GroupedDeal): string[] {
           <thead>
             <tr class="border-b border-border bg-muted/50">
               <th class="text-left px-4 py-3 font-semibold text-foreground w-5"></th>
-              <th class="text-left px-4 py-3 font-semibold text-foreground">Company</th>
+              <th class="text-left px-4 py-3 font-semibold text-foreground" style="min-width:160px;white-space:nowrap;">Company</th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Vehicle</th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Country</th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Sector</th>
-              <th class="text-center px-4 py-3 font-semibold text-foreground cursor-pointer select-none hover:text-primary transition-colors" id="sort-year">Year <span class="sort-arrow-year text-xs opacity-50">&#9660;</span></th>
+              <th class="sortable-th px-4 py-3 font-semibold text-foreground cursor-pointer select-none hover:text-primary transition-colors" id="sort-year" data-sort-key="year">
+                <span class="sort-header"><span class="sort-label">Year</span><span class="sort-indicator">&#8597;</span></span>
+              </th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Tags</th>
-              <th class="text-right px-4 py-3 font-semibold text-foreground">Investment</th>
+              <th class="sortable-th px-4 py-3 font-semibold text-foreground cursor-pointer select-none hover:text-primary transition-colors" id="sort-cost" data-sort-key="cost">
+                <span class="sort-header"><span class="sort-label">Investment</span><span class="sort-indicator">&#8597;</span></span>
+              </th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Stage</th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Exit</th>
-              <th class="text-right px-4 py-3 font-semibold text-foreground cursor-pointer select-none hover:text-primary transition-colors" id="sort-multiple">Multiple <span class="sort-arrow text-xs opacity-50">&#8597;</span></th>
+              <th class="sortable-th px-4 py-3 font-semibold text-foreground cursor-pointer select-none hover:text-primary transition-colors" id="sort-multiple" data-sort-key="multiple">
+                <span class="sort-header"><span class="sort-label">Multiple</span><span class="sort-indicator">&#8597;</span></span>
+              </th>
               <th class="text-right px-4 py-3 font-semibold text-foreground">Valuation</th>
             </tr>
           </thead>
@@ -350,6 +356,54 @@ function mergedTags(group: GroupedDeal): string[] {
   .deal-sub:hover {
     background-color: color-mix(in srgb, var(--primary) 6%, var(--background)) !important;
   }
+  /* Sortable column headers */
+  .sort-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+  }
+  .sort-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sort-indicator {
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    opacity: 0.4;
+    transition: opacity 0.15s;
+  }
+  .sortable-th.sort-active .sort-indicator {
+    opacity: 1;
+    color: var(--primary);
+  }
+  .sortable-th.sort-active {
+    color: var(--primary);
+  }
+  /* Column toggle buttons */
+  .col-toggle-btn {
+    border-color: var(--border);
+    color: var(--foreground);
+    background: var(--card);
+  }
+  .col-toggle-btn:hover {
+    border-color: var(--ring);
+    background: var(--muted);
+  }
+  .col-toggle-btn.col-toggle-active {
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 10%, var(--card));
+  }
+  .col-toggle-btn.col-toggle-hidden {
+    opacity: 0.45;
+    border-style: dashed;
+    text-decoration: line-through;
+  }
+  /* Resize handle hover indicator */
+  .col-resize-handle:hover {
+    background: color-mix(in srgb, var(--primary) 30%, transparent);
+  }
 </style>
 
 <script>
@@ -360,8 +414,6 @@ function mergedTags(group: GroupedDeal): string[] {
   const clearBtn = document.getElementById('clear-filters') as HTMLButtonElement;
   const countEl = document.getElementById('filter-count') as HTMLSpanElement;
   const totalInvestedEl = document.getElementById('total-invested') as HTMLSpanElement;
-  const sortBtn = document.getElementById('sort-multiple') as HTMLTableCellElement;
-  const sortArrow = sortBtn.querySelector('.sort-arrow') as HTMLSpanElement;
   const totalCompanies = primaryRows.length;
 
   // Expand/collapse toggles
@@ -374,13 +426,13 @@ function mergedTags(group: GroupedDeal): string[] {
     });
   });
 
-  // Sort state
-  const sortYearBtn = document.getElementById('sort-year') as HTMLTableCellElement;
-  const sortYearArrow = sortYearBtn.querySelector('.sort-arrow-year') as HTMLSpanElement;
+  // ── Generic sort system ──
+  // All sortable columns use .sortable-th with data-sort-key matching a data- attribute on rows
+  type SortKey = 'year' | 'multiple' | 'cost';
+  let activeSort: SortKey = 'year';
+  let sortDir: string | null = 'desc'; // default: year descending
 
-  type SortCol = 'year' | 'multiple';
-  let activeSort: SortCol = 'year';
-  let sortDir: string | null = 'desc'; // default: year descending (most recent first)
+  const sortableThs = Array.from(document.querySelectorAll('.sortable-th')) as HTMLTableCellElement[];
 
   function getGroups() {
     const groups: { primary: HTMLTableRowElement; subs: HTMLTableRowElement[] }[] = [];
@@ -393,27 +445,19 @@ function mergedTags(group: GroupedDeal): string[] {
   }
 
   function updateSortUI() {
-    // Year arrow
-    if (activeSort === 'year' && sortDir) {
-      sortYearArrow.innerHTML = sortDir === 'desc' ? '&#9660;' : '&#9650;';
-      sortYearArrow.style.opacity = '1';
-      sortYearBtn.classList.add('text-primary');
-    } else {
-      sortYearArrow.innerHTML = '&#8597;';
-      sortYearArrow.style.opacity = '0.5';
-      sortYearBtn.classList.remove('text-primary');
-    }
-
-    // Multiple arrow
-    if (activeSort === 'multiple' && sortDir) {
-      sortArrow.innerHTML = sortDir === 'desc' ? '&#9660;' : '&#9650;';
-      sortArrow.style.opacity = '1';
-      sortBtn.classList.add('text-primary');
-    } else {
-      sortArrow.innerHTML = '&#8597;';
-      sortArrow.style.opacity = '0.5';
-      sortBtn.classList.remove('text-primary');
-    }
+    sortableThs.forEach((th) => {
+      const key = th.dataset.sortKey as SortKey;
+      const indicator = th.querySelector('.sort-indicator') as HTMLSpanElement;
+      if (!indicator) return;
+      const isActive = activeSort === key && sortDir;
+      if (isActive) {
+        indicator.innerHTML = sortDir === 'desc' ? '&#9660;' : '&#9650;';
+        th.classList.add('sort-active');
+      } else {
+        indicator.innerHTML = '&#8597;';
+        th.classList.remove('sort-active');
+      }
+    });
   }
 
   function sortRows() {
@@ -423,14 +467,8 @@ function mergedTags(group: GroupedDeal): string[] {
       originalOrder.forEach((row) => tbody.appendChild(row));
     } else {
       groups.sort((a, b) => {
-        let aVal: number, bVal: number;
-        if (activeSort === 'year') {
-          aVal = parseFloat(a.primary.dataset.year || '0');
-          bVal = parseFloat(b.primary.dataset.year || '0');
-        } else {
-          aVal = parseFloat(a.primary.dataset.multiple || '0');
-          bVal = parseFloat(b.primary.dataset.multiple || '0');
-        }
+        const aVal = parseFloat(a.primary.dataset[activeSort] || '0');
+        const bVal = parseFloat(b.primary.dataset[activeSort] || '0');
         return sortDir === 'desc' ? bVal - aVal : aVal - bVal;
       });
 
@@ -444,7 +482,7 @@ function mergedTags(group: GroupedDeal): string[] {
     applyFilters();
   }
 
-  function cycleSortFor(col: SortCol) {
+  function cycleSortFor(col: SortKey) {
     if (activeSort !== col) {
       activeSort = col;
       sortDir = 'desc';
@@ -458,8 +496,9 @@ function mergedTags(group: GroupedDeal): string[] {
     sortRows();
   }
 
-  sortBtn.addEventListener('click', () => cycleSortFor('multiple'));
-  sortYearBtn.addEventListener('click', () => cycleSortFor('year'));
+  sortableThs.forEach((th) => {
+    th.addEventListener('click', () => cycleSortFor(th.dataset.sortKey as SortKey));
+  });
 
   function applyFilters() {
     const vehicle = (document.getElementById('filter-vehicle') as HTMLSelectElement).value;
@@ -525,4 +564,9 @@ function mergedTags(group: GroupedDeal): string[] {
 
   updateSortUI();
   applyFilters();
+</script>
+
+<script>
+  import { initTableColumns } from '../../scripts/table-columns';
+  initTableColumns('deals-table');
 </script>

@@ -819,6 +819,19 @@
     "tags": []
   },
   {
+    "company": "Avive",
+    "vehicle": "Million Lives I",
+    "countries": "US",
+    "sector": "MedTech, Medical Device",
+    "initialInvestmentDate": 2020,
+    "costOfInvestment": 4000000,
+    "stage": "Series A",
+    "exit": "FMV",
+    "multiple": "2.2x",
+    "relevantValuation": null,
+    "tags": []
+  },
+  {
     "company": "NovaKid",
     "vehicle": "LearnStart I",
     "countries": "Poland",
