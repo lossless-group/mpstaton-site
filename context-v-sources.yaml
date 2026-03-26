@@ -1,0 +1,13 @@
+auth:
+  token_env: GITHUB_CONTENT_PAT
+
+defaults:
+  branch: main
+  categories: [specs, blueprints, prompts, reminders]
+  include_root_files: false
+
+sources:
+  - repo: lossless-group/astro-knots
+    label: "Astro Knots"
+    description: "Pattern library and development workspace for client websites"
+    branch: master

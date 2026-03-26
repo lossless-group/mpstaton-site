@@ -3,8 +3,9 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "fetch-context": "bun scripts/fetch-context-v.ts",
+    "dev": "pnpm fetch-context && astro dev",
+    "build": "pnpm fetch-context && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -12,7 +13,8 @@
     "@astrojs/vercel": "^10.0.2",
     "@resvg/resvg-js": "^2.6.2",
     "astro": "^6.0.8",
-    "satori": "^0.26.0"
+    "satori": "^0.26.0",
+    "yaml": "^2.8.3"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.14",

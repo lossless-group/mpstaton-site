@@ -3,3 +3,7 @@ dist/
 .astro/
 .vercel/
 .env
+
+# Context-V fetcher
+src/content/context-v/
+.context-v-cache/
