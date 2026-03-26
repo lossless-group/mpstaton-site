@@ -1,0 +1,141 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DocCard from '../../components/context-v/DocCard.astro';
+
+const allDocs = await getCollection('context-v');
+
+const categories = ['Specification', 'Blueprint', 'Prompt', 'Reminder'] as const;
+
+// Group docs by category
+const byCategory = new Map<string, typeof allDocs>();
+for (const cat of categories) {
+  byCategory.set(cat, []);
+}
+byCategory.set('Uncategorized', []);
+
+for (const doc of allDocs) {
+  const cat = doc.data.category || 'Uncategorized';
+  if (!byCategory.has(cat)) byCategory.set(cat, []);
+  byCategory.get(cat)!.push(doc);
+}
+
+// Sort each category by date_modified or date_created descending
+for (const [, docs] of byCategory) {
+  docs.sort((a, b) => {
+    const dateA = a.data.date_modified || a.data.date_created || '';
+    const dateB = b.data.date_modified || b.data.date_created || '';
+    return dateB.localeCompare(dateA);
+  });
+}
+
+const totalDocs = allDocs.length;
+const repoCount = new Set(allDocs.map(d => d.data._context_v?.repo_label).filter(Boolean)).size;
+---
+
+<BaseLayout title="Rabbit Holes — Context Vigilance" description="Project documentation across multiple repositories. Specs, Blueprints, Prompts, and Reminders.">
+
+  <!-- Hero: half above-the-fold -->
+  <section class="flex items-center justify-center px-6" style="min-height: 45vh;">
+    <div class="text-center max-w-2xl">
+      <h1 class="gradient-text mb-4">Rabbit Holes</h1>
+      <p class="text-lg text-muted-foreground">
+        {totalDocs} documents across {repoCount} {repoCount === 1 ? 'project' : 'projects'}. Specs, blueprints, prompts, and reminders — the living documentation behind everything I build.
+      </p>
+    </div>
+  </section>
+
+  <!-- Category nav + content -->
+  <section class="max-w-5xl mx-auto px-6 pb-16">
+
+    <!-- Category filter tabs -->
+    <nav class="flex gap-2 mb-8 flex-wrap justify-center" id="category-nav">
+      <button
+        data-filter="all"
+        class="category-tab active px-4 py-2 rounded-full text-sm font-medium border border-border transition-colors"
+      >
+        All ({totalDocs})
+      </button>
+      {categories.map(cat => {
+        const count = byCategory.get(cat)?.length || 0;
+        if (count === 0) return null;
+        return (
+          <button
+            data-filter={cat}
+            class="category-tab px-4 py-2 rounded-full text-sm font-medium border border-border transition-colors"
+          >
+            {cat}s ({count})
+          </button>
+        );
+      })}
+    </nav>
+
+    <!-- Document list -->
+    <div class="grid gap-3" id="doc-list">
+      {allDocs
+        .sort((a, b) => {
+          const dateA = a.data.date_modified || a.data.date_created || '';
+          const dateB = b.data.date_modified || b.data.date_created || '';
+          return dateB.localeCompare(dateA);
+        })
+        .map(doc => (
+          <div data-category={doc.data.category || 'Uncategorized'}>
+            <DocCard
+              title={doc.data.title}
+              lede={doc.data.lede}
+              category={doc.data.category}
+              tags={doc.data.tags}
+              repo_label={doc.data._context_v?.repo_label}
+              github_url={doc.data._context_v?.github_url}
+              href={`/context-vigilance/${doc.id}`}
+            />
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .category-tab {
+    cursor: pointer;
+    background: transparent;
+    color: var(--muted-foreground);
+  }
+  .category-tab:hover {
+    border-color: var(--primary);
+    color: var(--foreground);
+  }
+  .category-tab.active {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border-color: var(--primary);
+  }
+</style>
+
+<script>
+  const nav = document.getElementById('category-nav');
+  const list = document.getElementById('doc-list');
+  if (nav && list) {
+    nav.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest('.category-tab') as HTMLButtonElement | null;
+      if (!btn) return;
+
+      const filter = btn.dataset.filter;
+
+      // Update active tab
+      nav.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Filter cards
+      list.querySelectorAll('[data-category]').forEach(card => {
+        const el = card as HTMLElement;
+        if (filter === 'all' || el.dataset.category === filter) {
+          el.style.display = '';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+    });
+  }
+</script>
