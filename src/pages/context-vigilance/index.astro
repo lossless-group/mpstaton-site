@@ -5,7 +5,7 @@ import DocCard from '../../components/context-v/DocCard.astro';
 
 const allDocs = await getCollection('context-v');
 
-const categories = ['Specification', 'Blueprint', 'Prompt', 'Reminder'] as const;
+const categories = ['Specifications', 'Blueprints', 'Prompts', 'Reminders'] as const;
 
 // Group docs by category
 const byCategory = new Map<string, typeof allDocs>();
@@ -64,7 +64,7 @@ const repoCount = new Set(allDocs.map(d => d.data._context_v?.repo_label).filter
             data-filter={cat}
             class="category-tab px-4 py-2 rounded-full text-sm font-medium border border-border transition-colors"
           >
-            {cat}s ({count})
+            {cat} ({count})
           </button>
         );
       })}

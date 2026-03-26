@@ -12,9 +12,13 @@ interface Props {
 const { title, lede, category, tags, repo_label, github_url, href } = Astro.props;
 
 const categoryColors: Record<string, string> = {
+  Specifications: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
   Specification: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
+  Blueprints: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
   Blueprint: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+  Prompts: 'bg-green-500/15 text-green-300 border-green-500/30',
   Prompt: 'bg-green-500/15 text-green-300 border-green-500/30',
+  Reminders: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
   Reminder: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
 };
 
