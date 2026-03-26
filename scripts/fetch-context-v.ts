@@ -208,6 +208,17 @@ async function main() {
       // Parse frontmatter, inject provenance
       const { data, content } = parseFrontmatter(rawContent);
 
+      // Infer category from directory if not set in frontmatter
+      if (!data.category && isInCategory) {
+        const DIR_TO_CATEGORY: Record<string, string> = {
+          specs: 'Specifications',
+          blueprints: 'Blueprints',
+          prompts: 'Prompts',
+          reminders: 'Reminders',
+        };
+        data.category = DIR_TO_CATEGORY[firstDir] || firstDir;
+      }
+
       const provenance: ContextVProvenance = {
         repo: source.repo,
         repo_label: source.label,
