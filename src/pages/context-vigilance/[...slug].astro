@@ -1,0 +1,124 @@
+---
+import { getCollection } from 'astro:content';
+import { parseMarkdown } from '@lossless-group/lfm';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AstroMarkdown from '../../components/markdown/AstroMarkdown.astro';
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/context-vigilance');
+
+// Find the matching entry
+const allDocs = await getCollection('context-v');
+const entry = allDocs.find((doc) => doc.id === slug);
+
+if (!entry) {
+  return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+
+const { data } = entry;
+
+// Parse markdown through the LFM pipeline
+const tree = await parseMarkdown(entry.body);
+
+// Category color mapping (matches DocCard.astro)
+const categoryColors: Record<string, string> = {
+  Specifications: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
+  Specification: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
+  Blueprints: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+  Blueprint: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+  Prompts: 'bg-green-500/15 text-green-300 border-green-500/30',
+  Prompt: 'bg-green-500/15 text-green-300 border-green-500/30',
+  Reminders: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+  Reminder: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+};
+
+const categoryStyle = data.category ? categoryColors[data.category] || 'bg-muted text-muted-foreground' : '';
+
+const statusColors: Record<string, string> = {
+  Draft: 'bg-yellow-500/15 text-yellow-300 border-yellow-500/30',
+  Published: 'bg-green-500/15 text-green-300 border-green-500/30',
+  Review: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+  Archived: 'bg-gray-500/15 text-gray-400 border-gray-500/30',
+};
+
+const statusStyle = data.status ? statusColors[data.status] || 'bg-muted text-muted-foreground' : '';
+---
+
+<BaseLayout title={data.title || 'Document'} description={data.lede}>
+  <div class="max-w-4xl mx-auto px-6 py-8">
+
+    <!-- Back link -->
+    <a href="/context-vigilance" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      Back to Rabbit Holes
+    </a>
+
+    <!-- Article header -->
+    <header class="mb-10">
+      <div class="flex items-center gap-2 mb-4 flex-wrap">
+        {data.category && (
+          <span class={`text-xs font-medium px-2.5 py-1 rounded-full border ${categoryStyle}`}>
+            {data.category}
+          </span>
+        )}
+        {data.status && (
+          <span class={`text-xs font-medium px-2.5 py-1 rounded-full border ${statusStyle}`}>
+            {data.status}
+          </span>
+        )}
+        {data.at_semantic_version && (
+          <span class="text-xs text-muted-foreground">
+            v{data.at_semantic_version}
+          </span>
+        )}
+      </div>
+
+      <h1 class="gradient-text mb-4">{data.title}</h1>
+
+      {data.lede && (
+        <p class="text-lg text-muted-foreground leading-relaxed mb-6">{data.lede}</p>
+      )}
+
+      <!-- Metadata row -->
+      <div class="flex items-center gap-4 flex-wrap text-sm text-muted-foreground border-t border-b border-border py-3">
+        {data.authors && data.authors.length > 0 && (
+          <span>{data.authors.join(', ')}</span>
+        )}
+        {data.date_modified && (
+          <span>Updated {data.date_modified}</span>
+        )}
+        {data._context_v?.repo_label && (
+          <span class="text-xs px-2 py-0.5 rounded bg-muted">{data._context_v.repo_label}</span>
+        )}
+        {data._context_v?.github_url && (
+          <a
+            href={data._context_v.github_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1 text-primary hover:underline"
+          >
+            View on GitHub
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        )}
+      </div>
+
+      <!-- Tags -->
+      {data.tags && data.tags.length > 0 && (
+        <div class="flex gap-1.5 flex-wrap mt-3">
+          {data.tags.map((tag: string) => (
+            <span class="text-xs px-2 py-0.5 rounded bg-muted text-muted-foreground">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <!-- Article body -->
+    <article class="prose">
+      <AstroMarkdown node={tree} />
+    </article>
+
+  </div>
+</BaseLayout>
