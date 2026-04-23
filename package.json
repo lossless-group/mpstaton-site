@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@astrojs/vercel": "^10.0.2",
-    "@lossless-group/lfm": "^0.1.0",
+    "@lossless-group/lfm": "workspace:^",
     "@resvg/resvg-js": "^2.6.2",
     "astro": "^6.0.8",
     "mdast-util-to-string": "^4.0.0",

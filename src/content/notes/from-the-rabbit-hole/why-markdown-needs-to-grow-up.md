@@ -10,7 +10,7 @@ authors:
 
 # Why Markdown Needs to Grow Up
 
-Markdown is simultaneously the best and worst content format. Best because it's plain text, version-controllable, AI-friendly, and learnable in ten minutes. Worst because the moment you need anything beyond headings and paragraphs, you fall off a cliff into fragmented, incompatible extension ecosystems.
+Markdown is simultaneously the best and worst content format. Best because it's plain text, version-controllable, AI-friendly, and learnable in ten minutes.[^a1b2c3] Worst because the moment you need anything beyond headings and paragraphs, you fall off a cliff into fragmented, incompatible extension ecosystems.[^d4e5f6]
 
 ## The Core Tension
 
@@ -21,7 +21,7 @@ Every library picks ONE syntax for triggering components and refuses the others:
 - **remark-directive** requires `:::name{}`. Expressive, but unfamiliar.
 - **Obsidian** uses code fences. Works in their app, breaks everywhere else.
 
-Each library treats its chosen syntax as a *philosophy* rather than a *preference*. That's the problem.
+Each library treats its chosen syntax as a *philosophy* rather than a *preference*.[^g7h8i9] That's the problem.
 
 ## What We're Building
 
@@ -40,4 +40,9 @@ For us, it's investment memos, market analyses, and technical specifications. Do
 - Collapsible sections for detailed appendices
 - Mermaid diagrams inline with prose
 
-None of these are exotic requirements. They're basic needs for serious content. And yet no single markdown library handles all of them without dropping into raw HTML or JSX.
+None of these are exotic requirements. They're basic needs for serious content.[^j0k1l2] And yet no single markdown library handles all of them without dropping into raw HTML or JSX.
+
+[^a1b2c3]: 2024. [CommonMark Spec](https://spec.commonmark.org/). Published: 2024-01-28
+[^d4e5f6]: 2023. [The State of Markdown Tooling](https://unifiedjs.com/learn/guide/introduction-to-unified/). Published: 2023-06-15
+[^g7h8i9]: 2022. [Markdoc: A Powerful, Flexible Markdown-based Authoring Framework](https://markdoc.dev/). Published: 2022-05-11
+[^j0k1l2]: 2025. [Why We Built Our Own Markdown Pipeline](https://lossless.group). Published: 2025-03-25

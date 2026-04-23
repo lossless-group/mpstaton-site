@@ -236,6 +236,19 @@ function childrenOf(n: any): any[] {
 
 {type === "break" && <br />}
 
+{type === "footnoteReference" && (() => {
+  const ref: any = node;
+  const index = ref.data?.citationIndex ?? ref.identifier;
+  const hex = ref.data?.citationHex ?? ref.identifier;
+  return (
+    <sup class="citation-marker">
+      <a href={`#source-${hex}`} title={`Citation ${index}`}>[{index}]</a>
+    </sup>
+  );
+})()}
+
+{type === "footnoteDefinition" && null}
+
 {/* Directive handling: callout + badge */}
 {["leafDirective", "containerDirective"].includes(type) && (() => {
   const directive: any = node;
@@ -289,6 +302,8 @@ function childrenOf(n: any): any[] {
   "leafDirective",
   "containerDirective",
   "textDirective",
+  "footnoteReference",
+  "footnoteDefinition",
 ].includes(type) && (
   <>
     {childrenOf(node).map((child) => (

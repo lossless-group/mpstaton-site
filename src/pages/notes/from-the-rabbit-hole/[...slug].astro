@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import { parseMarkdown } from '@lossless-group/lfm';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import AstroMarkdown from '../../../components/markdown/AstroMarkdown.astro';
+import Sources from '../../../components/markdown/Sources.astro';
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect('/notes/from-the-rabbit-hole');
@@ -16,6 +17,7 @@ if (!entry) {
 
 const { data } = entry;
 const tree = await parseMarkdown(entry.body);
+const citations = (tree as any).data?.citations?.ordered ?? [];
 ---
 
 <BaseLayout title={data.title || 'Note'} description={data.lede}>
@@ -56,6 +58,8 @@ const tree = await parseMarkdown(entry.body);
     <article class="prose">
       <AstroMarkdown node={tree} />
     </article>
+
+    <Sources citations={citations} />
 
   </div>
 </BaseLayout>
