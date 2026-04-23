@@ -9,6 +9,18 @@ const changelog = defineCollection({
   }),
 });
 
+const notes = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/notes/from-the-rabbit-hole' }),
+  schema: z.object({
+    title: z.string().optional(),
+    lede: z.string().optional(),
+    date_created: z.coerce.string().optional(),
+    date_modified: z.coerce.string().optional(),
+    authors: z.array(z.string()).optional(),
+    tags: z.array(z.string()).optional(),
+  }).passthrough(),
+});
+
 const contextV = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/context-v' }),
   schema: z.object({
@@ -40,4 +52,5 @@ const contextV = defineCollection({
 export const collections = {
   changelog,
   'context-v': contextV,
+  'notes': notes,
 };

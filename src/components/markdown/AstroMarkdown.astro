@@ -3,6 +3,7 @@ import type { Root, Content, Heading, List, ListItem, Link, Image, Code, InlineC
 import { toString } from "mdast-util-to-string";
 import CodeBlock from "./CodeBlock.astro";
 import Callout from "./Callout.astro";
+import MarkdownImage from "./MarkdownImage.astro";
 
 export interface Props {
   node: Root | Content;
@@ -240,6 +241,9 @@ function childrenOf(n: any): any[] {
   const directive: any = node;
   if (directive.name === "callout") {
     return <Callout node={directive} data={data} />;
+  }
+  if (directive.name === "image") {
+    return <MarkdownImage node={directive} data={data} />;
   }
   // Fallback: render children as-is
   return (
