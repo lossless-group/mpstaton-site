@@ -49,8 +49,30 @@ const contextV = defineCollection({
   }).passthrough(),
 });
 
+const essays = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/essays' }),
+  schema: z.object({
+    title: z.string().optional(),
+    lede: z.string().optional(),
+    date_created: z.coerce.string().optional(),
+    date_modified: z.coerce.string().optional(),
+    date_authored_initial_draft: z.coerce.string().optional(),
+    date_authored_current_draft: z.coerce.string().optional(),
+    status: z.string().nullable().optional(),
+    category: z.string().nullable().optional(),
+    authors: z.array(z.string()).optional(),
+    tags: z.array(z.string()).optional(),
+    portrait_image: z.string().optional(),
+    banner_image: z.string().optional(),
+    image_prompt: z.string().optional(),
+    augmented_with: z.string().optional(),
+    at_semantic_version: z.string().optional(),
+  }).passthrough(),
+});
+
 export const collections = {
   changelog,
   'context-v': contextV,
   'notes': notes,
+  essays,
 };

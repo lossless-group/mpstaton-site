@@ -7,3 +7,7 @@ dist/
 # Context-V fetcher
 src/content/context-v/
 .context-v-cache/
+
+# Essays fetcher
+src/content/essays/
+.essays-cache/

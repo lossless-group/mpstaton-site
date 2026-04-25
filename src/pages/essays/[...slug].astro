@@ -1,0 +1,80 @@
+---
+import { getCollection } from 'astro:content';
+import { parseMarkdown } from '@lossless-group/lfm';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AstroMarkdown from '../../components/markdown/AstroMarkdown.astro';
+import Sources from '../../components/markdown/Sources.astro';
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/essays');
+
+const allEssays = await getCollection('essays');
+const entry = allEssays.find((essay) => essay.id === slug);
+
+if (!entry) {
+  return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+
+const { data } = entry;
+const tree = await parseMarkdown(entry.body);
+const citations = (tree as any).data?.citations?.ordered ?? [];
+---
+
+<BaseLayout title={data.title || 'Essay'} description={data.lede}>
+  <div class="max-w-4xl mx-auto px-6 py-8">
+
+    <a href="/essays" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      Back to Essays
+    </a>
+
+    <header class="mb-10">
+      {data.banner_image && (
+        <img
+          src={data.banner_image}
+          alt=""
+          class="w-full rounded-lg mb-6 object-cover"
+          style="max-height: 300px;"
+          loading="lazy"
+        />
+      )}
+
+      <h1 class="gradient-text mb-4">{data.title}</h1>
+
+      {data.lede && (
+        <p class="text-lg text-muted-foreground leading-relaxed mb-6">{data.lede}</p>
+      )}
+
+      <div class="flex items-center gap-4 flex-wrap text-sm text-muted-foreground border-t border-b border-border py-3">
+        {data.authors && data.authors.length > 0 && (
+          <span>{data.authors.join(', ')}</span>
+        )}
+        {data.category && (
+          <span class="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-xs font-medium">
+            {data.category}
+          </span>
+        )}
+        {data.date_modified && (
+          <span>Updated {data.date_modified}</span>
+        )}
+      </div>
+
+      {data.tags && data.tags.length > 0 && (
+        <div class="flex gap-1.5 flex-wrap mt-3">
+          {data.tags.map((tag: string) => (
+            <span class="text-xs px-2 py-0.5 rounded bg-muted text-muted-foreground">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <article class="prose">
+      <AstroMarkdown node={tree} />
+    </article>
+
+    <Sources citations={citations} />
+
+  </div>
+</BaseLayout>

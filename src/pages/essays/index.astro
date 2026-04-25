@@ -1,0 +1,79 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const allEssays = await getCollection('essays');
+
+// Sort by date_modified descending
+allEssays.sort((a, b) => {
+  const dateA = a.data.date_modified || a.data.date_created || '';
+  const dateB = b.data.date_modified || b.data.date_created || '';
+  return dateB.localeCompare(dateA);
+});
+---
+
+<BaseLayout title="Essays" description="Long-form essays on technology, investing, and building from The Lossless Group.">
+
+  <section class="flex items-center justify-center px-6" style="min-height: 40vh;">
+    <div class="text-center max-w-2xl">
+      <h1 class="gradient-text mb-4">Essays</h1>
+      <p class="text-lg text-muted-foreground">
+        {allEssays.length} {allEssays.length === 1 ? 'essay' : 'essays'} — long-form writing on technology, investing, and building from The Lossless Group.
+      </p>
+    </div>
+  </section>
+
+  <section class="max-w-3xl mx-auto px-6 pb-16">
+    <div class="grid gap-3">
+      {allEssays.map(essay => (
+        <a href={`/essays/${essay.id}`} class="block group">
+          <article class="border border-border rounded-lg p-5 hover:border-primary/50 transition-colors bg-card">
+            <div class="flex gap-4">
+              {essay.data.portrait_image && (
+                <img
+                  src={essay.data.portrait_image}
+                  alt=""
+                  class="w-16 h-16 rounded object-cover flex-shrink-0"
+                  loading="lazy"
+                />
+              )}
+              <div class="flex-1 min-w-0">
+                <h3 class="text-lg font-semibold text-foreground group-hover:text-primary transition-colors leading-tight mb-1">
+                  {essay.data.title || essay.id}
+                </h3>
+
+                {essay.data.lede && (
+                  <p class="text-sm text-muted-foreground mb-3 line-clamp-2">{essay.data.lede}</p>
+                )}
+
+                <div class="flex items-center gap-3 flex-wrap">
+                  {essay.data.category && (
+                    <span class="text-xs px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
+                      {essay.data.category}
+                    </span>
+                  )}
+                  {essay.data.date_modified && (
+                    <span class="text-xs text-muted-foreground">{essay.data.date_modified}</span>
+                  )}
+                  {essay.data.tags && essay.data.tags.length > 0 && (
+                    <div class="flex gap-1.5 flex-wrap">
+                      {essay.data.tags.slice(0, 4).map((tag: string) => (
+                        <span class="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                          {tag}
+                        </span>
+                      ))}
+                      {essay.data.tags.length > 4 && (
+                        <span class="text-xs text-muted-foreground">+{essay.data.tags.length - 4}</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </article>
+        </a>
+      ))}
+    </div>
+  </section>
+
+</BaseLayout>

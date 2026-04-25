@@ -4,8 +4,10 @@
   "version": "0.0.1",
   "scripts": {
     "fetch-context": "bun scripts/fetch-context-v.ts",
-    "dev": "pnpm fetch-context && astro dev",
-    "build": "pnpm fetch-context && astro build",
+    "fetch-essays": "bun scripts/fetch-essays.ts",
+    "fetch-all": "pnpm fetch-context && pnpm fetch-essays",
+    "dev": "pnpm fetch-all && astro dev",
+    "build": "pnpm fetch-all && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
