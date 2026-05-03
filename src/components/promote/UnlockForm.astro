@@ -1,0 +1,40 @@
+---
+interface Props {
+  slug: string;
+  redirectTo?: string;
+  hasError?: boolean;
+}
+
+const { slug, redirectTo = '', hasError = false } = Astro.props;
+---
+<form
+  method="POST"
+  action="/api/promote/unlock"
+  class="mx-auto flex w-full max-w-sm flex-col gap-3"
+>
+  <input type="hidden" name="slug" value={slug} />
+  {redirectTo && <input type="hidden" name="redirectTo" value={redirectTo} />}
+  <label class="sr-only" for="promote-code">Access code</label>
+  <input
+    id="promote-code"
+    name="code"
+    type="password"
+    autocomplete="off"
+    autofocus
+    required
+    placeholder="Access code"
+    class="rounded-md border border-border bg-card px-4 py-3 text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-ring"
+  />
+  <button
+    type="submit"
+    class="rounded-md bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+  >
+    Unlock
+  </button>
+  {hasError && (
+    <p class="text-center text-sm text-accent">That code didn't work — try again.</p>
+  )}
+  <p class="text-center text-xs text-muted-foreground">
+    By invitation only. If you don't have a code, this isn't for you yet.
+  </p>
+</form>

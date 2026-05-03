@@ -1,0 +1,54 @@
+---
+import type { Material, Opportunity } from '../../lib/promote/types';
+import { materialUrl } from '../../lib/promote/urls';
+
+interface Props {
+  opportunity: Opportunity;
+  materials: Material[];
+}
+
+const { opportunity, materials } = Astro.props;
+
+const TYPE_ICONS: Record<string, string> = {
+  deck: '▤',
+  memo: '☰',
+  'data-room': '⌸',
+  video: '▶',
+  'qa-log': '?',
+};
+
+const layout = materials.length >= 4 ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : 'flex flex-col gap-4';
+---
+<div class={layout}>
+  {materials.map((m) => {
+    const href = materialUrl(opportunity.slug, m);
+    const icon = TYPE_ICONS[m.type] ?? '◇';
+    const emphasis = m.primary
+      ? 'border-primary/40 bg-card shadow-sm'
+      : 'border-border bg-card/60';
+    return (
+      <a
+        href={href}
+        class={`group flex items-start gap-4 rounded-lg border p-5 transition-colors hover:border-primary hover:bg-card ${emphasis}`}
+      >
+        <span class="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted/60 text-lg text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary">
+          {icon}
+        </span>
+        <div class="flex-1">
+          <div class="flex items-center gap-2">
+            <h3 class="text-base font-semibold text-foreground">{m.title}</h3>
+            {m.status === 'draft' && (
+              <span class="rounded bg-muted px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">draft</span>
+            )}
+          </div>
+          {m.description && (
+            <p class="mt-1 text-sm text-muted-foreground">{m.description}</p>
+          )}
+          <p class="mt-2 text-xs text-muted-foreground/80 group-hover:text-primary">
+            Open →
+          </p>
+        </div>
+      </a>
+    );
+  })}
+</div>

@@ -1,0 +1,37 @@
+---
+import type { Opportunity } from '../../lib/promote/types';
+import StatusPill from './StatusPill.astro';
+import { hubUrl } from '../../lib/promote/urls';
+
+interface Props {
+  opportunity: Opportunity;
+}
+
+const { opportunity: o } = Astro.props;
+const symbol = o.logo?.symbol;
+const dimmed = o.status === 'closed';
+---
+<a
+  href={hubUrl(o.slug)}
+  class={`group block rounded-xl border border-border bg-card p-6 transition-all hover:border-primary hover:shadow-md ${dimmed ? 'opacity-60 hover:opacity-90' : ''}`}
+>
+  <div class="flex items-start justify-between gap-4">
+    <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-muted/60">
+      {symbol ? (
+        <img src={symbol} alt="" class="h-10 w-10 object-contain" />
+      ) : (
+        <span class="text-2xl text-muted-foreground">◇</span>
+      )}
+    </div>
+    <StatusPill status={o.status} />
+  </div>
+  <div class="mt-4">
+    <h2 class="text-lg font-semibold text-foreground">{o.company_name}</h2>
+    {o.short_description && (
+      <p class="mt-1 text-sm text-muted-foreground line-clamp-2">{o.short_description}</p>
+    )}
+  </div>
+  <div class="mt-4 text-xs text-muted-foreground/80 group-hover:text-primary">
+    View opportunity →
+  </div>
+</a>

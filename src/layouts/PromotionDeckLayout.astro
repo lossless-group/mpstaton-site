@@ -1,0 +1,44 @@
+---
+import '../styles/globals.css';
+import brand from '@brand';
+import PageAsDeckWrapper from './PageAsDeckWrapper.astro';
+import SessionToast from '../components/promote/SessionToast.astro';
+import type { Opportunity } from '../lib/promote/types';
+import { hubUrl } from '../lib/promote/urls';
+
+interface Props {
+  opportunity: Opportunity;
+  title: string;
+  description?: string;
+}
+
+const { opportunity, title, description } = Astro.props;
+const SITE_MODE = import.meta.env.SITE_MODE ?? 'dark';
+const accentVar = opportunity.accent_color ? `--opportunity-accent:${opportunity.accent_color};` : '';
+---
+<html
+  lang="en"
+  data-theme={SITE_MODE}
+  style={`--primary:${brand.colors.primary};--secondary:${brand.colors.secondary};--accent:${brand.colors.accent};${accentVar}`}
+>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href={brand.assets?.favicon ?? '/favicon.svg'} />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+    {description && <meta name="description" content={description} />}
+    <title>{title}</title>
+  </head>
+  <body class="bg-background text-foreground">
+    <a
+      href={hubUrl(opportunity.slug)}
+      class="fixed left-4 top-4 z-50 rounded-md border border-border bg-card/80 px-3 py-1.5 text-xs text-muted-foreground backdrop-blur transition-colors hover:text-foreground"
+    >
+      ← {opportunity.company_name}
+    </a>
+    <PageAsDeckWrapper>
+      <slot />
+    </PageAsDeckWrapper>
+    <SessionToast />
+  </body>
+</html>

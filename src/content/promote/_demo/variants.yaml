@@ -1,0 +1,7 @@
+deck:
+  scroll:
+    versions: [1]
+    default: 1
+memo:
+  versions: [1]
+  default: 1

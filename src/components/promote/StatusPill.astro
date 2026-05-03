@@ -1,0 +1,26 @@
+---
+import type { OpportunityStatus } from '../../lib/promote/types';
+
+interface Props {
+  status: OpportunityStatus;
+}
+
+const { status } = Astro.props;
+
+const labels: Record<OpportunityStatus, string> = {
+  active: 'Active',
+  'closing-soon': 'Closing soon',
+  closed: 'Closed',
+  paused: 'Paused',
+};
+
+const variant = {
+  active: 'bg-secondary/15 text-secondary border-secondary/30',
+  'closing-soon': 'bg-accent/15 text-accent border-accent/40',
+  closed: 'bg-muted/40 text-muted-foreground border-border',
+  paused: 'bg-muted/40 text-muted-foreground border-border',
+}[status];
+---
+<span class={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium tracking-wide ${variant}`}>
+  {labels[status]}
+</span>

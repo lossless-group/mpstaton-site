@@ -1,0 +1,46 @@
+---
+// Surfaces once per browser after the unlock cookie is set, then clears
+// the localStorage flag so the toast doesn't keep nagging on every page.
+---
+<div
+  id="promote-session-toast"
+  data-promote-session-toast
+  class="fixed bottom-6 right-6 z-50 hidden max-w-xs translate-y-2 rounded-lg border border-border bg-card px-4 py-3 text-sm text-card-foreground shadow-lg opacity-0 transition-all duration-300"
+>
+  <div class="flex items-start gap-3">
+    <div class="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-secondary"></div>
+    <div class="flex-1">
+      <p class="font-medium">You're signed in</p>
+      <p class="mt-0.5 text-xs text-muted-foreground">Access remembered for 7 days on this device.</p>
+    </div>
+    <button
+      type="button"
+      data-promote-session-dismiss
+      class="text-muted-foreground hover:text-foreground"
+      aria-label="Dismiss"
+    >×</button>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const KEY = 'promote.toast.shown';
+    const toast = document.querySelector('[data-promote-session-toast]');
+    if (!toast) return;
+    if (sessionStorage.getItem(KEY)) return;
+    requestAnimationFrame(() => {
+      toast.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        toast.classList.remove('opacity-0', 'translate-y-2');
+      });
+    });
+    sessionStorage.setItem(KEY, '1');
+    const dismiss = toast.querySelector('[data-promote-session-dismiss]');
+    const hide = () => {
+      toast.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(() => toast.classList.add('hidden'), 300);
+    };
+    dismiss?.addEventListener('click', hide);
+    setTimeout(hide, 5500);
+  })();
+</script>

@@ -1,0 +1,35 @@
+---
+import PromotionDeckLayout from '../../../../../layouts/PromotionDeckLayout.astro';
+import { getOpportunity, getVariantsRegistry } from '../../../../../lib/promote/opportunities';
+import { loadSections } from '../../../../../lib/promote/sections';
+import { hubUrl } from '../../../../../lib/promote/urls';
+import type { DeckFormat } from '../../../../../lib/promote/types';
+
+export const prerender = false;
+
+const { slug, format } = Astro.params;
+if (!slug || !format) return Astro.redirect('/promote');
+
+const opportunity = getOpportunity(slug);
+if (!opportunity) return new Response('Not found', { status: 404 });
+
+const validFormats: DeckFormat[] = ['scroll', 'static', 'interactive'];
+if (!validFormats.includes(format as DeckFormat)) {
+  return Astro.redirect(hubUrl(slug));
+}
+
+const fmt = format as DeckFormat;
+const registry = getVariantsRegistry(slug);
+const formatRegistry = registry.deck?.[fmt];
+const defaultVersion = formatRegistry?.default ?? 1;
+
+const sections = await loadSections(slug, fmt, defaultVersion);
+if (sections.length === 0) {
+  return new Response(`No sections found for ${slug}/${fmt}/v${defaultVersion}`, { status: 404 });
+}
+
+const title = `${opportunity.company_name} — ${fmt} deck`;
+---
+<PromotionDeckLayout opportunity={opportunity} title={title} description={opportunity.short_description}>
+  {sections.map(({ Component }) => <Component />)}
+</PromotionDeckLayout>

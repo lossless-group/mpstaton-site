@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import AstroMarkdown from '../../../../components/markdown/AstroMarkdown.astro';
+import Sources from '../../../../components/markdown/Sources.astro';
+import SessionToast from '../../../../components/promote/SessionToast.astro';
+import { getOpportunity } from '../../../../lib/promote/opportunities';
+import { loadMemo } from '../../../../lib/promote/memos';
+import { hubUrl, parseVersionParam } from '../../../../lib/promote/urls';
+
+export const prerender = false;
+
+const { slug, version } = Astro.params;
+if (!slug || !version) return Astro.redirect('/promote');
+
+const opportunity = getOpportunity(slug);
+if (!opportunity) return new Response('Not found', { status: 404 });
+
+const versionNumber = parseVersionParam(version);
+if (versionNumber === null) return Astro.redirect(hubUrl(slug));
+
+const memo = await loadMemo(slug, versionNumber);
+if (!memo) {
+  return new Response(`Memo v${versionNumber} not found`, { status: 404 });
+}
+
+const title = `${opportunity.company_name} — Investment memo v${versionNumber}`;
+---
+<BaseLayout title={title} description={opportunity.short_description}>
+  <article class="mx-auto max-w-3xl px-6 py-12">
+    <a
+      href={hubUrl(slug)}
+      class="mb-6 inline-block text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"
+    >
+      ← {opportunity.company_name}
+    </a>
+    <h1 class="mb-2 text-3xl font-semibold tracking-tight text-foreground">Investment memo
+      <span class="text-base font-normal text-muted-foreground">v{versionNumber}</span>
+    </h1>
+    {opportunity.short_description && (
+      <p class="mb-8 text-muted-foreground">{opportunity.short_description}</p>
+    )}
+    <div class="prose prose-invert max-w-none">
+      <AstroMarkdown node={memo.tree} />
+    </div>
+    <Sources citations={memo.citations} />
+  </article>
+  <SessionToast />
+</BaseLayout>

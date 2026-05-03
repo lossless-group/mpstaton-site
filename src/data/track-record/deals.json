@@ -14,15 +14,17 @@
     ]
   },
   {
-    "company": "Sano",
+    "company": "Sano Intelligence",
     "vehicle": "Angel",
     "countries": "US",
     "sector": "Medical Device",
     "initialInvestmentDate": 2012,
     "costOfInvestment": 10000,
     "stage": "Pre-Seed",
-    "exit": "FMV",
-    "tags": []
+    "exit": "Acquired",
+    "tags": [
+      "Exit"
+    ]
   },
   {
     "company": "Plethora",
@@ -1117,6 +1119,50 @@
     "initialInvestmentDate": 2026,
     "costOfInvestment": 50000,
     "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Singularity University",
+    "vehicle": "Learn Capital II",
+    "countries": "US",
+    "sector": "Edtech, Executive Education",
+    "initialInvestmentDate": 2012,
+    "costOfInvestment": 250000,
+    "stage": "Series A",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Yellowbrick",
+    "vehicle": "LearnStart I",
+    "countries": "US",
+    "sector": "Edtech, Content Platform",
+    "initialInvestmentDate": 2015,
+    "costOfInvestment": 250000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Millie Clinic",
+    "vehicle": "LearnStart II",
+    "countries": "US",
+    "sector": "HealthTech, Women's Health, Maternity",
+    "initialInvestmentDate": 2018,
+    "costOfInvestment": 250000,
+    "stage": "Pre-Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "company": "Climb Credit",
+    "vehicle": "Learn Capital III",
+    "countries": "US",
+    "sector": "Edtech, FinTech",
+    "initialInvestmentDate": 2014,
+    "costOfInvestment": 500000,
+    "stage": "Series A",
     "exit": "FMV",
     "tags": []
   }

@@ -1,0 +1,8 @@
+company:
+  name: Demo Opportunity
+  one_liner: "A placeholder company used to smoke-test the /promote machinery"
+  stage: "Series _"
+metrics:
+  arr: "$x M"
+  growth: "y% YoY"
+team: []

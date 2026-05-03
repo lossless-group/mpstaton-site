@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PromotionHeader from '../../../components/promote/PromotionHeader.astro';
+import UnlockForm from '../../../components/promote/UnlockForm.astro';
+import MaterialsChooser from '../../../components/promote/MaterialsChooser.astro';
+import SessionToast from '../../../components/promote/SessionToast.astro';
+import { getOpportunity } from '../../../lib/promote/opportunities';
+import { materialUrl, visibleMaterials } from '../../../lib/promote/urls';
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/promote');
+
+const opportunity = getOpportunity(slug);
+if (!opportunity) return new Response('Not found', { status: 404 });
+
+const unlocked = Astro.locals.promote?.unlocked ?? false;
+const hasError = Astro.url.searchParams.get('e') === '1';
+const isDev = import.meta.env.DEV;
+
+const visible = unlocked ? visibleMaterials(opportunity, isDev) : [];
+
+if (unlocked && visible.length === 1) {
+  return Astro.redirect(materialUrl(opportunity.slug, visible[0]), 303);
+}
+
+if (unlocked && visible.length === 0) {
+  return new Response('No materials available', { status: 404 });
+}
+
+const title = unlocked
+  ? `${opportunity.company_name} — Materials`
+  : `${opportunity.company_name} — Promote`;
+---
+<BaseLayout title={title} description={opportunity.short_description}>
+  <section class="mx-auto max-w-3xl px-6 py-12">
+    <PromotionHeader opportunity={opportunity} />
+
+    {!unlocked && (
+      <div class="mt-6">
+        <UnlockForm slug={opportunity.slug} hasError={hasError} />
+      </div>
+    )}
+
+    {unlocked && (
+      <div class="mt-8">
+        <h2 class="mb-6 text-center text-sm uppercase tracking-[0.18em] text-muted-foreground">
+          Materials
+        </h2>
+        <MaterialsChooser opportunity={opportunity} materials={visible} />
+        <SessionToast />
+      </div>
+    )}
+  </section>
+</BaseLayout>

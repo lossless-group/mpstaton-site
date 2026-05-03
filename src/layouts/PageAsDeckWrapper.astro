@@ -1,0 +1,225 @@
+---
+interface Props {
+  enableScrollSnap?: boolean;
+  showNavigationHints?: boolean;
+  hintDuration?: number;
+}
+
+const {
+  enableScrollSnap = true,
+  showNavigationHints = true,
+  hintDuration = 2400,
+} = Astro.props;
+---
+
+<div
+  class="deck-wrapper"
+  data-scroll-snap={String(enableScrollSnap)}
+  data-show-hints={String(showNavigationHints)}
+  data-hint-duration={String(hintDuration)}
+>
+  <div class="deck-content">
+    <slot />
+  </div>
+
+  <div class="nav-hint nav-hint-down" style={showNavigationHints ? '' : 'display: none;'}>
+    <span class="hint-icon">↓</span>
+    <span class="hint-text">scroll · arrow keys · double-click to advance</span>
+  </div>
+
+  <div class="section-indicator">
+    <span class="current-section">1</span>
+    <span class="separator">/</span>
+    <span class="total-sections">1</span>
+  </div>
+</div>
+
+<style>
+  .deck-wrapper {
+    height: var(--deck-height, 100vh);
+    overflow-y: auto;
+    position: relative;
+    background: var(--background);
+  }
+
+  .deck-wrapper[data-scroll-snap="true"] {
+    scroll-snap-type: y mandatory;
+  }
+
+  .deck-content { min-height: 100%; }
+
+  .deck-wrapper :global(section) {
+    min-height: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .nav-hint {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--card) 90%, transparent);
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .deck-wrapper.show-hints .nav-hint { opacity: 1; }
+  .deck-wrapper.at-last     .nav-hint { opacity: 0; }
+
+  .hint-icon { font-size: 0.9rem; animation: bounce 2s ease-in-out infinite; }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(3px); }
+  }
+
+  .section-indicator {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: var(--radius);
+    background: color-mix(in oklab, var(--card) 90%, transparent);
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    z-index: 100;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .current-section { font-weight: 600; color: var(--foreground); }
+  .separator       { opacity: 0.4; }
+  .total-sections  { opacity: 0.7; }
+</style>
+
+<script>
+  function initDeckNavigator() {
+    const wrappers = document.querySelectorAll<HTMLElement>('.deck-wrapper');
+    wrappers.forEach((wrapper) => {
+      if (wrapper.hasAttribute('data-initialized')) return;
+      wrapper.setAttribute('data-initialized', 'true');
+
+      const sections = wrapper.querySelectorAll<HTMLElement>('section');
+      let currentIndex = 0;
+      let isNavigating = false;
+
+      const showHints   = wrapper.getAttribute('data-show-hints') === 'true';
+      const hintDuration = parseInt(wrapper.getAttribute('data-hint-duration') || '2400', 10);
+
+      const updateIndicator = () => {
+        const cur = wrapper.querySelector('.current-section');
+        const tot = wrapper.querySelector('.total-sections');
+        if (cur) cur.textContent = String(currentIndex + 1);
+        if (tot) tot.textContent = String(sections.length);
+      };
+
+      const updateBoundaries = () => {
+        wrapper.classList.toggle('at-first', currentIndex === 0);
+        wrapper.classList.toggle('at-last',  currentIndex === sections.length - 1);
+      };
+
+      const navigateTo = (index: number) => {
+        if (index < 0 || index >= sections.length || isNavigating) return;
+        isNavigating = true;
+        currentIndex = index;
+        sections[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        updateIndicator();
+        updateBoundaries();
+        setTimeout(() => { isNavigating = false; }, 500);
+      };
+
+      const next = () => navigateTo(currentIndex + 1);
+      const prev = () => navigateTo(currentIndex - 1);
+
+      wrapper.addEventListener('dblclick', (e) => {
+        if (isNavigating) return;
+        const isUpper = e.clientY < window.innerHeight / 2;
+        isUpper ? prev() : next();
+      });
+
+      let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
+      wrapper.addEventListener('scroll', () => {
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          const vh = window.innerHeight;
+          let newIndex = 0;
+          let maxVisibility = 0;
+          sections.forEach((s, i) => {
+            const r = s.getBoundingClientRect();
+            const visible = Math.max(0, Math.min(vh, r.bottom) - Math.max(0, r.top));
+            if (visible / vh > maxVisibility) {
+              maxVisibility = visible / vh;
+              newIndex = i;
+            }
+          });
+          if (newIndex !== currentIndex) {
+            currentIndex = newIndex;
+            updateIndicator();
+            updateBoundaries();
+          }
+        }, 80);
+      });
+
+      document.addEventListener('keydown', (e) => {
+        const r = wrapper.getBoundingClientRect();
+        if (r.top > window.innerHeight || r.bottom < 0) return;
+        const t = e.target as HTMLElement | null;
+        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+
+        if (e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); next(); }
+        else if (e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+        else if (e.key === 'Home') { e.preventDefault(); navigateTo(0); }
+        else if (e.key === 'End')  { e.preventDefault(); navigateTo(sections.length - 1); }
+      });
+
+      const items = wrapper.querySelectorAll<HTMLElement>('.reveal-item');
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const target = entry.target as HTMLElement;
+            const delay = parseInt(target.style.getPropertyValue('--delay') || '0', 10);
+            setTimeout(() => target.classList.add('revealed'), delay);
+            io.unobserve(target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+      items.forEach((item) => io.observe(item));
+
+      updateIndicator();
+      updateBoundaries();
+
+      if (showHints) {
+        wrapper.classList.add('show-hints');
+        if (hintDuration > 0) {
+          setTimeout(() => wrapper.classList.remove('show-hints'), hintDuration);
+        }
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initDeckNavigator);
+  document.addEventListener('astro:page-load', initDeckNavigator);
+</script>

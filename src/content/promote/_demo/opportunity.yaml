@@ -1,0 +1,20 @@
+codename: demo
+company_name: Demo Opportunity
+status: active
+listed_in_index: false
+short_description: "Series · placeholder for testing the /promote machinery"
+eyebrow: "Demo · not a real deal"
+accent_color: "#9138E0"
+materials:
+  - type: deck
+    format: scroll
+    title: "Quick scroll-deck"
+    description: "1 slide, end-to-end smoke test"
+    primary: true
+    default_version: 1
+  - type: memo
+    title: "Investment memo"
+    description: "Placeholder memo content"
+    default_version: 1
+gate:
+  override_code: null

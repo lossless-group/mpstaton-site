@@ -11,3 +11,14 @@ src/content/context-v/
 # Essays fetcher
 src/content/essays/
 .essays-cache/
+
+# /promote — opportunity content is local-only (this is a public repo).
+# Convention:
+#   • directories prefixed with `_` ARE committed (templates, scaffolding, demo)
+#   • directories with real opportunity slugs (e.g. chromadb, acme) are NOT committed
+src/content/promote/*/
+!src/content/promote/_*/
+src/layouts/sections/promote/*/
+!src/layouts/sections/promote/_*/
+public/promote/*/
+!public/promote/_*/
