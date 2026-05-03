@@ -12,8 +12,8 @@ importers:
         specifier: ^10.0.2
         version: 10.0.2(astro@6.0.8(@vercel/functions@3.4.3)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3))(rollup@4.60.0)
       '@lossless-group/lfm':
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: npm:@jsr/lossless-group__lfm@^0.2.1
+        version: '@jsr/lossless-group__lfm@0.2.1'
       '@resvg/resvg-js':
         specifier: ^2.6.2
         version: 2.6.2
@@ -404,8 +404,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@lossless-group/lfm@0.1.0':
-    resolution: {integrity: sha512-QIgF8AEeddnhMNMKrm+UKkbpmkdSHsM1M+0yD8MZUVxP718ctesri36T4w7NiJp9s8JlNuunoALDRZUtxZveGg==, tarball: https://npm.pkg.github.com/download/@lossless-group/lfm/0.1.0/9ff047db8e9d660b3c9fea1f33726be0364c1128}
+  '@jsr/lossless-group__lfm@0.2.1':
+    resolution: {integrity: sha512-c+CxAoCxQjDz01C4ULgRPyDJLS6w5k5L0Iy4vJGe5kBynbXr9koOfXCVJ0PBmoe3vvZYtH9A1hfigwfugNddJA==, tarball: https://npm.jsr.io/~/11/@jsr/lossless-group__lfm/0.2.1.tgz}
 
   '@mapbox/node-pre-gyp@2.0.3':
     resolution: {integrity: sha512-uwPAhccfFJlsfCxMYTwOdVfOz3xqyj8xYL3zJj8f0pb30tLohnnFPhLuqp4/qoEz8sNxe4SESZedcBojRefIzg==}
@@ -2289,8 +2289,9 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@lossless-group/lfm@0.1.0':
+  '@jsr/lossless-group__lfm@0.2.1':
     dependencies:
+      '@types/mdast': 4.0.4
       remark-directive: 3.0.1
       remark-gfm: 4.0.1
       remark-parse: 11.0.0

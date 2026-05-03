@@ -9,11 +9,14 @@
     "dev": "pnpm fetch-all && astro dev",
     "build": "pnpm fetch-all && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "lfm:local": "node scripts/lfm-mode.mjs local",
+    "lfm:jsr": "node scripts/lfm-mode.mjs jsr",
+    "lfm:auto": "node scripts/lfm-mode.mjs auto"
   },
   "dependencies": {
     "@astrojs/vercel": "^10.0.2",
-    "@lossless-group/lfm": "workspace:^",
+    "@lossless-group/lfm": "npm:@jsr/lossless-group__lfm@^0.2.1",
     "@resvg/resvg-js": "^2.6.2",
     "astro": "^6.0.8",
     "mdast-util-to-string": "^4.0.0",
