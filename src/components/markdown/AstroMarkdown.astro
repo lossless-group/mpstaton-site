@@ -5,6 +5,10 @@ import CodeBlock from "./CodeBlock.astro";
 import Callout from "./Callout.astro";
 import MarkdownImage from "./MarkdownImage.astro";
 import MermaidChartDisplay from "./MermaidChartDisplay.astro";
+import YouTubeEmbed from "./YouTubeEmbed.astro";
+import YouTubeShortsEmbed from "./YouTubeShortsEmbed.astro";
+import YouTubePlaylistEmbed from "./YouTubePlaylistEmbed.astro";
+import { classifyBareLink, getBareLinkUrl } from "../../lib/markdown/classify-bare-link";
 
 export interface Props {
   node: Root | Content;
@@ -27,13 +31,24 @@ function childrenOf(n: any): any[] {
   </>
 )}
 
-{type === "paragraph" && (
-  <p>
-    {childrenOf(node).map((child) => (
-      <Astro.self node={child} data={data} />
-    ))}
-  </p>
-)}
+{type === "paragraph" && (() => {
+  const bareUrl = getBareLinkUrl(node);
+  if (bareUrl) {
+    const c = classifyBareLink(bareUrl);
+    if (c) {
+      if (c.component === "YouTubeShortsEmbed") return <YouTubeShortsEmbed url={c.url} />;
+      if (c.component === "YouTubePlaylistEmbed") return <YouTubePlaylistEmbed url={c.url} />;
+      return <YouTubeEmbed url={c.url} />;
+    }
+  }
+  return (
+    <p>
+      {childrenOf(node).map((child) => (
+        <Astro.self node={child} data={data} />
+      ))}
+    </p>
+  );
+})()}
 
 {type === "text" && <>{(node as any).value}</>}
 
