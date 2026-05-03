@@ -12,7 +12,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 
-const JSR_SPEC = 'npm:@jsr/lossless-group__lfm@^0.2.1';
+const JSR_SPEC = 'npm:@jsr/lossless-group__lfm@^0.2.2';
 const WORKSPACE_SPEC = 'workspace:^';
 const LOCAL_BRANCHES = new Set(['development', 'develop', 'dev']);
 

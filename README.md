@@ -204,7 +204,7 @@ Behind the scenes the script flips `package.json`'s LFM specifier between `npm:@
 ### Runtime
 - **Astro** — v6.0.8 — server-output mode via `@astrojs/vercel` adapter
 - **Tailwind CSS** — v4.1.14 — `@tailwindcss/vite` plugin, semantic-token CSS architecture
-- **@lossless-group/lfm** — `npm:@jsr/lossless-group__lfm@^0.2.1` — shared markdown pipeline (JSR canonical)
+- **@lossless-group/lfm** — `npm:@jsr/lossless-group__lfm@^0.2.2` — shared markdown pipeline (JSR canonical)
 - **Satori** — v0.26.0 — JSX → SVG for OG image generation
 - **@resvg/resvg-js** — v2.6.2 — SVG → PNG rasterization
 - **mdast-util-to-string** — v4.0.0 — heading-ID generation in the renderer
