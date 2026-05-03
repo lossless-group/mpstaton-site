@@ -1,0 +1,398 @@
+---
+interface Props {
+  code: string;
+}
+
+const { code } = Astro.props;
+
+function sanitizeMermaidCode(input: string): string {
+  return input
+    .replace(/\[\[([^\]]+)\]\]/g, '$1')
+    .replace(/\[([^[\]]*\/[^[\]]*)\]/g, (_m, path) => `[${path.replace(/\//g, '|')}]`)
+    .replace(/([A-Z])\[([^[\]]*\/[^[\]]*)\]/g, (_m, id, path) => `${id}[${path.replace(/\//g, '_')}]`)
+    .replace(/([A-Z]\s*-->\s*[A-Z]\[[^\]]*)\[([^\]]*)\]/g, '$1$2')
+    .replace(/\[\[/g, '[')
+    .replace(/\]\]/g, ']')
+    .replace(/\s+$/gm, '')
+    .trim();
+}
+
+const sanitizedCode = sanitizeMermaidCode(code);
+const chartId = `mermaid-chart-${Math.random().toString(36).slice(2, 10)}`;
+---
+
+<div id={chartId} class="mermaid-breakout" tabindex="0">
+  <div class="mermaid-chart-shell">
+    <button
+      type="button"
+      class="mermaid-expand-btn"
+      aria-label="Expand chart"
+      aria-expanded="false"
+      data-chart-id={chartId}
+      data-mermaid-code={sanitizedCode}
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M15 3h6v6"/>
+        <path d="M9 21H3v-6"/>
+        <path d="m21 3-7 7"/>
+        <path d="m3 21 7-7"/>
+      </svg>
+    </button>
+    <div class="mermaid">{sanitizedCode}</div>
+  </div>
+</div>
+
+<div
+  id={`modal-${chartId}`}
+  class="mermaid-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby={`modal-title-${chartId}`}
+  hidden
+>
+  <div class="mermaid-modal-content">
+    <h2 id={`modal-title-${chartId}`} class="visually-hidden">Expanded Chart</h2>
+    <button type="button" class="mermaid-modal-close-btn" aria-label="Close expanded chart">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m3 21 6-6"/>
+        <path d="M21 3l-6 6"/>
+        <path d="M9 21v-6h6"/>
+        <path d="M15 3v6h6"/>
+      </svg>
+    </button>
+    <div class="mermaid-modal-chart-container">
+      <div class="mermaid">{sanitizedCode}</div>
+    </div>
+  </div>
+</div>
+
+<style>
+.mermaid-breakout {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  box-sizing: border-box;
+  margin: 2rem 0;
+}
+.mermaid-chart-shell {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  max-width: 85ch;
+  margin: 1.25rem auto;
+  overflow-x: auto;
+  background: var(--card, #1A0F2B);
+  box-shadow: 0 4px 48px rgba(0,0,0,0.25);
+  border-radius: 10px;
+  border: 2px solid var(--brand-aqua, #04E5E5);
+  display: block;
+  padding: 1rem;
+  min-height: 200px;
+}
+.mermaid {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+}
+.mermaid svg {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+}
+.mermaid-expand-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 10;
+  background: none;
+  color: var(--foreground, #fff);
+  border: 1px solid var(--brand-aqua, #04E5E5);
+  border-radius: 3px;
+  padding: 3px;
+  cursor: pointer;
+  opacity: 0.35;
+  transition: opacity 0.2s, background-color 0.2s;
+  line-height: 0;
+}
+.mermaid-expand-btn:hover,
+.mermaid-expand-btn:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--brand-aqua, #04E5E5);
+  outline-offset: 2px;
+  background-color: rgba(4, 229, 229, 0.1);
+}
+/* Show the button when the chart shell itself is hovered/focused */
+.mermaid-chart-shell:hover .mermaid-expand-btn,
+.mermaid-chart-shell:focus-within .mermaid-expand-btn {
+  opacity: 0.85;
+}
+.mermaid-chart-shell:hover .mermaid-expand-btn:hover,
+.mermaid-chart-shell:focus-within .mermaid-expand-btn:focus-visible {
+  opacity: 1;
+}
+
+.mermaid-modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0s 0.3s linear;
+  pointer-events: none;
+}
+.mermaid-modal[data-visible="true"] {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+  pointer-events: auto;
+}
+.mermaid-modal-content {
+  position: relative;
+  background-color: var(--card, #1A0F2B);
+  padding: 4rem 2rem 2rem 2rem;
+  border-radius: 8px;
+  width: 90vw;
+  height: 90vh;
+  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  box-sizing: border-box;
+}
+.mermaid-modal-chart-container {
+  flex-grow: 1;
+  overflow: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1.5rem;
+  padding-top: 0.5rem;
+  min-height: 0;
+  position: relative;
+}
+.mermaid-modal-chart-container .mermaid {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 0;
+}
+.mermaid-modal-chart-container .mermaid svg {
+  max-width: 100%;
+  max-height: 200vh;
+  width: auto;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  position: relative;
+}
+.mermaid-modal-close-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  background: none;
+  color: var(--foreground, #fff);
+  border: 1px solid var(--brand-aqua, #04E5E5);
+  border-radius: 3px;
+  padding: 4px;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.2s, background-color 0.2s;
+  line-height: 0;
+}
+.mermaid-modal-close-btn:hover,
+.mermaid-modal-close-btn:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--brand-aqua, #04E5E5);
+  outline-offset: 2px;
+  background-color: rgba(4, 229, 229, 0.1);
+}
+.visually-hidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .mermaid-chart-shell {
+    max-width: 100%;
+    padding: 0.5rem;
+  }
+  .mermaid-modal-content {
+    width: 95vw;
+    height: 95vh;
+    padding: 3rem 1rem 1rem 1rem;
+  }
+}
+</style>
+
+<script is:inline>
+  function getCssVar(name, fallback) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+  }
+
+  function buildMermaidConfig() {
+    const foreground = getCssVar('--foreground', '#E8F3F5');
+    const card = getCssVar('--card', '#1A0F2B');
+    const muted = getCssVar('--muted', '#1A2940');
+    const brandAqua = getCssVar('--brand-aqua', '#04E5E5');
+    const brandCyan = getCssVar('--brand-cyan', '#22A6B5');
+    const brandPurple = getCssVar('--brand-purple', '#9138E0');
+
+    return {
+      startOnLoad: false,
+      theme: 'base',
+      themeVariables: {
+        darkMode: true,
+        background: 'transparent',
+        primaryColor: card,
+        primaryBorderColor: brandAqua,
+        primaryTextColor: foreground,
+        secondaryColor: brandPurple,
+        secondaryTextColor: brandCyan,
+        clusterBkg: muted,
+        clusterBorder: brandAqua,
+        lineColor: brandAqua,
+        fontFamily: 'Inter, system-ui, sans-serif',
+        decisionBkgColor: brandPurple,
+        decisionBorderColor: brandAqua,
+        processBkgColor: card,
+        processBorderColor: brandAqua,
+        roleBkgColor: brandCyan,
+        roleBorderColor: brandAqua,
+      },
+    };
+  }
+
+  if (!window.__MERMAID_LOADED__) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs')
+      .then((mermaid) => {
+        mermaid.default.initialize(buildMermaidConfig());
+        mermaid.default.run();
+        window.mermaid = mermaid.default;
+        window.__MERMAID_LOADED__ = true;
+      })
+      .catch((error) => {
+        console.error('[MermaidChart] Failed to load Mermaid library:', error);
+      });
+  } else {
+    window.mermaid?.initialize(buildMermaidConfig());
+    window.mermaid?.run();
+  }
+
+  window.renderMermaidCharts = function () {
+    if (window.mermaid) window.mermaid.run();
+  };
+
+  function centerModalSvg(modal) {
+    const svg = modal.querySelector('.mermaid svg');
+    if (svg) {
+      svg.style.maxWidth = '100%';
+      svg.style.maxHeight = '200vh';
+      svg.style.width = 'auto';
+      svg.style.height = 'auto';
+      svg.style.display = 'block';
+      svg.style.margin = '0 auto';
+    }
+  }
+
+  window.addEventListener('resize', () => {
+    const visibleModal = document.querySelector('.mermaid-modal[data-visible="true"]');
+    if (visibleModal) centerModalSvg(visibleModal);
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.mermaid-expand-btn').forEach((expandBtn) => {
+      const chartId = expandBtn.getAttribute('data-chart-id');
+      const modal = document.getElementById(`modal-${chartId}`);
+      if (!modal) return;
+
+      const closeBtn = modal.querySelector('.mermaid-modal-close-btn');
+      let previouslyFocused;
+
+      const openModal = () => {
+        previouslyFocused = document.activeElement;
+        const rawCode = expandBtn.getAttribute('data-mermaid-code');
+        const modalDiv = modal.querySelector('.mermaid');
+        if (modalDiv && rawCode && window.mermaid) {
+          modalDiv.innerHTML = '';
+          modalDiv.removeAttribute('data-processed');
+          modalDiv.textContent = rawCode;
+          modal.hidden = false;
+          setTimeout(() => {
+            modal.setAttribute('data-visible', 'true');
+            try {
+              window.mermaid.run({ nodes: [modalDiv] });
+              setTimeout(() => {
+                centerModalSvg(modal);
+                const container = modal.querySelector('.mermaid-modal-chart-container');
+                if (container) container.scrollTop = 0;
+                const ro = new ResizeObserver(() => centerModalSvg(modal));
+                ro.observe(modal);
+                modal._resizeObserver = ro;
+              }, 50);
+            } catch (e) {
+              console.error('[MermaidChart] modal render error:', e);
+              modalDiv.textContent = 'Error rendering chart.';
+            }
+            document.body.style.overflow = 'hidden';
+            expandBtn.setAttribute('aria-expanded', 'true');
+            (closeBtn ?? modal).focus();
+          }, 10);
+        }
+      };
+
+      const closeModal = () => {
+        modal.setAttribute('data-visible', 'false');
+        setTimeout(() => { modal.hidden = true; }, 300);
+        if (modal._resizeObserver) {
+          modal._resizeObserver.disconnect();
+          modal._resizeObserver = null;
+        }
+        document.body.style.overflow = '';
+        expandBtn.setAttribute('aria-expanded', 'false');
+        previouslyFocused?.focus();
+      };
+
+      expandBtn.addEventListener('click', openModal);
+      closeBtn?.addEventListener('click', closeModal);
+      modal.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+        if (e.key === 'Tab') {
+          const focusables = Array.from(modal.querySelectorAll(
+            'a[href], button:not([disabled]), [tabindex="0"]'
+          ));
+          if (focusables.length === 0) return;
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+          if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+          else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+        }
+      });
+    });
+  });
+</script>

@@ -4,6 +4,7 @@ import { toString } from "mdast-util-to-string";
 import CodeBlock from "./CodeBlock.astro";
 import Callout from "./Callout.astro";
 import MarkdownImage from "./MarkdownImage.astro";
+import MermaidChartDisplay from "./MermaidChartDisplay.astro";
 
 export interface Props {
   node: Root | Content;
@@ -165,6 +166,9 @@ function childrenOf(n: any): any[] {
 
 {type === "code" && (() => {
   const code = node as Code;
+  if (code.lang === "mermaid") {
+    return <MermaidChartDisplay code={code.value} />;
+  }
   return <CodeBlock language={code.lang ?? undefined} code={code.value} meta={code.meta ?? undefined} />;
 })()}
 
