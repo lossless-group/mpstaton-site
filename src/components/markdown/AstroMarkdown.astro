@@ -8,6 +8,7 @@ import MermaidChartDisplay from "./MermaidChartDisplay.astro";
 import YouTubeEmbed from "./YouTubeEmbed.astro";
 import YouTubeShortsEmbed from "./YouTubeShortsEmbed.astro";
 import YouTubePlaylistEmbed from "./YouTubePlaylistEmbed.astro";
+import VimeoEmbed from "./VimeoEmbed.astro";
 import { classifyBareLink, getBareLinkUrl } from "../../lib/markdown/classify-bare-link";
 
 export interface Props {
@@ -38,6 +39,7 @@ function childrenOf(n: any): any[] {
     if (c) {
       if (c.component === "YouTubeShortsEmbed") return <YouTubeShortsEmbed url={c.url} />;
       if (c.component === "YouTubePlaylistEmbed") return <YouTubePlaylistEmbed url={c.url} />;
+      if (c.component === "VimeoEmbed") return <VimeoEmbed url={c.url} />;
       return <YouTubeEmbed url={c.url} />;
     }
   }

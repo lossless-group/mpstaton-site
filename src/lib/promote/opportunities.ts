@@ -17,7 +17,9 @@ function readYaml<T>(path: string): T | null {
 let cache: Map<string, Opportunity> | null = null;
 
 function load(): Map<string, Opportunity> {
-  if (cache) return cache;
+  // Bypass in dev so edits to opportunity.yaml / variants.yaml surface on the
+  // next request. Production keeps the cache (the build runs the loader once).
+  if (cache && !import.meta.env.DEV) return cache;
   cache = new Map();
 
   const root = new URL(CONTENT_ROOT).pathname;

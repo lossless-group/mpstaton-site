@@ -9,7 +9,8 @@
 export type BareLinkComponent =
   | 'YouTubeEmbed'
   | 'YouTubeShortsEmbed'
-  | 'YouTubePlaylistEmbed';
+  | 'YouTubePlaylistEmbed'
+  | 'VimeoEmbed';
 
 export type BareLinkKind = 'video' | 'short' | 'playlist';
 
@@ -30,6 +31,7 @@ interface Matcher {
 
 const YT_HOSTS_FULL = new Set(['youtube.com', 'www.youtube.com', 'm.youtube.com']);
 const YT_HOSTS_PLAYLIST = new Set(['youtube.com', 'www.youtube.com']);
+const VIMEO_CANONICAL_HOSTS = new Set(['vimeo.com', 'www.vimeo.com']);
 
 const matchers: Matcher[] = [
   {
@@ -67,6 +69,25 @@ const matchers: Matcher[] = [
         if (u.pathname !== '/watch' && u.pathname !== '/watch/') return null;
         const v = u.searchParams.get('v');
         return v && /^[A-Za-z0-9_-]{11}$/.test(v) ? v : null;
+      }
+      return null;
+    },
+  },
+  {
+    provider: 'vimeo',
+    component: 'VimeoEmbed',
+    kind: 'video',
+    match: (u) => {
+      const host = u.hostname.toLowerCase();
+      if (VIMEO_CANONICAL_HOSTS.has(host)) {
+        // /{id}, /{id}/{hash}, /channels/{name}/{id}, /album/{x}/video/{id}, etc.
+        // We only care that a numeric video ID is present somewhere in the path.
+        const m = u.pathname.match(/^\/(?:[^/]+\/)*?(\d+)(?:\/[A-Za-z0-9]+)?\/?$/);
+        return m ? m[1] : null;
+      }
+      if (host === 'player.vimeo.com') {
+        const m = u.pathname.match(/^\/video\/(\d+)(?:\/[A-Za-z0-9]+)?\/?$/);
+        return m ? m[1] : null;
       }
       return null;
     },
