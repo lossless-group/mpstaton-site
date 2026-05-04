@@ -1,0 +1,106 @@
+---
+/**
+ * LinkRollup — multi-URL container.
+ *
+ * Renders each URL as the matching format-per-format mapping (per spec §4.23.6):
+ *   column → row · gallery → card · carousel → card · thumb-row → thumb
+ *
+ * Reads the directive's resolved spec (`linkPreviewSpec`) plus the per-URL
+ * data the og-fetcher attached to each link's `node.data.linkPreview`.
+ *
+ * For now (no OG yet), each item degrades to URL + host via LinkPreviewCard's
+ * own fallback path.
+ */
+
+import LinkPreviewCard from './LinkPreviewCard.astro';
+
+interface PreviewItem {
+  url: string;
+  /** Per-URL OG data, when fetched. */
+  data?: Record<string, unknown>;
+}
+
+interface Props {
+  urls: string[];
+  format?: 'column' | 'gallery' | 'carousel' | 'thumb-row--horizontal-scroll';
+  type?: 'article' | 'video' | 'audio' | 'code' | 'tweet' | 'unknown';
+  columns?: number;
+  /** Optional per-URL data lookup, keyed by URL. */
+  itemData?: Record<string, PreviewItem['data']>;
+}
+
+const {
+  urls,
+  format = 'gallery',
+  type = 'article',
+  columns = 3,
+  itemData = {},
+} = Astro.props as Props;
+
+const childFormat: 'row' | 'card' | 'thumb' = (() => {
+  if (format === 'column') return 'row';
+  if (format === 'thumb-row--horizontal-scroll') return 'thumb';
+  return 'card';
+})();
+---
+
+<div class={`lfm-link-rollup lfm-link-rollup--${format}`} style={`--lfm-rollup-columns: ${columns}`}>
+  {urls.map((url) => (
+    <LinkPreviewCard url={url} format={childFormat} type={type} data={itemData[url] as any} />
+  ))}
+</div>
+
+<style>
+  .lfm-link-rollup {
+    margin: 1.5rem 0;
+  }
+  .lfm-link-rollup--column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .lfm-link-rollup--gallery {
+    display: grid;
+    grid-template-columns: repeat(var(--lfm-rollup-columns, 3), minmax(0, 1fr));
+    gap: 1rem;
+  }
+  .lfm-link-rollup--gallery :global(.lfm-link-preview--card) {
+    grid-template-columns: 1fr;
+    margin: 0;
+  }
+  .lfm-link-rollup--gallery :global(.lfm-card-media) {
+    aspect-ratio: 16/9;
+    width: 100%;
+  }
+  .lfm-link-rollup--gallery :global(.lfm-card-media img) {
+    aspect-ratio: 16/9;
+  }
+  .lfm-link-rollup--carousel {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 0.5rem;
+  }
+  .lfm-link-rollup--carousel :global(.lfm-link-preview) {
+    flex: 0 0 320px;
+    scroll-snap-align: start;
+  }
+  .lfm-link-rollup--thumb-row--horizontal-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 0.5rem;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 0.5rem;
+  }
+  .lfm-link-rollup--thumb-row--horizontal-scroll :global(.lfm-link-preview--thumb) {
+    flex: 0 0 180px;
+    scroll-snap-align: start;
+  }
+
+  @media (max-width: 720px) {
+    .lfm-link-rollup--gallery {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

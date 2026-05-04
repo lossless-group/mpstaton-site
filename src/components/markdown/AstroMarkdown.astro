@@ -9,6 +9,8 @@ import YouTubeEmbed from "./YouTubeEmbed.astro";
 import YouTubeShortsEmbed from "./YouTubeShortsEmbed.astro";
 import YouTubePlaylistEmbed from "./YouTubePlaylistEmbed.astro";
 import VimeoEmbed from "./VimeoEmbed.astro";
+import LinkPreviewCard from "./LinkPreviewCard.astro";
+import LinkRollup from "./LinkRollup.astro";
 import { classifyBareLink, getBareLinkUrl } from "../../lib/markdown/classify-bare-link";
 
 export interface Props {
@@ -270,7 +272,7 @@ function childrenOf(n: any): any[] {
 
 {type === "footnoteDefinition" && null}
 
-{/* Directive handling: callout + badge */}
+{/* Directive handling: callout + badge + link-preview / link-rollup */}
 {["leafDirective", "containerDirective"].includes(type) && (() => {
   const directive: any = node;
   if (directive.name === "callout") {
@@ -278,6 +280,34 @@ function childrenOf(n: any): any[] {
   }
   if (directive.name === "image") {
     return <MarkdownImage node={directive} data={data} />;
+  }
+  // remark-link-preview stamps `data.linkPreviewSpec` on `:::link-preview`
+  // and `:::link-rollup` containerDirectives. Dispatch to the matching
+  // component family — single-URL substitutions become a LinkPreviewCard,
+  // multi-URL containers become a LinkRollup.
+  const spec = directive.data?.linkPreviewSpec;
+  if (spec && spec.kind === "link-preview" && spec.urls.length > 0) {
+    const url = spec.urls[0];
+    return (
+      <LinkPreviewCard
+        url={url}
+        format={spec.format}
+        type={spec.type}
+        trusted={spec.trusted}
+        data={spec.items?.[url]}
+      />
+    );
+  }
+  if (spec && spec.kind === "link-rollup") {
+    return (
+      <LinkRollup
+        urls={spec.urls}
+        format={spec.format}
+        type={spec.type}
+        columns={spec.columns}
+        itemData={spec.items}
+      />
+    );
   }
   // Fallback: render children as-is
   return (

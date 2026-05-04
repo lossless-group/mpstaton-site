@@ -12,6 +12,9 @@ src/content/context-v/
 src/content/essays/
 .essays-cache/
 
+# LFM Open Graph fetch cache (regenerated on build, keyed by URL hash)
+src/data/og-cache.json
+
 # /promote — opportunity content is local-only (this is a public repo).
 # Convention:
 #   • directories prefixed with `_` ARE committed (templates, scaffolding, demo)

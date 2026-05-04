@@ -1,0 +1,290 @@
+---
+/**
+ * LinkPreviewCard — single-URL substitution preview.
+ *
+ * Renders one of four visual densities (row | card | thumb | livesite)
+ * driven by `format`. Reads `data` (a partial LinkPreviewData) when the
+ * og-fetcher has populated it; otherwise falls back to URL + host so
+ * the component degrades cleanly when OG fetch is disabled or has failed.
+ *
+ * First-pass implementation — no OG fetch wired into the site yet, so most
+ * renders show host + URL. Once `loadMemo` passes `ogFetch.enabled`, the
+ * fields populate automatically.
+ */
+
+interface Props {
+  url: string;
+  format?: 'row' | 'card' | 'thumb' | 'livesite' | 'fullplayer';
+  type?: 'article' | 'video' | 'audio' | 'code' | 'tweet' | 'unknown';
+  data?: {
+    title?: string;
+    description?: string;
+    image?: string;
+    imageAlt?: string;
+    source?: string;
+    sourceUrl?: string;
+    publishedAt?: string;
+    cacheStatus?: 'hit' | 'miss' | 'failed';
+  };
+  trusted?: boolean;
+}
+
+const { url, format = 'card', type = 'article', data = {}, trusted = false } = Astro.props as Props;
+
+const host = (() => {
+  try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; }
+})();
+
+// Google's favicon service — no auth, returns a 64px icon as soon as the
+// domain has any kind of favicon discoverable. Cached aggressively by the
+// browser. Free fallback when the OG image hasn't been fetched yet.
+const faviconUrl = `https://www.google.com/s2/favicons?domain=${host}&sz=64`;
+
+const title = data.title ?? host;
+const description = data.description;
+const image = data.image;
+const source = data.source ?? host;
+const publishedAt = data.publishedAt;
+---
+
+{format === 'livesite' && trusted && (
+  <div class="lfm-link-preview lfm-link-preview--livesite">
+    <div class="lfm-livesite-meta">
+      <a href={url} target="_blank" rel="noopener noreferrer">{title}</a>
+      <span>{host}</span>
+    </div>
+    <iframe
+      src={url}
+      sandbox="allow-scripts allow-same-origin"
+      loading="lazy"
+      title={title}
+    />
+  </div>
+)}
+
+{format === 'row' && (
+  <a href={url} target="_blank" rel="noopener noreferrer" class="lfm-link-preview lfm-link-preview--row">
+    <img class="lfm-favicon" src={faviconUrl} alt="" width="20" height="20" loading="lazy" />
+    <span class="lfm-row-title">{title}</span>
+    <span class="lfm-row-host">{source}</span>
+  </a>
+)}
+
+{format === 'thumb' && (
+  <a href={url} target="_blank" rel="noopener noreferrer" class="lfm-link-preview lfm-link-preview--thumb">
+    {image ? (
+      <img src={image} alt={data.imageAlt ?? ''} loading="lazy" />
+    ) : (
+      <div class="lfm-thumb-favicon-fallback">
+        <img class="lfm-favicon lfm-favicon--lg" src={faviconUrl} alt="" loading="lazy" />
+      </div>
+    )}
+    <span class="lfm-thumb-title">{title}</span>
+  </a>
+)}
+
+{(format === 'card' || (format === 'livesite' && !trusted) || format === 'fullplayer') && (
+  <a href={url} target="_blank" rel="noopener noreferrer" class="lfm-link-preview lfm-link-preview--card">
+    {image && (
+      <div class="lfm-card-media">
+        <img src={image} alt={data.imageAlt ?? ''} loading="lazy" />
+      </div>
+    )}
+    <div class="lfm-card-body">
+      <div class="lfm-card-host">
+        <img class="lfm-favicon" src={faviconUrl} alt="" width="16" height="16" loading="lazy" />
+        <span>{source}</span>
+      </div>
+      <div class="lfm-card-title">{title}</div>
+      {description && <p class="lfm-card-description">{description}</p>}
+      {publishedAt && <div class="lfm-card-meta">Published: {publishedAt.slice(0, 10)}</div>}
+      {!data.title && (
+        <div class="lfm-card-meta lfm-card-meta--pending">
+          OG metadata not yet fetched. Enable <code>ogFetch</code> in <code>parseMarkdown</code> options.
+        </div>
+      )}
+    </div>
+  </a>
+)}
+
+<style>
+  .lfm-link-preview {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid var(--border, rgba(145, 56, 224, 0.15));
+    background: var(--card, rgba(255, 255, 255, 0.04));
+    border-radius: 8px;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .lfm-link-preview:hover {
+    border-color: var(--brand-aqua, #04E5E5);
+  }
+
+  /* --- Favicon (shared) --- */
+  .lfm-favicon {
+    display: inline-block;
+    flex-shrink: 0;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .lfm-favicon--lg { width: 48px; height: 48px; border-radius: 6px; }
+  .lfm-favicon--xl { width: 64px; height: 64px; border-radius: 8px; }
+
+  /* --- Row --- */
+  .lfm-link-preview--row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.9rem;
+    margin: 0.75rem 0;
+    font-size: 0.9rem;
+  }
+  .lfm-link-preview--row .lfm-row-host {
+    margin-left: auto;
+  }
+  .lfm-row-title {
+    color: var(--foreground, #e2e8f0);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .lfm-row-host {
+    color: var(--brand-aqua, #04E5E5);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  /* --- Card --- */
+  .lfm-link-preview--card {
+    display: grid;
+    grid-template-columns: minmax(120px, 200px) 1fr;
+    gap: 1rem;
+    padding: 0;
+    margin: 1.5rem 0;
+    overflow: hidden;
+  }
+  .lfm-link-preview--card:not(:has(.lfm-card-media)) {
+    grid-template-columns: 1fr;
+  }
+  .lfm-card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .lfm-card-body {
+    padding: 1rem 1rem 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .lfm-link-preview--card:not(:has(.lfm-card-media)) .lfm-card-body {
+    padding: 1rem;
+  }
+  .lfm-card-host {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--brand-aqua, #04E5E5);
+  }
+  .lfm-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--foreground, #e2e8f0);
+    line-height: 1.3;
+  }
+  .lfm-card-description {
+    font-size: 0.85rem;
+    color: var(--foreground, #cbd5e1);
+    opacity: 0.85;
+    margin: 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .lfm-card-meta {
+    font-size: 0.7rem;
+    color: var(--foreground, #94a3b8);
+    opacity: 0.7;
+    margin-top: auto;
+  }
+  .lfm-card-meta--pending {
+    color: var(--brand-aqua, #04E5E5);
+    opacity: 0.6;
+    font-style: italic;
+  }
+  .lfm-card-meta code {
+    font-size: 0.7rem;
+    background: rgba(4, 229, 229, 0.08);
+    padding: 0.05rem 0.25rem;
+    border-radius: 3px;
+  }
+
+  /* --- Thumb --- */
+  .lfm-link-preview--thumb {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+  .lfm-link-preview--thumb img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  .lfm-thumb-favicon-fallback {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: rgba(255, 255, 255, 0.025);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* Override the broader .lfm-link-preview--thumb img rule for the favicon. */
+  .lfm-thumb-favicon-fallback .lfm-favicon {
+    width: 48px;
+    height: 48px;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+  }
+  .lfm-thumb-title {
+    color: var(--foreground, #e2e8f0);
+    font-weight: 500;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  /* --- LiveSite --- */
+  .lfm-link-preview--livesite {
+    margin: 1.5rem 0;
+    border: 1px solid var(--border, rgba(145, 56, 224, 0.15));
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .lfm-livesite-meta {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0.9rem;
+    background: var(--card, rgba(255, 255, 255, 0.04));
+    font-size: 0.85rem;
+  }
+  .lfm-link-preview--livesite iframe {
+    width: 100%;
+    height: 480px;
+    border: none;
+    display: block;
+  }
+</style>
