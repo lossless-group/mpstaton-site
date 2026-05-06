@@ -1,5 +1,5 @@
 auth:
-  token_env: GITHUB_CONTENT_PAT
+  token_env: GITHUB_PERSONAL_ACCESS_TOKEN
 
 defaults:
   branch: main

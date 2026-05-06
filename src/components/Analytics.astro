@@ -1,0 +1,12 @@
+---
+// Analytics — Pass 1: passive scripts, production-only.
+// Pass 2 (clicks/events/flows) lives in context-v/prompts/Implement-Deeper-Analytics-Tracking.md
+const isProd = import.meta.env.PROD;
+---
+
+{isProd && (
+  <>
+    <script is:inline defer src="https://cloud.umami.is/script.js" data-website-id="01f9880b-2512-43ce-9504-18299e2196b1"></script>
+    <script is:inline src="https://cdn.usefathom.com/script.js" data-site="LSMKMSBP" defer></script>
+  </>
+)}

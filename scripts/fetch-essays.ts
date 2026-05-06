@@ -132,8 +132,13 @@ async function main() {
   const verbose = process.argv.includes('--verbose');
   const fresh = process.argv.includes('--fresh');
 
-  // Resolve token (optional for public repos)
-  const token = process.env.GITHUB_CONTENT_PAT || undefined;
+  // Resolve token (optional for public repos). Canonical name is
+  // GITHUB_PERSONAL_ACCESS_TOKEN; GITHUB_CONTENT_PAT kept as a fallback
+  // for any environment that still has the older name set.
+  const token =
+    process.env.GITHUB_PERSONAL_ACCESS_TOKEN ||
+    process.env.GITHUB_CONTENT_PAT ||
+    undefined;
   if (!token) {
     console.log('  No GitHub token found — using unauthenticated requests (60/hr limit)');
   }

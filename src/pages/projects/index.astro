@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const meta = {
+  title: 'Projects · Michael P. Staton',
+  description: 'Tools and small products from the Lossless Group — including MemoPop, the native desktop app for AI-assisted investment memos.',
+  type: 'website' as const,
+};
+---
+<BaseLayout title={meta.title} description={meta.description} meta={meta}>
+  <section class="mx-auto max-w-5xl px-6 py-16">
+    <header class="mb-10">
+      <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Projects</p>
+      <h1 class="mt-2 text-4xl font-semibold tracking-tight text-foreground">Tools we build</h1>
+      <p class="mt-3 max-w-2xl text-muted-foreground">
+        A short list of tools and small products from the Lossless Group.
+        Most are companions to the workflows you'll see across this site.
+      </p>
+    </header>
+
+    <article class="rounded-xl border border-border bg-card/40 p-8">
+      <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">For investment professionals</p>
+      <h2 class="mt-2 text-xl font-semibold tracking-tight text-foreground">
+        Don't want to run LangChain through the command line?
+      </h2>
+      <p class="mt-3 max-w-2xl text-muted-foreground">
+        Don't know what that means, but you're still an investment professional?
+        Check out our <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground">MemoPop</code>
+        native desktop app — the same memo-generation pipeline behind the
+        opportunities pages, packaged for your laptop without the terminal.
+      </p>
+      <a
+        href="https://www.lossless.group/projects/gallery/memopop-ai"
+        class="mt-5 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:text-brand-aqua transition-colors"
+      >
+        Visit MemoPop
+        <span aria-hidden="true">→</span>
+      </a>
+    </article>
+  </section>
+</BaseLayout>
