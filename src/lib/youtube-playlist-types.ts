@@ -5,10 +5,11 @@
 
 export interface PlaylistItem {
   videoId: string;
-  position: number;
+  position: number;       // YouTube's playlist-position index — used for playVideoAt()
   title: string;
   thumbnail: string;
-  duration?: string;
+  duration?: string;      // ISO 8601 — PT4M30S
+  addedAt?: string;       // ISO timestamp; when the video was added to the playlist
   channelTitle?: string;
   unavailable?: boolean;
 }

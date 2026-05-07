@@ -137,13 +137,13 @@
 
 <style>
   .playlist-sidebar {
+    /* The outer wrapper (.yt-playlist__sidebar) owns the chrome — background,
+       border, radius — so this component inherits visually and stays usable
+       in both inline and full-screen-panel contexts. */
     display: flex;
     flex-direction: column;
     height: 100%;
     min-height: 0;
-    background: var(--card, rgba(255, 255, 255, 0.04));
-    border: 1px solid var(--border, rgba(145, 56, 224, 0.18));
-    border-radius: 12px;
     overflow: hidden;
   }
   .playlist-sidebar__list {

@@ -33,6 +33,7 @@ interface PlaylistItem {
   title: string;
   thumbnail: string;
   duration?: string; // ISO 8601 — PT4M30S
+  addedAt?: string;  // ISO timestamp when the video was added to the playlist
   channelTitle?: string;
   unavailable?: boolean;
 }
@@ -122,6 +123,7 @@ interface YTPlaylistItemsResponse {
     snippet: {
       position: number;
       title: string;
+      publishedAt: string; // when added to playlist
       channelTitle?: string;
       thumbnails?: Record<string, { url: string; width: number; height: number }>;
       resourceId: { videoId: string };
@@ -210,6 +212,7 @@ async function fetchPlaylist(id: string, key: string): Promise<PlaylistCacheEntr
       title: it.snippet.title,
       thumbnail: pickThumb(it.snippet.thumbnails),
       duration: durations.get(videoId),
+      addedAt: it.snippet.publishedAt,
       channelTitle: it.snippet.channelTitle,
       unavailable: isPrivate || undefined,
     };

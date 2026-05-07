@@ -45,8 +45,16 @@ if (!playlistId) {
 const data = getPlaylist(playlistId);
 const ITEM_CAP = 50;
 const allItems = data?.items ?? [];
-const visibleItems = allItems.slice(0, ITEM_CAP);
-const overflow = allItems.length > ITEM_CAP;
+// Default sort: most-recently-added on top. Falls back to playlist position
+// for items without addedAt (older cache entries, edge cases).
+const sortedItems = [...allItems].sort((a, b) => {
+  if (a.addedAt && b.addedAt) return b.addedAt.localeCompare(a.addedAt);
+  if (a.addedAt) return -1;
+  if (b.addedAt) return 1;
+  return a.position - b.position;
+});
+const visibleItems = sortedItems.slice(0, ITEM_CAP);
+const overflow = sortedItems.length > ITEM_CAP;
 const totalCount = data?.itemCount ?? allItems.length;
 
 const iframeId = `yt-pl-${playlistId}`;
@@ -139,12 +147,16 @@ const isUnavailable = !data || data.unavailable || allItems.length === 0;
 
 <style>
   .yt-playlist {
-    margin-block: 1.5rem;
+    /* Tighter than before — was 1.5rem, the article had too much breathing room */
+    margin-block: 0.5rem;
     border: 1px solid var(--border, rgba(145, 56, 224, 0.18));
     border-radius: 14px;
-    overflow: hidden;
     background: var(--card, rgba(255, 255, 255, 0.03));
     box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.35);
+    /* `overflow: hidden` removed so the right-escape sidebar can extend
+       past the component's box on wide viewports. The sub-areas (player,
+       header) keep their own border-radius via clip-path or border-radius
+       on themselves where needed. */
   }
 
   .yt-playlist__header {
@@ -152,16 +164,18 @@ const isUnavailable = !data || data.unavailable || allItems.length === 0;
     align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0.85rem 1rem;
+    padding: 0.7rem 1rem;
     border-bottom: 1px solid var(--border, rgba(145, 56, 224, 0.12));
     background: linear-gradient(
       to right,
-      rgba(4, 229, 229, 0.05),
-      transparent 70%
+      rgba(4, 229, 229, 0.04),
+      transparent 60%
     );
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
   }
   .yt-playlist__eyebrow {
-    margin: 0 0 0.15rem 0;
+    margin: 0 0 0.1rem 0;
     font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -176,7 +190,7 @@ const isUnavailable = !data || data.unavailable || allItems.length === 0;
     color: var(--foreground, #e2e8f0);
   }
   .yt-playlist__meta {
-    margin: 0.3rem 0 0 0;
+    margin: 0.25rem 0 0 0;
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
@@ -200,6 +214,8 @@ const isUnavailable = !data || data.unavailable || allItems.length === 0;
     text-decoration: underline;
   }
 
+  /* Default layout (≤1279px): single column — header, player, then sidebar
+     stacked. Sidebar height capped to ~3 items so it doesn't dominate. */
   .yt-playlist__layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -209,6 +225,9 @@ const isUnavailable = !data || data.unavailable || allItems.length === 0;
     width: 100%;
     aspect-ratio: 16 / 9;
     background: #000;
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+    overflow: hidden;
   }
   .yt-playlist__player iframe {
     width: 100%;
@@ -218,20 +237,47 @@ const isUnavailable = !data || data.unavailable || allItems.length === 0;
   }
   .yt-playlist__sidebar {
     min-height: 0;
+    border-top: 1px solid var(--border, rgba(145, 56, 224, 0.12));
+    /* Default cap: ~3 items + tiny scroll affordance */
+    max-height: 232px;
+    overflow: hidden;
   }
 
-  /* Tablet+: side-by-side layout */
-  @media (min-width: 1024px) {
-    .yt-playlist__layout {
-      grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
+  /* Wide-desktop right-escape: the sidebar pops out into the article's right
+     margin track. Player stays at the article column width; header sits above
+     the player only. This is the first concrete consumer of the `aside-escape`
+     pattern (LFM video spec §4.1.3 + cross-cutting per §5.5).
+     `(100vw - 100%) / 2` is the right margin space outside this component's
+     parent column; pulling it negative lets the component span past the column
+     edge into that space, capped at 2rem from the viewport's right edge. */
+  @media (min-width: 1280px) {
+    .yt-playlist {
+      margin-right: calc(((100vw - 100%) / -2) + 2rem);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 1.5rem minmax(280px, 340px);
+      grid-template-rows: auto auto;
+      grid-template-areas:
+        "header header header"
+        "player gap   sidebar";
+    }
+    .yt-playlist__header {
+      grid-area: header;
+      border-top-right-radius: 14px;
+    }
+    .yt-playlist__layout { display: contents; }
+    .yt-playlist__player {
+      grid-area: player;
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 14px;
     }
     .yt-playlist__sidebar {
-      max-height: 100%;
+      grid-area: sidebar;
+      max-height: none;       /* matches player height via grid row stretch */
+      align-self: stretch;
+      border-top: none;
       border-left: 1px solid var(--border, rgba(145, 56, 224, 0.12));
-    }
-    .yt-playlist__player {
-      /* Ensure player anchors to the top of the layout grid */
-      aspect-ratio: 16 / 9;
+      border-radius: 0 14px 14px 0;
+      overflow: hidden;
     }
   }
 
