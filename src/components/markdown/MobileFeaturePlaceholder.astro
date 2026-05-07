@@ -1,0 +1,285 @@
+---
+/**
+ * Cross-cutting mobile-sidebar pattern per:
+ * context-v/specs/Versatile-Component-Library-for-Video-Players.md §5.9
+ *
+ * Desktop / tablet (≥769px): full content renders inline as a sidebar.
+ * Mobile (≤768px): full content is hidden inline; a compact placeholder
+ * slot renders in its place with a CTA. Tapping the CTA (or a leftward
+ * swipe from the placeholder) slides the full content in as a full-screen
+ * panel. Swipe right, tap the back button, or press ESC to return.
+ *
+ * Slots:
+ *   - `placeholder` — compact inline preview shown only on mobile
+ *   - default slot — full content shown inline on desktop and inside the
+ *     panel on mobile
+ *
+ * Props:
+ *   - label: CTA text on the placeholder ("Browse playlist", etc.)
+ *   - panelTitle: optional title shown in the panel header on mobile
+ */
+
+interface Props {
+  label: string;
+  panelTitle?: string;
+  id?: string;
+}
+
+const generatedId =
+  'mfp-' + Math.random().toString(36).slice(2, 10);
+const { label, panelTitle, id = generatedId } = Astro.props;
+---
+
+<div class="mfp" data-mfp-id={id}>
+  <div class="mfp__placeholder">
+    <slot name="placeholder" />
+    <button type="button" class="mfp__cta" data-mfp-open={id}>
+      {label}
+      <span aria-hidden="true">→</span>
+    </button>
+  </div>
+
+  <div
+    class="mfp__full"
+    role="region"
+    aria-label={panelTitle ?? label}
+  >
+    <header class="mfp__panel-header">
+      <button
+        type="button"
+        class="mfp__back"
+        data-mfp-close={id}
+        aria-label="Back to article"
+      >
+        <span aria-hidden="true">←</span> Back
+      </button>
+      {panelTitle && <h2 class="mfp__panel-title">{panelTitle}</h2>}
+    </header>
+    <div class="mfp__panel-body">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<script>
+  // One handler set at module scope; uses delegated events keyed by data attrs.
+  // Idempotent — safe even if Astro hydrates multiple times.
+  if (!(window as any).__mfpInit) {
+    (window as any).__mfpInit = true;
+
+    const isMobile = () =>
+      window.matchMedia('(max-width: 768px)').matches;
+
+    function openPanel(id: string) {
+      const root = document.querySelector(`.mfp[data-mfp-id="${id}"]`);
+      if (!root) return;
+      root.setAttribute('data-mfp-open', '');
+      document.body.style.overflow = 'hidden';
+      // Focus the back button so keyboard / screen-reader land there
+      const backBtn = root.querySelector<HTMLButtonElement>('.mfp__back');
+      backBtn?.focus();
+      // Push history state so swipe-back / browser-back closes the panel
+      history.pushState({ mfp: id }, '', window.location.href);
+    }
+
+    function closePanel(id: string) {
+      const root = document.querySelector(`.mfp[data-mfp-id="${id}"]`);
+      if (!root || !root.hasAttribute('data-mfp-open')) return;
+      root.removeAttribute('data-mfp-open');
+      document.body.style.overflow = '';
+      // Return focus to the CTA that opened it
+      const cta = root.querySelector<HTMLButtonElement>('.mfp__cta');
+      cta?.focus();
+    }
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const open = target.closest<HTMLElement>('[data-mfp-open]');
+      if (open) {
+        e.preventDefault();
+        openPanel(open.getAttribute('data-mfp-open')!);
+        return;
+      }
+      const close = target.closest<HTMLElement>('[data-mfp-close]');
+      if (close) {
+        e.preventDefault();
+        const id = close.getAttribute('data-mfp-close')!;
+        if (history.state?.mfp === id) history.back();
+        else closePanel(id);
+      }
+    });
+
+    // Close on browser back (also handles edge swipe-back on iOS Safari)
+    window.addEventListener('popstate', () => {
+      document.querySelectorAll<HTMLElement>('.mfp[data-mfp-open]').forEach((el) => {
+        const id = el.getAttribute('data-mfp-id');
+        if (id) closePanel(id);
+      });
+    });
+
+    // ESC closes any open panel
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const open = document.querySelector<HTMLElement>('.mfp[data-mfp-open]');
+      if (open) {
+        const id = open.getAttribute('data-mfp-id');
+        if (id) {
+          if (history.state?.mfp === id) history.back();
+          else closePanel(id);
+        }
+      }
+    });
+
+    // Touch swipe — right-to-left to open from placeholder, left-to-right to close
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const SWIPE_MIN_PX = 60;
+    const SWIPE_MAX_VERTICAL = 50;
+
+    document.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      if (!isMobile()) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - touchStartX;
+      const dy = Math.abs(t.clientY - touchStartY);
+      if (dy > SWIPE_MAX_VERTICAL) return; // ignore mostly-vertical swipes
+
+      const target = e.target as HTMLElement;
+      const root = target.closest<HTMLElement>('.mfp');
+      if (!root) return;
+      const id = root.getAttribute('data-mfp-id');
+      if (!id) return;
+
+      if (dx < -SWIPE_MIN_PX && !root.hasAttribute('data-mfp-open')) {
+        // swipe-left from placeholder → open
+        const placeholder = target.closest('.mfp__placeholder');
+        if (placeholder) openPanel(id);
+      } else if (dx > SWIPE_MIN_PX && root.hasAttribute('data-mfp-open')) {
+        // swipe-right inside open panel → close
+        if (history.state?.mfp === id) history.back();
+        else closePanel(id);
+      }
+    }, { passive: true });
+  }
+</script>
+
+<style>
+  .mfp {
+    /* desktop default: full content visible, placeholder hidden */
+    display: contents;
+  }
+  .mfp__placeholder {
+    display: none;
+  }
+  .mfp__back,
+  .mfp__panel-header {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .mfp {
+      display: block;
+    }
+    .mfp__full {
+      display: none;
+    }
+    .mfp__placeholder {
+      display: block;
+      padding: 1rem;
+      border: 1px solid var(--border, rgba(145, 56, 224, 0.18));
+      border-radius: 12px;
+      background: var(--card, rgba(255, 255, 255, 0.04));
+      margin-block: 1rem;
+    }
+    .mfp__cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+      padding: 0.5rem 0.9rem;
+      background: transparent;
+      border: 1px solid var(--brand-aqua, #04E5E5);
+      border-radius: 8px;
+      color: var(--foreground, #e2e8f0);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.15s, transform 0.15s;
+    }
+    .mfp__cta:hover,
+    .mfp__cta:focus-visible {
+      background: rgba(4, 229, 229, 0.12);
+      outline: 2px solid var(--brand-aqua, #04E5E5);
+      outline-offset: 2px;
+    }
+    .mfp__cta:active {
+      transform: translateX(2px);
+    }
+
+    /* When open: full-screen panel */
+    .mfp[data-mfp-open] .mfp__full {
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: var(--background, #0b0b14);
+      animation: mfp-slide-in 220ms ease-out;
+    }
+    .mfp[data-mfp-open] .mfp__panel-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border, rgba(145, 56, 224, 0.18));
+      flex-shrink: 0;
+    }
+    .mfp[data-mfp-open] .mfp__back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: transparent;
+      border: 1px solid var(--border, rgba(145, 56, 224, 0.18));
+      border-radius: 8px;
+      padding: 0.4rem 0.8rem;
+      color: var(--foreground, #e2e8f0);
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .mfp[data-mfp-open] .mfp__back:hover,
+    .mfp[data-mfp-open] .mfp__back:focus-visible {
+      background: rgba(4, 229, 229, 0.08);
+    }
+    .mfp[data-mfp-open] .mfp__panel-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--foreground, #e2e8f0);
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .mfp[data-mfp-open] .mfp__panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+  }
+
+  @keyframes mfp-slide-in {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mfp[data-mfp-open] .mfp__full {
+      animation: none;
+    }
+  }
+</style>

@@ -1,118 +1,282 @@
 ---
+/**
+ * YouTubePlaylistEmbed — full playlist UX per:
+ * context-v/specs/Versatile-Component-Library-for-Video-Players.md §4.1.3
+ *
+ * Astro shell + Svelte island architecture:
+ * - Astro server-renders the wrapper, header strip, and iframe
+ * - PlaylistSidebar.svelte renders the sidebar list and handles click-to-play
+ *   via the YouTube IFrame Player API (postMessage)
+ * - MobileFeaturePlaceholder wraps the sidebar so it becomes a full-screen
+ *   panel on mobile (≤768px)
+ *
+ * Data is sourced from src/data/youtube-playlist-cache.json, populated by
+ * scripts/fetch-youtube-playlists.ts at build time.
+ */
+
+import PlaylistSidebar from './PlaylistSidebar.svelte';
+import MobileFeaturePlaceholder from './MobileFeaturePlaceholder.astro';
+import { getPlaylist, formatDuration } from '../../lib/youtube-playlist-cache';
+
 interface Props {
-  url: string;
+  url?: string;
+  id?: string;
+  index?: number;
   caption?: string;
 }
 
-const { url, caption } = Astro.props;
+const { url, id: idProp, index = 0, caption } = Astro.props;
 
-const extractYouTubePlaylistId = (url: string): string | null => {
-  const playlistMatch = url.match(/youtube\.com\/playlist\?.*list=([a-zA-Z0-9_-]+)/);
-  return playlistMatch ? playlistMatch[1] : null;
-};
+function extractPlaylistId(u: string): string | null {
+  try {
+    return new URL(u).searchParams.get('list');
+  } catch {
+    return null;
+  }
+}
 
-const playlistId = extractYouTubePlaylistId(url);
-if (!playlistId) throw new Error(`Invalid YouTube playlist URL: ${url}`);
+const playlistId = idProp ?? (url ? extractPlaylistId(url) : null);
+if (!playlistId) {
+  throw new Error(
+    `YouTubePlaylistEmbed requires id or url; got id=${idProp ?? '(none)'} url=${url ?? '(none)'}`
+  );
+}
 
-let embedUrl = `https://www.youtube.com/embed/videoseries?list=${playlistId}`;
-const siMatch = url.match(/[?&]si=([^&]+)/);
-if (siMatch) embedUrl += `&si=${siMatch[1]}`;
+const data = getPlaylist(playlistId);
+const ITEM_CAP = 50;
+const allItems = data?.items ?? [];
+const visibleItems = allItems.slice(0, ITEM_CAP);
+const overflow = allItems.length > ITEM_CAP;
+const totalCount = data?.itemCount ?? allItems.length;
+
+const iframeId = `yt-pl-${playlistId}`;
+const embedSrc = `https://www.youtube-nocookie.com/embed/videoseries?list=${playlistId}&enablejsapi=1&modestbranding=1&rel=0`;
+
+const isUnavailable = !data || data.unavailable || allItems.length === 0;
 ---
 
-<div class="youtube-playlist-container">
-  <div class="youtube-playlist-wrapper">
-    <iframe
-      src={embedUrl}
-      title="YouTube playlist player"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      referrerpolicy="strict-origin-when-cross-origin"
-      allowfullscreen
-      loading="lazy"
-    />
-  </div>
-  {caption && (
-    <div class="youtube-playlist-caption">
-      <div class="caption-content">{caption}</div>
-      <button
-        class="copy-url-btn"
-        onclick={`navigator.clipboard.writeText('${url}').then(() => {
-          const btn = event.target.closest('.copy-url-btn');
-          btn.classList.add('copied');
-          setTimeout(() => { btn.classList.remove('copied'); }, 2000);
-        }).catch(err => console.error('Failed to copy: ', err))`}
-        title="Copy playlist URL to clipboard"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M16 3H4V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M8 7H20V20H8V7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
+<aside class="yt-playlist" aria-label={data?.title ?? 'YouTube playlist'}>
+  <header class="yt-playlist__header">
+    <div class="yt-playlist__title-block">
+      <p class="yt-playlist__eyebrow">YouTube playlist</p>
+      <h3 class="yt-playlist__title">{data?.title ?? 'YouTube playlist'}</h3>
+      {data && (
+        <p class="yt-playlist__meta">
+          {data.channelTitle && <span>{data.channelTitle}</span>}
+          {data.channelTitle && <span aria-hidden="true">·</span>}
+          <span>{totalCount} {totalCount === 1 ? 'video' : 'videos'}</span>
+        </p>
+      )}
     </div>
-  )}
-</div>
+    <a
+      class="yt-playlist__open-on-yt"
+      href={`https://www.youtube.com/playlist?list=${playlistId}`}
+      target="_blank"
+      rel="noopener"
+      title="Open playlist on YouTube"
+    >
+      Open on YouTube ↗
+    </a>
+  </header>
+
+  <div class="yt-playlist__layout">
+    <div class="yt-playlist__player">
+      <iframe
+        id={iframeId}
+        src={embedSrc}
+        title={data?.title ?? 'YouTube playlist player'}
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+        loading="lazy"
+      />
+    </div>
+
+    <div class="yt-playlist__sidebar">
+      {isUnavailable ? (
+        <div class="yt-playlist__unavailable">
+          <p>Playlist details unavailable.</p>
+          <p class="yt-playlist__unavailable-detail">
+            The playlist will still play in the embedded player above.
+          </p>
+        </div>
+      ) : (
+        <MobileFeaturePlaceholder
+          label={`Browse ${totalCount} ${totalCount === 1 ? 'video' : 'videos'}`}
+          panelTitle={data?.title}
+        >
+          <Fragment slot="placeholder">
+            <div class="yt-playlist__placeholder">
+              <p class="yt-playlist__placeholder-title">{data?.title}</p>
+              <div class="yt-playlist__placeholder-thumbs">
+                {visibleItems.slice(0, 4).map((item) => (
+                  <img src={item.thumbnail} alt="" loading="lazy" width="80" height="45" />
+                ))}
+              </div>
+              <p class="yt-playlist__placeholder-count">
+                {data?.channelTitle && `${data.channelTitle} · `}{totalCount} videos
+              </p>
+            </div>
+          </Fragment>
+
+          <PlaylistSidebar
+            client:visible
+            items={visibleItems}
+            playlistId={playlistId}
+            iframeId={iframeId}
+            initialIndex={index}
+            totalCount={totalCount}
+            overflow={overflow}
+          />
+        </MobileFeaturePlaceholder>
+      )}
+    </div>
+  </div>
+
+  {caption && <p class="yt-playlist__caption">{caption}</p>}
+</aside>
 
 <style>
-  .youtube-playlist-container {
-    margin: 1.5rem 0;
-    border-radius: 8px;
+  .yt-playlist {
+    margin-block: 1.5rem;
+    border: 1px solid var(--border, rgba(145, 56, 224, 0.18));
+    border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
-    border: 1px solid var(--border, rgba(145, 56, 224, 0.15));
+    background: var(--card, rgba(255, 255, 255, 0.03));
+    box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.35);
   }
-  .youtube-playlist-wrapper {
+
+  .yt-playlist__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border, rgba(145, 56, 224, 0.12));
+    background: linear-gradient(
+      to right,
+      rgba(4, 229, 229, 0.05),
+      transparent 70%
+    );
+  }
+  .yt-playlist__eyebrow {
+    margin: 0 0 0.15rem 0;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--brand-aqua, #04E5E5);
+  }
+  .yt-playlist__title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--foreground, #e2e8f0);
+  }
+  .yt-playlist__meta {
+    margin: 0.3rem 0 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--muted-foreground, #94a3b8);
+  }
+  .yt-playlist__open-on-yt {
+    flex-shrink: 0;
+    font-size: 0.78rem;
+    color: var(--brand-aqua, #04E5E5);
+    text-decoration: none;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--border, rgba(145, 56, 224, 0.18));
+    border-radius: 6px;
+    transition: background-color 0.12s;
+    white-space: nowrap;
+  }
+  .yt-playlist__open-on-yt:hover,
+  .yt-playlist__open-on-yt:focus-visible {
+    background: rgba(4, 229, 229, 0.08);
+    text-decoration: underline;
+  }
+
+  .yt-playlist__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .yt-playlist__player {
     position: relative;
     width: 100%;
-    aspect-ratio: 16/9;
+    aspect-ratio: 16 / 9;
     background: #000;
   }
-  .youtube-playlist-wrapper iframe {
+  .yt-playlist__player iframe {
     width: 100%;
     height: 100%;
     border: none;
     display: block;
   }
-  .youtube-playlist-caption {
-    padding: 0.75rem 1rem;
-    background: var(--card, rgba(255, 255, 255, 0.05));
-    border-top: 1px solid var(--border, rgba(145, 56, 224, 0.15));
+  .yt-playlist__sidebar {
+    min-height: 0;
+  }
+
+  /* Tablet+: side-by-side layout */
+  @media (min-width: 1024px) {
+    .yt-playlist__layout {
+      grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
+    }
+    .yt-playlist__sidebar {
+      max-height: 100%;
+      border-left: 1px solid var(--border, rgba(145, 56, 224, 0.12));
+    }
+    .yt-playlist__player {
+      /* Ensure player anchors to the top of the layout grid */
+      aspect-ratio: 16 / 9;
+    }
+  }
+
+  .yt-playlist__unavailable {
+    padding: 1rem;
+    color: var(--muted-foreground, #94a3b8);
     font-size: 0.9rem;
-    line-height: 1.4;
+    text-align: center;
+  }
+  .yt-playlist__unavailable-detail {
+    font-size: 0.78rem;
+    margin-top: 0.4rem;
+  }
+
+  .yt-playlist__caption {
+    padding: 0.6rem 1rem;
+    border-top: 1px solid var(--border, rgba(145, 56, 224, 0.12));
+    font-size: 0.85rem;
+    color: var(--muted-foreground, #94a3b8);
+    margin: 0;
+  }
+
+  /* Mobile placeholder content */
+  .yt-playlist__placeholder-title {
+    margin: 0 0 0.6rem 0;
+    font-size: 0.95rem;
+    font-weight: 600;
     color: var(--foreground, #e2e8f0);
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
   }
-  .caption-content { flex: 1; min-width: 0; }
-  .copy-url-btn {
-    background: transparent;
-    border: 1px solid var(--brand-aqua, #04E5E5);
-    border-radius: 6px;
-    padding: 0.5rem;
-    cursor: pointer;
-    color: var(--foreground, #e2e8f0);
-    transition: opacity 0.2s, background-color 0.2s;
-    flex-shrink: 0;
-    min-width: 2.5rem;
-    height: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.7;
+  .yt-playlist__placeholder-thumbs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.4rem;
+    margin-bottom: 0.6rem;
   }
-  .copy-url-btn:hover,
-  .copy-url-btn:focus-visible {
-    opacity: 1;
-    background-color: rgba(4, 229, 229, 0.1);
-    outline: 2px solid var(--brand-aqua, #04E5E5);
-    outline-offset: 2px;
+  .yt-playlist__placeholder-thumbs img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 4px;
+    background: #000;
   }
-  .copy-url-btn.copied {
-    background: rgba(34, 197, 94, 0.2);
-    border-color: rgba(34, 197, 94, 0.4);
-    color: #4ade80;
+  .yt-playlist__placeholder-count {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--muted-foreground, #94a3b8);
   }
-  .copy-url-btn svg { width: 16px; height: 16px; }
 </style>

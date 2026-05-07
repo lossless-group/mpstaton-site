@@ -15,6 +15,9 @@ src/content/essays/
 # LFM Open Graph fetch cache (regenerated on build, keyed by URL hash)
 src/data/og-cache.json
 
+# YouTube playlist data cache (regenerated on build, keyed by playlist ID)
+src/data/youtube-playlist-cache.json
+
 # /promote — opportunity content is local-only (this is a public repo).
 # Convention:
 #   • directories prefixed with `_` ARE committed (templates, scaffolding, demo)

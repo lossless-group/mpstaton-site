@@ -5,7 +5,8 @@
   "scripts": {
     "fetch-context": "bun scripts/fetch-context-v.ts",
     "fetch-essays": "bun scripts/fetch-essays.ts",
-    "fetch-all": "pnpm fetch-context && pnpm fetch-essays",
+    "fetch-playlists": "bun scripts/fetch-youtube-playlists.ts",
+    "fetch-all": "pnpm fetch-context && pnpm fetch-essays && pnpm fetch-playlists",
     "dev": "pnpm fetch-all && astro dev",
     "build": "pnpm fetch-all && astro build",
     "preview": "astro preview",
@@ -24,7 +25,9 @@
     "yaml": "^2.8.3"
   },
   "devDependencies": {
+    "@astrojs/svelte": "^8.1.0",
     "@tailwindcss/vite": "^4.1.14",
+    "svelte": "^5.55.5",
     "tailwindcss": "^4.1.14"
   }
 }
