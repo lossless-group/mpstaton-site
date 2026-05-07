@@ -95,26 +95,48 @@ const {
 </aside>
 
 <style>
-  /* Default (≤1279px): stacked below the card, capped to ~3 items. */
+  /* Default (≤1279px): stacked below the card, capped to ~3 items.
+     `overflow-y: auto` (not `hidden`) so wheel/touchpad/keyboard
+     scrolling works naturally — the previous `overflow: hidden` clipped
+     content but never offered a scroll mechanism because the inner
+     height chain was broken. */
   .yt-pl-scroller {
     margin-top: 0.5rem;
     border: 1px solid var(--border, rgba(145, 56, 224, 0.18));
     border-radius: 14px;
-    overflow: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     background: var(--card, rgba(255, 255, 255, 0.03));
     max-height: 232px;
+    /* Subtle scrollbar styling so the bar doesn't dominate */
+    scrollbar-width: thin;
+    scrollbar-color: var(--border, rgba(145, 56, 224, 0.4)) transparent;
+  }
+  .yt-pl-scroller::-webkit-scrollbar {
+    width: 8px;
+  }
+  .yt-pl-scroller::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .yt-pl-scroller::-webkit-scrollbar-thumb {
+    background: var(--border, rgba(145, 56, 224, 0.35));
+    border-radius: 4px;
   }
 
   /* ≥1280px — the `aside-escape` pattern. The scroller pops out of the article
      column into the right margin track. Requires a `position: relative`
      ancestor (the orchestrator's `.yt-playlist-block` wrapper).
      `100%` resolves to the wrapper's width (= article column inner width).
-     `(100vw - 100%) / 2` is the right margin space outside that column. */
+     `(100vw - 100%) / 2` is the right margin space outside that column.
+     Vertical centering: top: 50% + translateY(-50%) anchors the scroller's
+     midpoint to the player's midpoint, so it extends equally above and below
+     the player when taller. */
   @media (min-width: 1280px) {
     .yt-pl-scroller {
       position: absolute;
-      top: 0;
+      top: 50%;
       left: calc(100% + 1.5rem);
+      transform: translateY(-50%);
       width: min(340px, calc(((100vw - 100%) / 2) - 2rem));
       max-height: min(80vh, 720px);
       margin-top: 0;

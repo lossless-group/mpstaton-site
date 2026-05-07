@@ -14,12 +14,18 @@
   let player: any = null;
   let pollHandle: number | null = null;
 
+  let sidebarEl: HTMLDivElement | null = null;
+  let listEl: HTMLOListElement | null = null;
+  let scrollEl: HTMLElement | null = null;
+  let isAtTop = true;
+  let isAtBottom = false;
+  const SCROLL_BY_ITEMS = 5;
+
   // Loads the YouTube IFrame API script (idempotent across instances).
   function ensureYouTubeApi(): Promise<void> {
     return new Promise((resolve) => {
       const w = window as any;
       if (w.YT && w.YT.Player) { resolve(); return; }
-      // Multiple sidebars on one page share the readiness event
       const prev = w.onYouTubeIframeAPIReady;
       w.onYouTubeIframeAPIReady = () => {
         if (typeof prev === 'function') prev();
@@ -47,8 +53,6 @@
     });
   }
 
-  // The IFrame API doesn't fire a dedicated "playlist index changed" event,
-  // so on every state change (and on a slow poll) we read getPlaylistIndex().
   function syncFromPlayer() {
     if (!player?.getPlaylistIndex) return;
     try {
@@ -65,7 +69,6 @@
       player.playVideoAt(i);
       activeIndex = i;
     } else {
-      // Pre-hydration fallback: navigate to the YouTube page
       const item = items[i];
       window.open(
         `https://www.youtube.com/watch?v=${item.videoId}&list=${playlistId}&index=${i + 1}`,
@@ -75,23 +78,70 @@
     }
   }
 
+  // Walks up from the sidebar root looking for the nearest scrollable ancestor.
+  // For inline desktop the answer is `.yt-pl-scroller`; inside the mobile
+  // full-screen panel it's `.mfp__panel-body`. Either works as the scroll target.
+  function findScrollContainer(el: HTMLElement | null): HTMLElement | null {
+    let current: HTMLElement | null = el?.parentElement ?? null;
+    while (current && current !== document.body) {
+      const style = getComputedStyle(current);
+      const oy = style.overflowY;
+      if (oy === 'auto' || oy === 'scroll') return current;
+      current = current.parentElement;
+    }
+    return null;
+  }
+
+  function updateEdges() {
+    if (!scrollEl) return;
+    isAtTop = scrollEl.scrollTop < 4;
+    isAtBottom =
+      scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 4;
+  }
+
+  function scrollByN(n: number) {
+    if (!scrollEl || !listEl) return;
+    const firstItem = listEl.querySelector('li');
+    const itemHeight = firstItem?.getBoundingClientRect().height ?? 64;
+    scrollEl.scrollBy({ top: n * itemHeight, behavior: 'smooth' });
+  }
+
   onMount(async () => {
+    scrollEl = findScrollContainer(sidebarEl);
+    if (scrollEl) {
+      scrollEl.addEventListener('scroll', updateEdges, { passive: true });
+      // Defer initial measurement until layout settles
+      requestAnimationFrame(() => requestAnimationFrame(updateEdges));
+    }
     await ensureYouTubeApi();
     attachPlayer();
-    // Poll every 2s as a backstop — onStateChange covers most transitions
-    // but a user clicking inside the iframe (on YouTube's own next-button)
-    // doesn't always fire onStateChange in the parent.
     pollHandle = window.setInterval(syncFromPlayer, 2000);
   });
 
   onDestroy(() => {
+    if (scrollEl) scrollEl.removeEventListener('scroll', updateEdges);
     if (pollHandle != null) clearInterval(pollHandle);
     if (player?.destroy) try { player.destroy(); } catch {}
   });
 </script>
 
-<div class="playlist-sidebar">
-  <ol class="playlist-sidebar__list" aria-label="Playlist videos">
+<div class="playlist-sidebar" bind:this={sidebarEl}>
+  <div class="playlist-sidebar__btn-bar playlist-sidebar__btn-bar--top">
+    <button
+      type="button"
+      class="playlist-sidebar__scroll-btn"
+      on:click={() => scrollByN(-SCROLL_BY_ITEMS)}
+      disabled={isAtTop}
+      aria-label={`Scroll up ${SCROLL_BY_ITEMS} videos`}
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="18 15 12 9 6 15" />
+      </svg>
+      <span>Up {SCROLL_BY_ITEMS}</span>
+    </button>
+  </div>
+
+  <ol class="playlist-sidebar__list" bind:this={listEl} aria-label="Playlist videos">
     {#each items as item, i (item.videoId + '-' + item.position)}
       <li
         class="playlist-sidebar__item"
@@ -123,6 +173,22 @@
       </li>
     {/each}
   </ol>
+
+  <div class="playlist-sidebar__btn-bar playlist-sidebar__btn-bar--bottom">
+    <button
+      type="button"
+      class="playlist-sidebar__scroll-btn"
+      on:click={() => scrollByN(SCROLL_BY_ITEMS)}
+      disabled={isAtBottom}
+      aria-label={`Scroll down ${SCROLL_BY_ITEMS} videos`}
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+      <span>Down {SCROLL_BY_ITEMS}</span>
+    </button>
+  </div>
+
   {#if overflow}
     <a
       class="playlist-sidebar__overflow"
@@ -136,22 +202,63 @@
 </div>
 
 <style>
+  /* The wrapper component (.yt-pl-scroller) is the scroll container — it has
+     `overflow-y: auto` and the `max-height` cap. This sidebar lays out as a
+     normal block; the buttons use `position: sticky` to pin to the top and
+     bottom of the wrapper's scroll viewport, the list flows naturally between
+     them, and wheel/touchpad scroll just works. */
   .playlist-sidebar {
-    /* The outer wrapper (.yt-playlist__sidebar) owns the chrome — background,
-       border, radius — so this component inherits visually and stays usable
-       in both inline and full-screen-panel contexts. */
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    min-height: 0;
-    overflow: hidden;
+    display: block;
   }
+
+  .playlist-sidebar__btn-bar {
+    position: sticky;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    padding: 0.4rem;
+    background: var(--card, rgba(20, 18, 30, 0.92));
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .playlist-sidebar__btn-bar--top {
+    top: 0;
+    border-bottom: 1px solid var(--border, rgba(145, 56, 224, 0.18));
+  }
+  .playlist-sidebar__btn-bar--bottom {
+    bottom: 0;
+    border-top: 1px solid var(--border, rgba(145, 56, 224, 0.18));
+  }
+  .playlist-sidebar__scroll-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.85rem;
+    background: transparent;
+    border: 1px solid var(--border, rgba(145, 56, 224, 0.22));
+    border-radius: 6px;
+    color: var(--foreground, #e2e8f0);
+    font-size: 0.78rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color 0.12s, border-color 0.12s, opacity 0.12s;
+  }
+  .playlist-sidebar__scroll-btn:hover:not(:disabled),
+  .playlist-sidebar__scroll-btn:focus-visible:not(:disabled) {
+    background: rgba(4, 229, 229, 0.1);
+    border-color: var(--brand-aqua, #04E5E5);
+    outline: none;
+  }
+  .playlist-sidebar__scroll-btn:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+  }
+
   .playlist-sidebar__list {
     list-style: none;
     margin: 0;
     padding: 0;
-    overflow-y: auto;
-    flex: 1;
   }
   .playlist-sidebar__item {
     border-bottom: 1px solid var(--border, rgba(145, 56, 224, 0.08));
@@ -232,7 +339,6 @@
     font-size: 0.85rem;
     text-decoration: none;
     border-top: 1px solid var(--border, rgba(145, 56, 224, 0.18));
-    flex-shrink: 0;
   }
   .playlist-sidebar__overflow:hover,
   .playlist-sidebar__overflow:focus-visible {
