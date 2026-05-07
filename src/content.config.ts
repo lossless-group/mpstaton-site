@@ -33,7 +33,7 @@ const contextV = defineCollection({
     date_authored_initial_draft: z.string().optional(),
     date_authored_current_draft: z.string().optional(),
     authors: z.array(z.string()).optional(),
-    augmented_with: z.string().optional(),
+    augmented_with: z.coerce.string().optional(),
     tags: z.array(z.string()).optional(),
     at_semantic_version: z.string().optional(),
     publish: z.boolean().optional(),
@@ -65,7 +65,7 @@ const essays = defineCollection({
     portrait_image: z.string().optional(),
     banner_image: z.string().optional(),
     image_prompt: z.string().optional(),
-    augmented_with: z.string().optional(),
+    augmented_with: z.coerce.string().optional(),
     at_semantic_version: z.string().optional(),
   }).passthrough(),
 });
