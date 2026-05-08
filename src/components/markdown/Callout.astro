@@ -5,6 +5,12 @@
 // All variant data (label, icon) lives in `callout-types.ts`; per-type accent
 // colors and mode behavior live in `callout.css` + tokens.css. This file only
 // handles structure: header row + body slot.
+//
+// Special behavior for `llm-response` callouts: scans the body text for
+// case-insensitive mentions of supported AI brands (Claude, GPT, Perplexity)
+// and renders matching brand favicons in the top-right. Perplexity is the
+// default when no brand is mentioned, since it's the most common authoring
+// source in mpstaton-site essays.
 import AstroMarkdown from "./AstroMarkdown.astro";
 import { resolveCalloutType, getCalloutMeta } from "./callout-types";
 
@@ -18,24 +24,89 @@ const attrs = node.attributes ?? {};
 const type = resolveCalloutType(attrs.type);
 const meta = getCalloutMeta(type);
 
-// Empty string = author asked for no header (Obsidian's `[!type]-` syntax).
-// Undefined = use the default label.
+// Optional column-escape positioning for desktop reading. Authors opt in via
+// the directive form: `:::callout{type="info" position="escape-right"}`.
+// Below 1280px this attribute is ignored (the callout flows in-column like
+// any other), per the site's mobile-reading discipline.
+const POSITIONS = new Set([
+  "escape-left",
+  "escape-right",
+  "offset-left",
+  "offset-right",
+]);
+const position: string | null =
+  typeof attrs.position === "string" && POSITIONS.has(attrs.position)
+    ? attrs.position
+    : null;
+
 const headerText: string | null =
   attrs.title === ""        ? null
   : attrs.title             ? attrs.title
   : meta.label;
 
 const children = Array.isArray(node?.children) ? node.children : [];
+
+// Brand-detection registry. Order here = render order in the badge stack.
+// Patterns are case-insensitive and word-boundary-safe enough for prose;
+// `gpt` matches `GPT-4`, `ChatGPT`, etc. without accidentally hitting
+// unrelated words.
+const BRAND_REGISTRY: { key: string; label: string; pattern: RegExp; icon: string }[] = [
+  { key: "perplexity", label: "Perplexity", pattern: /\bperplexity\b/i,         icon: "/icons/perplexity.svg" },
+  { key: "claude",     label: "Claude",     pattern: /\bclaude\b/i,             icon: "/icons/claude.svg" },
+  { key: "gpt",        label: "GPT",        pattern: /\b(gpt|chatgpt|openai)\b/i, icon: "/icons/gpt.svg" },
+];
+
+// Recursively walk an MDAST subtree and concatenate text content. Used for
+// brand detection — we don't need exact prose, just enough text for regex.
+function nodeText(n: any): string {
+  if (!n) return "";
+  if (typeof n.value === "string") return n.value;
+  if (Array.isArray(n.children)) return n.children.map(nodeText).join(" ");
+  return "";
+}
+
+let detectedBrands: typeof BRAND_REGISTRY = [];
+if (type === "llm-response") {
+  const haystack = [headerText ?? "", ...children.map(nodeText)].join(" ");
+  detectedBrands = BRAND_REGISTRY.filter(b => b.pattern.test(haystack));
+  // Default to Perplexity when no brand is mentioned — it's the most common
+  // authoring source. Authors can still get other brands by mentioning them.
+  if (detectedBrands.length === 0) {
+    const perplexity = BRAND_REGISTRY.find(b => b.key === "perplexity");
+    if (perplexity) detectedBrands = [perplexity];
+  }
+}
 ---
 
 <style is:global>@import "./callout.css";</style>
 
-<aside class={`ak-callout ak-callout--${type}${headerText === null ? " ak-callout--no-header" : ""}`} role="note">
+<aside
+  class={[
+    "ak-callout",
+    `ak-callout--${type}`,
+    headerText === null ? "ak-callout--no-header" : null,
+    position ? `ak-callout--${position}` : null,
+  ].filter(Boolean).join(" ")}
+  role="note"
+>
   <span class="ak-callout-icon" aria-hidden="true">
     <svg viewBox="0 0 24 24" set:html={meta.iconPaths} />
   </span>
 
   {headerText && <div class="ak-callout-header">{headerText}</div>}
+
+  {detectedBrands.length > 0 && (
+    <div class="ak-callout-brands" aria-label="AI source">
+      {detectedBrands.map((b) => (
+        <span
+          class={`ak-callout-brand ak-callout-brand--${b.key}`}
+          title={b.label}
+          aria-label={b.label}
+          role="img"
+        />
+      ))}
+    </div>
+  )}
 
   <div class="ak-callout-body">
     {children.map((child: any) => <AstroMarkdown node={child} data={data} />)}

@@ -95,6 +95,114 @@
 /* Quote callouts read better in italic. */
 .ak-callout--quote .ak-callout-body { font-style: italic; }
 
+/* ---------------------------------------------------------------------------
+ * Column-escape positioning for desktop reading.
+ *
+ * Two flavors, both opt-in via the directive form
+ * (`:::callout{type="info" position="escape-right"}`):
+ *
+ *   - `escape-{left,right}` — callout sits ENTIRELY in the gutter outside
+ *     the article column, parallel to the prose. Width = 80% of the
+ *     available margin track, capped so it never crowds the viewport edge.
+ *
+ *   - `offset-{left,right}` — callout pokes partly out of the article
+ *     column (-3rem hang) to differentiate it from main reading material
+ *     without leaving the column entirely.
+ *
+ * Both behaviors apply only at ≥1280px. Below that, the position attribute
+ * is ignored and the callout flows normally in-column (same as a bracket-
+ * syntax callout). This matches the existing aside-escape recipe used by
+ * YouTubePlaylistScroller — same breakpoint, same `(100vw - 100%) / 2`
+ * arithmetic, so the two patterns line up visually on the page.
+ * ------------------------------------------------------------------------- */
+@media (min-width: 1280px) {
+  .ak-callout--escape-left,
+  .ak-callout--escape-right {
+    /* 80% of the available margin track minus a 1rem viewport-edge buffer. */
+    --escape-width: calc((((100vw - 100%) / 2) - 1rem) * 0.8);
+    width: var(--escape-width);
+    margin-top: 0.25rem;
+    margin-bottom: 0.75rem;
+    /* The escape callout reads as a smaller side-note — slightly tighter
+     * type than the in-column body so it doesn't compete for attention. */
+    font-size: 0.9rem;
+  }
+
+  .ak-callout--escape-right {
+    float: right;
+    /* Pull the callout fully past the article's right edge into the gutter,
+     * with 1rem of breathing room from the column. */
+    margin-right: calc(-1 * (var(--escape-width) + 1rem));
+    margin-left: 1rem;
+    clear: right;
+  }
+
+  .ak-callout--escape-left {
+    float: left;
+    margin-left: calc(-1 * (var(--escape-width) + 1rem));
+    margin-right: 1rem;
+    clear: left;
+  }
+
+  /* Offset variants — callout extends a few rem into the gutter but most
+   * of its body still overlaps the article column. Distinguishes the
+   * callout visually without taking it out of the reading flow. */
+  .ak-callout--offset-right {
+    margin-right: -3rem;
+  }
+  .ak-callout--offset-left {
+    margin-left: -3rem;
+  }
+}
+
+/* Brand badge stack — anchored to the callout's top-right corner. Used by
+ * `llm-response` callouts to show which AI source the content came from
+ * (Perplexity, Claude, GPT). Multiple brands stack horizontally. The grid
+ * isn't disturbed because this floats absolutely within the relatively-
+ * positioned callout. SVGs are loaded via mask-image so the brand icon
+ * picks up `--callout-accent` instead of rendering as a fixed color. */
+.ak-callout { position: relative; }
+.ak-callout-brands {
+  position: absolute;
+  top: 0.625rem;
+  right: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  pointer-events: none;
+}
+.ak-callout-brand {
+  display: inline-block;
+  width: 1.125rem;
+  height: 1.125rem;
+  background-color: var(--callout-accent);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-size: contain;
+          mask-size: contain;
+  opacity: 0.85;
+}
+.ak-callout-brand--perplexity {
+  -webkit-mask-image: url("/icons/perplexity.svg");
+          mask-image: url("/icons/perplexity.svg");
+}
+.ak-callout-brand--claude {
+  -webkit-mask-image: url("/icons/claude.svg");
+          mask-image: url("/icons/claude.svg");
+}
+.ak-callout-brand--gpt {
+  -webkit-mask-image: url("/icons/gpt.svg");
+          mask-image: url("/icons/gpt.svg");
+}
+
+/* Push the header text away from the brand badges so a long title doesn't
+ * collide with them. Only applies when the callout has detected brands. */
+.ak-callout:has(.ak-callout-brands) .ak-callout-header {
+  padding-right: 4rem;
+}
+
 /* Excerpt callouts: long-form quoted copy from another source. The body
  * font is reduced so a multi-paragraph copypasta doesn't dominate the page,
  * and italic styling marks it visually as borrowed material. The accent

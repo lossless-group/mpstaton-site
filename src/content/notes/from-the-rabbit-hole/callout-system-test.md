@@ -55,8 +55,17 @@ This page exercises every callout type and alias supported by `@lossless-group/l
 > [!important] Important
 > Crimson accent with a bell icon. Stronger than `info`, used for "you must read this" emphasis.
 
-> [!llm-response] LLM Response
-> Sparkles icon, brand-purple accent. Used in essays to mark verbatim AI output. Recognized because the regex was broadened from `\w+` to `[\w-]+` — hyphenated type identifiers used to silently fall through as plain blockquotes.
+> [!llm-response] LLM Response — default (Perplexity)
+> Sparkles icon, brand-purple accent. No brand mention here, so the Perplexity badge appears top-right by default since it's the most common authoring source.
+
+> [!llm-response] From Claude
+> Anthropic's Claude generated the following response. The callout auto-detects the word "Claude" (case-insensitive) and shows the Anthropic starburst badge top-right.
+
+> [!llm-response] Comparing GPT and Claude
+> When you mention multiple brands — like GPT and Claude — both badges stack horizontally in the top-right. ChatGPT and OpenAI also count as GPT mentions.
+
+> [!llm-response] Perplexity, with explicit attribution
+> Perplexity surfaced this answer with citations. Detection is case-insensitive: PERPLEXITY, perplexity, and Perplexity all match.
 
 > [!excerpt] Excerpt — long-form quoted copy
 > Smaller body font, italic, muted graphite accent. The accent is intentionally quiet so the borrowed material recedes and the surrounding author voice stays foreground.
@@ -176,6 +185,48 @@ The remark plugin lowercases the bracketed type before matching, and `resolveCal
 
 > [!IDEA] Uppercase IDEA (alias for tip)
 > Should render as a tip with the lightbulb icon.
+
+## Column-escape positioning (desktop ≥1280px only)
+
+Callouts can opt out of the article column in two ways. The bracket syntax can't take attributes, so escape/offset callouts use the directive form. Below 1280px, the position attribute is ignored and the callout flows normally in-column.
+
+### Full escape — entirely in the right margin
+
+The next callout floats fully into the right gutter parallel to this paragraph. Its width is 80% of the available margin track (which scales with viewport width), so on a 1920px screen it'll be wider than on a 1280px screen. The callout sits visually next to the prose rather than between paragraphs, the way a print-magazine sidebar does. Surrounding paragraphs flow past it on the left side without being displaced — that's what `float: right` plus a negative margin-right gives us.
+
+:::callout{type="info" position="escape-right"}
+**Right-margin escape.** This is the canonical "sidebar" position. Reads parallel to the body prose without interrupting it.
+:::
+
+This paragraph continues normally in the article column. On wider viewports you should see this prose flowing past the callout's left edge. As soon as the prose runs longer than the callout's height, the column reflows back to its full width. On narrow screens (below 1280px) the callout snaps back into the column above this paragraph and reads inline.
+
+### Full escape — entirely in the left margin
+
+Same recipe mirrored. The left-margin variant is rarer in Western reading layouts (left-to-right gutter is normally just whitespace), but it's useful for editorial/aside content that should clearly read as separate from the main argument.
+
+:::callout{type="quote" position="escape-left"}
+**Left-margin escape.** "The medium is the message." — McLuhan, more or less. Pulled into the left gutter to read parallel to its surrounding prose.
+:::
+
+Surrounding prose flows around the callout on the right side. The pattern shares CSS arithmetic with the YouTube playlist scroller — both use `(100vw - 100%) / 2` to find the available margin, so they line up visually if both appear on the same page.
+
+### Offset right — partial overhang
+
+The next callout extends 3rem past the right edge of the article column but most of its body still overlaps the column. Use this when you want the callout to read as in-flow but visually distinct from the main reader, without losing column width.
+
+:::callout{type="warning" position="offset-right"}
+**Right-offset.** Most of this callout still sits inside the article column — only the right edge hangs into the gutter. A subtler signal than full escape; useful for "important but not asynchronous to the main argument" content.
+:::
+
+### Offset left — partial overhang
+
+Mirror of the above. Often paired with offset-right callouts in alternating sequence to give a page visual rhythm.
+
+:::callout{type="tip" position="offset-left"}
+**Left-offset.** Same recipe, opposite side. The 3rem hang is intentionally smaller than full-escape so the prose still feels primary.
+:::
+
+This paragraph closes the position section. The combination of in-column, escape-left, escape-right, offset-left, and offset-right gives five reading-rhythm positions for callouts — useful for long-form essays where uniform in-column callouts would feel monotonous.
 
 ## Done
 
