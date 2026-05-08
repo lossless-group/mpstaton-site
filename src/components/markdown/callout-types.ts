@@ -24,6 +24,10 @@ const I = {
   beaker: '<path d="M4.5 3h15"/><path d="M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3"/><path d="M6 14h12"/>',
   question: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
   bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  // Sparkles — for `llm-response`. Signals AI/generative output.
+  sparkles: '<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/>',
+  // Document with text lines — for `excerpt`. Signals quoted long-form copy.
+  fileText: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>',
 };
 
 export const CALLOUT_TYPES = {
@@ -37,6 +41,12 @@ export const CALLOUT_TYPES = {
   example:   { label: 'Example',   iconPaths: I.beaker },
   question:  { label: 'Question',  iconPaths: I.question },
   important: { label: 'Important', iconPaths: I.bell },
+  // AI/generative output — used in essays to mark verbatim LLM responses.
+  // Hyphenated key: requires the `[\w-]+` regex in remarkCallouts.
+  'llm-response': { label: 'LLM Response', iconPaths: I.sparkles },
+  // Long-form quoted copy from another source. Body font is reduced (see
+  // callout.css) since excerpts are typically much longer than other types.
+  excerpt:   { label: 'Excerpt',   iconPaths: I.fileText },
 } satisfies Record<string, CalloutTypeMeta>;
 
 export type CalloutType = keyof typeof CALLOUT_TYPES;
@@ -60,6 +70,11 @@ const ALIASES: Record<string, CalloutType> = {
   help:        'question',
   alert:       'warning',
   idea:        'tip',
+  // Common typo for `excerpt` — observed in legacy essays. Cheap insurance.
+  exerpt:      'excerpt',
+  // Hyphen-free variants of `llm-response` for author convenience.
+  llmresponse: 'llm-response',
+  llm:         'llm-response',
 };
 
 export function resolveCalloutType(raw: string | undefined | null): CalloutType {

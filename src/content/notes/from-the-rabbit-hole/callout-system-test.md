@@ -55,6 +55,16 @@ This page exercises every callout type and alias supported by `@lossless-group/l
 > [!important] Important
 > Crimson accent with a bell icon. Stronger than `info`, used for "you must read this" emphasis.
 
+> [!llm-response] LLM Response
+> Sparkles icon, brand-purple accent. Used in essays to mark verbatim AI output. Recognized because the regex was broadened from `\w+` to `[\w-]+` — hyphenated type identifiers used to silently fall through as plain blockquotes.
+
+> [!excerpt] Excerpt — long-form quoted copy
+> Smaller body font, italic, muted graphite accent. The accent is intentionally quiet so the borrowed material recedes and the surrounding author voice stays foreground.
+>
+> Excerpts are typically multi-paragraph copypasta from another source. A reduced body font keeps a long block from dominating the page, and italic signals "this is borrowed."
+>
+> The third paragraph confirms the smaller font carries through across blank-line-separated paragraphs inside the same callout.
+
 ## Aliases
 
 These should render as their canonical type (warn → warning, tldr → info, etc.).

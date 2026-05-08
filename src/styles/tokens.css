@@ -46,6 +46,8 @@
   --callout-example:   var(--brand-purple);
   --callout-question:  color-mix(in srgb, var(--brand-aqua) 50%, var(--foreground));
   --callout-important: var(--brand-crimson);
+  --callout-llm-response: var(--brand-purple);
+  --callout-excerpt:   color-mix(in srgb, var(--brand-purple) 25%, var(--foreground));
 
   /* Mode-loudness tokens — used by the .ak-callout--info hero variant. */
   --fx-glow-opacity: 0.08;
@@ -81,6 +83,8 @@
   --callout-example:   color-mix(in srgb, var(--brand-purple) 75%, var(--foreground));
   --callout-question:  var(--brand-aqua);
   --callout-important: color-mix(in srgb, var(--brand-crimson) 82%, var(--card));
+  --callout-llm-response: color-mix(in srgb, var(--brand-purple) 70%, var(--brand-aqua));
+  --callout-excerpt:   #94A3B8;
 
   --fx-glow-opacity: 0.22;
   --fx-glow-spread: 24px;

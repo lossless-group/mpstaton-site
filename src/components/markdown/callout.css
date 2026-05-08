@@ -89,9 +89,24 @@
 .ak-callout--example   { --callout-accent: var(--callout-example); }
 .ak-callout--question  { --callout-accent: var(--callout-question); }
 .ak-callout--important { --callout-accent: var(--callout-important); }
+.ak-callout--llm-response { --callout-accent: var(--callout-llm-response); }
+.ak-callout--excerpt   { --callout-accent: var(--callout-excerpt); }
 
 /* Quote callouts read better in italic. */
 .ak-callout--quote .ak-callout-body { font-style: italic; }
+
+/* Excerpt callouts: long-form quoted copy from another source. The body
+ * font is reduced so a multi-paragraph copypasta doesn't dominate the page,
+ * and italic styling marks it visually as borrowed material. The accent
+ * color is intentionally muted graphite so the excerpt recedes — the
+ * surrounding author voice should stay foreground. */
+.ak-callout--excerpt .ak-callout-body {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  font-style: italic;
+  opacity: 0.92;
+}
+.ak-callout--excerpt .ak-callout-body p { margin: 0.4em 0; }
 
 /* `info` is the brand's hero callout — bigger, brighter, glowy edges. The
  * intensity (background tint, glow strength) rides on --fx-glow-opacity and
