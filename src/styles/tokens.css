@@ -32,6 +32,24 @@
   --input: rgba(145,56,224,0.12);
   --ring: #9138E0;
   --radius: 0.5rem;
+
+  /* Callout semantic tokens (Tier 2) — each points to a brand stop in Tier 1.
+   * Light-mode defaults: lime/aqua are deepened via color-mix against --foreground
+   * so they read on the bone background instead of disappearing. */
+  --callout-note:      #6B7280;
+  --callout-info:      color-mix(in srgb, var(--brand-cyan) 70%, var(--foreground));
+  --callout-tip:       color-mix(in srgb, var(--brand-lime) 38%, var(--foreground));
+  --callout-success:   color-mix(in srgb, var(--brand-lime) 38%, var(--foreground));
+  --callout-warning:   color-mix(in srgb, var(--brand-orange) 65%, var(--foreground));
+  --callout-danger:    var(--brand-crimson);
+  --callout-quote:     var(--brand-purple);
+  --callout-example:   var(--brand-purple);
+  --callout-question:  color-mix(in srgb, var(--brand-aqua) 50%, var(--foreground));
+  --callout-important: var(--brand-crimson);
+
+  /* Mode-loudness tokens — used by the .ak-callout--info hero variant. */
+  --fx-glow-opacity: 0.08;
+  --fx-glow-spread: 12px;
 }
 
 [data-theme='dark'] {
@@ -50,4 +68,20 @@
   --border: rgba(145,56,224,0.25);
   --input: rgba(145,56,224,0.2);
   --ring: #9138E0;
+
+  /* Dark-mode callout overrides — loud accents gently desaturated against
+   * --card so they don't burn at full saturation on the deep purple bg. */
+  --callout-note:      #94A3B8;
+  --callout-info:      var(--brand-aqua);
+  --callout-tip:       color-mix(in srgb, var(--brand-lime) 80%, var(--card));
+  --callout-success:   color-mix(in srgb, var(--brand-lime) 80%, var(--card));
+  --callout-warning:   var(--brand-orange);
+  --callout-danger:    color-mix(in srgb, var(--brand-crimson) 82%, var(--card));
+  --callout-quote:     color-mix(in srgb, var(--brand-purple) 75%, var(--foreground));
+  --callout-example:   color-mix(in srgb, var(--brand-purple) 75%, var(--foreground));
+  --callout-question:  var(--brand-aqua);
+  --callout-important: color-mix(in srgb, var(--brand-crimson) 82%, var(--card));
+
+  --fx-glow-opacity: 0.22;
+  --fx-glow-spread: 24px;
 }
