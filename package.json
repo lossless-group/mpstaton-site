@@ -6,6 +6,7 @@
     "fetch-context": "bun scripts/fetch-context-v.ts",
     "fetch-essays": "bun scripts/fetch-essays.ts",
     "fetch-playlists": "bun scripts/fetch-youtube-playlists.ts",
+    "audit-wikilinks": "bun scripts/audit-wikilinks.ts",
     "fetch-all": "pnpm fetch-context && pnpm fetch-essays && pnpm fetch-playlists",
     "dev": "pnpm fetch-all && astro dev",
     "build": "pnpm fetch-all && astro build",
