@@ -17,18 +17,18 @@
     "lfm:auto": "node scripts/lfm-mode.mjs auto"
   },
   "dependencies": {
-    "@astrojs/vercel": "^10.0.2",
+    "@astrojs/vercel": "^10.0.6",
     "@lossless-group/lfm": "npm:@jsr/lossless-group__lfm@0.3.0",
     "@resvg/resvg-js": "^2.6.2",
-    "astro": "^6.0.8",
+    "astro": "^6.3.1",
     "mdast-util-to-string": "^4.0.0",
     "satori": "^0.26.0",
-    "yaml": "^2.8.3"
+    "yaml": "^2.8.4"
   },
   "devDependencies": {
     "@astrojs/svelte": "^8.1.0",
-    "@tailwindcss/vite": "^4.1.14",
+    "@tailwindcss/vite": "^4.3.0",
     "svelte": "^5.55.5",
-    "tailwindcss": "^4.1.14"
+    "tailwindcss": "^4.3.0"
   }
 }
