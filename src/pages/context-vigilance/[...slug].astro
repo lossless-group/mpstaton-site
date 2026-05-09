@@ -1,8 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
-import { parseMarkdown } from '@lossless-group/lfm';
+import { createLfmProcessor } from '@lossless-group/lfm';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AstroMarkdown from '../../components/markdown/AstroMarkdown.astro';
+import { remarkLosslessWikilinksLocal } from '../../lib/remark-lossless-wikilinks-local';
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect('/context-vigilance');
@@ -17,8 +18,9 @@ if (!entry) {
 
 const { data } = entry;
 
-// Parse markdown through the LFM pipeline
-const tree = await parseMarkdown(entry.body);
+// Parse markdown through the LFM pipeline + site-local wikilinks plugin.
+const processor = createLfmProcessor().use(remarkLosslessWikilinksLocal);
+const tree = await processor.run(processor.parse(entry.body));
 
 // Category color mapping (matches DocCard.astro)
 const categoryColors: Record<string, string> = {

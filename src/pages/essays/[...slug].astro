@@ -1,9 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
-import { parseMarkdown } from '@lossless-group/lfm';
+import { createLfmProcessor } from '@lossless-group/lfm';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AstroMarkdown from '../../components/markdown/AstroMarkdown.astro';
 import Sources from '../../components/markdown/Sources.astro';
+import { remarkLosslessWikilinksLocal, type WikilinkPluginStats } from '../../lib/remark-lossless-wikilinks-local';
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect('/essays');
@@ -16,8 +17,17 @@ if (!entry) {
 }
 
 const { data } = entry;
-const tree = await parseMarkdown(entry.body);
+// Wikilinks: site-local MDAST plugin that visits text nodes only (skips code
+// fences, inline code, html). Stats are collected for build-time logging.
+const wikilinkStats: WikilinkPluginStats = { resolved: 0, unresolved: [], deferred: 0 };
+const processor = createLfmProcessor().use(remarkLosslessWikilinksLocal, wikilinkStats);
+const parsed = processor.parse(entry.body);
+const tree = await processor.run(parsed);
 const citations = (tree as any).data?.citations?.ordered ?? [];
+
+if (import.meta.env.DEV && wikilinkStats.unresolved.length > 0) {
+  console.log(`[wikilinks] ${slug}: ${wikilinkStats.resolved} resolved, ${wikilinkStats.unresolved.length} unresolved (${wikilinkStats.unresolved.slice(0, 3).join(', ')}${wikilinkStats.unresolved.length > 3 ? ', …' : ''})`);
+}
 ---
 
 <BaseLayout title={data.title || 'Essay'} description={data.lede}>

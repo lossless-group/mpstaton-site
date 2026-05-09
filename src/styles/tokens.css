@@ -52,6 +52,13 @@
   /* Mode-loudness tokens — used by the .ak-callout--info hero variant. */
   --fx-glow-opacity: 0.08;
   --fx-glow-spread: 12px;
+
+  /* Reader-prose link color (Tier 2 semantic token). Used by .prose a so
+   * the markdown renderer can re-theme links per mode without touching
+   * the component CSS. Light mode: keep brand-purple primary — high
+   * contrast on the bone background, matches the existing chrome. */
+  --prose-link: var(--primary);
+  --prose-link-hover: color-mix(in srgb, var(--primary) 70%, var(--foreground));
 }
 
 [data-theme='dark'] {
@@ -88,4 +95,11 @@
 
   --fx-glow-opacity: 0.22;
   --fx-glow-spread: 24px;
+
+  /* Dark-mode prose links: brand-aqua. Brighter than brand-cyan (closer
+   * to neon), and intentionally consistent with the dark-mode info /
+   * question callout accents — reader's attention layer (links +
+   * informational callouts) reads as one chromatic family. */
+  --prose-link: var(--brand-aqua);
+  --prose-link-hover: color-mix(in srgb, var(--brand-aqua) 80%, white);
 }

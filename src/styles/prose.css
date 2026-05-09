@@ -42,17 +42,20 @@
   margin-bottom: 1rem;
 }
 
-/* Links */
+/* Links — read through the --prose-link semantic token so each mode picks
+ * its own reader-attention accent. Light: brand-purple. Dark: brand-aqua.
+ * (See src/styles/tokens.css for the per-mode wiring.) */
 .prose a {
-  color: var(--primary);
+  color: var(--prose-link);
   text-decoration: underline;
   text-underline-offset: 0.15em;
-  text-decoration-color: color-mix(in srgb, var(--primary) 40%, transparent);
-  transition: text-decoration-color 0.15s;
+  text-decoration-color: color-mix(in srgb, var(--prose-link) 40%, transparent);
+  transition: color 0.15s, text-decoration-color 0.15s;
 }
 
 .prose a:hover {
-  text-decoration-color: var(--primary);
+  color: var(--prose-link-hover);
+  text-decoration-color: var(--prose-link);
 }
 
 /* Lists */
