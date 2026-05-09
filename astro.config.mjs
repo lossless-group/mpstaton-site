@@ -3,6 +3,7 @@ import tailwind from '@tailwindcss/vite'
 import { fileURLToPath } from 'node:url'
 import { existsSync } from 'node:fs'
 import vercel from '@astrojs/vercel'
+import svelte from '@astrojs/svelte'
 
 // Detect if we're in the monorepo with local workspace packages available.
 const workspaceRootUrl = new URL('../../..', import.meta.url)
@@ -46,6 +47,7 @@ const aliases = {
 export default defineConfig({
   output: 'server',
   adapter: vercel(),
+  integrations: [svelte()],
   vite: {
     plugins: [tailwind(), watchRawContent],
     server: hasWorkspaceTokensCss

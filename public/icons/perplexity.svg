@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-label="Perplexity">
+  <title>Perplexity</title>
+  <!-- Stylized "P" mark inside a circle, evoking Perplexity's search/algorithm
+       glyph. The vertical stem plus the loop reads as "P" while the circle
+       echoes the brand's enclosed silhouette. -->
+  <circle cx="12" cy="12" r="9.5"/>
+  <line x1="12" y1="3" x2="12" y2="21"/>
+  <path d="M12 5 L19 8 L19 14 L12 17"/>
+  <path d="M12 5 L5 8 L5 14 L12 17"/>
+</svg>

@@ -1,9 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
-import { parseMarkdown } from '@lossless-group/lfm';
+import { createLfmProcessor } from '@lossless-group/lfm';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import AstroMarkdown from '../../../components/markdown/AstroMarkdown.astro';
 import Sources from '../../../components/markdown/Sources.astro';
+import { remarkLosslessWikilinksLocal } from '../../../lib/remark-lossless-wikilinks-local';
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect('/notes/from-the-rabbit-hole');
@@ -16,7 +17,8 @@ if (!entry) {
 }
 
 const { data } = entry;
-const tree = await parseMarkdown(entry.body);
+const processor = createLfmProcessor().use(remarkLosslessWikilinksLocal);
+const tree = await processor.run(processor.parse(entry.body));
 const citations = (tree as any).data?.citations?.ordered ?? [];
 ---
 

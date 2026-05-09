@@ -281,6 +281,35 @@ function childrenOf(n: any): any[] {
   if (directive.name === "image") {
     return <MarkdownImage node={directive} data={data} />;
   }
+  if (directive.name === "youtube-short") {
+    const attrs = directive.attributes ?? {};
+    const align = attrs.align === "left" || attrs.align === "right" ? attrs.align : undefined;
+    // Authors often paste the URL inside the container instead of (or in
+    // addition to) setting an attribute. Fall back to walking children for
+    // a bare-URL paragraph when neither `id` nor `url` is given as an attr.
+    let id: string | undefined = attrs.id;
+    let url: string | undefined = attrs.url;
+    if (!id && !url) {
+      for (const child of childrenOf(directive)) {
+        const bareUrl = getBareLinkUrl(child);
+        if (bareUrl) { url = bareUrl; break; }
+      }
+    }
+    return <YouTubeShortsEmbed id={id} url={url} align={align} caption={attrs.caption} />;
+  }
+  if (directive.name === "youtube-playlist") {
+    const attrs = directive.attributes ?? {};
+    const index = attrs.index !== undefined ? Number(attrs.index) : undefined;
+    let id: string | undefined = attrs.id;
+    let url: string | undefined = attrs.url;
+    if (!id && !url) {
+      for (const child of childrenOf(directive)) {
+        const bareUrl = getBareLinkUrl(child);
+        if (bareUrl) { url = bareUrl; break; }
+      }
+    }
+    return <YouTubePlaylistEmbed id={id} url={url} index={index} caption={attrs.caption} />;
+  }
   // remark-link-preview stamps `data.linkPreviewSpec` on `:::link-preview`
   // and `:::link-rollup` containerDirectives. Dispatch to the matching
   // component family — single-URL substitutions become a LinkPreviewCard,

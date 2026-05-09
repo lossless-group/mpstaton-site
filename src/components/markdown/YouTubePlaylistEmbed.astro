@@ -1,118 +1,110 @@
 ---
+/**
+ * YouTubePlaylistEmbed — orchestrator. Reads the build-time playlist cache,
+ * sorts items by addedAt descending, and renders two visually-separate
+ * sibling components inside a position:relative wrapper:
+ *
+ *   1. <YouTubePlaylistPlayer />   — the in-column card with header + iframe
+ *   2. <YouTubePlaylistScroller /> — escape-positioned (≥1280px) or stacked
+ *                                    (768–1279px) or panel (≤768px) list
+ *
+ * The wrapper is `position: relative` so the scroller's `position: absolute`
+ * at ≥1280px anchors to the wrapper's box (the article column width).
+ *
+ * The two siblings communicate only via the shared `iframeId` — the
+ * scroller's Svelte island finds the iframe by ID and uses postMessage to
+ * send playVideoAt(N) commands through the YouTube IFrame Player API.
+ *
+ * Spec: context-v/specs/Versatile-Component-Library-for-Video-Players.md §4.1.3
+ */
+
+import YouTubePlaylistPlayer from './YouTubePlaylistPlayer.astro';
+import YouTubePlaylistScroller from './YouTubePlaylistScroller.astro';
+import { getPlaylist } from '../../lib/youtube-playlist-cache';
+
 interface Props {
-  url: string;
+  url?: string;
+  id?: string;
+  index?: number;
   caption?: string;
 }
 
-const { url, caption } = Astro.props;
+const { url, id: idProp, index = 0, caption } = Astro.props;
 
-const extractYouTubePlaylistId = (url: string): string | null => {
-  const playlistMatch = url.match(/youtube\.com\/playlist\?.*list=([a-zA-Z0-9_-]+)/);
-  return playlistMatch ? playlistMatch[1] : null;
-};
+function extractPlaylistId(u: string): string | null {
+  try {
+    return new URL(u).searchParams.get('list');
+  } catch {
+    return null;
+  }
+}
 
-const playlistId = extractYouTubePlaylistId(url);
-if (!playlistId) throw new Error(`Invalid YouTube playlist URL: ${url}`);
+const playlistId = idProp ?? (url ? extractPlaylistId(url) : null);
+if (!playlistId) {
+  throw new Error(
+    `YouTubePlaylistEmbed requires id or url; got id=${idProp ?? '(none)'} url=${url ?? '(none)'}`
+  );
+}
 
-let embedUrl = `https://www.youtube.com/embed/videoseries?list=${playlistId}`;
-const siMatch = url.match(/[?&]si=([^&]+)/);
-if (siMatch) embedUrl += `&si=${siMatch[1]}`;
+const data = getPlaylist(playlistId);
+const ITEM_CAP = 50;
+const allItems = data?.items ?? [];
+
+// Default sort: most-recently-added on top. Falls back to playlist position
+// for items without addedAt (older cache entries, edge cases). The click
+// handler in PlaylistSidebar still uses each item's actual `position` for
+// the iframe `playVideoAt(N)` call, so the visual order is independent of
+// the playback addressing.
+const sortedItems = [...allItems].sort((a, b) => {
+  if (a.addedAt && b.addedAt) return b.addedAt.localeCompare(a.addedAt);
+  if (a.addedAt) return -1;
+  if (b.addedAt) return 1;
+  return a.position - b.position;
+});
+const visibleItems = sortedItems.slice(0, ITEM_CAP);
+const overflow = sortedItems.length > ITEM_CAP;
+const totalCount = data?.itemCount ?? allItems.length;
+
+const iframeId = `yt-pl-${playlistId}`;
+const isUnavailable = !data || data.unavailable || allItems.length === 0;
 ---
 
-<div class="youtube-playlist-container">
-  <div class="youtube-playlist-wrapper">
-    <iframe
-      src={embedUrl}
-      title="YouTube playlist player"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      referrerpolicy="strict-origin-when-cross-origin"
-      allowfullscreen
-      loading="lazy"
-    />
-  </div>
-  {caption && (
-    <div class="youtube-playlist-caption">
-      <div class="caption-content">{caption}</div>
-      <button
-        class="copy-url-btn"
-        onclick={`navigator.clipboard.writeText('${url}').then(() => {
-          const btn = event.target.closest('.copy-url-btn');
-          btn.classList.add('copied');
-          setTimeout(() => { btn.classList.remove('copied'); }, 2000);
-        }).catch(err => console.error('Failed to copy: ', err))`}
-        title="Copy playlist URL to clipboard"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M16 3H4V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M8 7H20V20H8V7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-    </div>
-  )}
+<div class="yt-playlist-block">
+  <YouTubePlaylistPlayer
+    iframeId={iframeId}
+    playlistId={playlistId}
+    title={data?.title}
+    channelTitle={data?.channelTitle}
+    totalCount={totalCount}
+  />
+  <YouTubePlaylistScroller
+    iframeId={iframeId}
+    playlistId={playlistId}
+    items={visibleItems}
+    totalCount={totalCount}
+    overflow={overflow}
+    initialIndex={index}
+    title={data?.title}
+    channelTitle={data?.channelTitle}
+    isUnavailable={isUnavailable}
+  />
 </div>
 
+{caption && <p class="yt-playlist-caption">{caption}</p>}
+
 <style>
-  .youtube-playlist-container {
-    margin: 1.5rem 0;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
-    border: 1px solid var(--border, rgba(145, 56, 224, 0.15));
-  }
-  .youtube-playlist-wrapper {
+  /* The orchestrator owns only the relationship between the two siblings:
+     a `position: relative` wrapper that anchors the scroller's absolute
+     positioning at ≥1280px. All chrome / layout / responsive behaviour
+     lives in the child components. */
+  .yt-playlist-block {
     position: relative;
-    width: 100%;
-    aspect-ratio: 16/9;
-    background: #000;
+    margin-block: 0.75rem;
   }
-  .youtube-playlist-wrapper iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
+
+  .yt-playlist-caption {
+    margin: 0.4rem 0 0 0;
+    font-size: 0.85rem;
+    color: var(--muted-foreground, #94a3b8);
   }
-  .youtube-playlist-caption {
-    padding: 0.75rem 1rem;
-    background: var(--card, rgba(255, 255, 255, 0.05));
-    border-top: 1px solid var(--border, rgba(145, 56, 224, 0.15));
-    font-size: 0.9rem;
-    line-height: 1.4;
-    color: var(--foreground, #e2e8f0);
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-  }
-  .caption-content { flex: 1; min-width: 0; }
-  .copy-url-btn {
-    background: transparent;
-    border: 1px solid var(--brand-aqua, #04E5E5);
-    border-radius: 6px;
-    padding: 0.5rem;
-    cursor: pointer;
-    color: var(--foreground, #e2e8f0);
-    transition: opacity 0.2s, background-color 0.2s;
-    flex-shrink: 0;
-    min-width: 2.5rem;
-    height: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.7;
-  }
-  .copy-url-btn:hover,
-  .copy-url-btn:focus-visible {
-    opacity: 1;
-    background-color: rgba(4, 229, 229, 0.1);
-    outline: 2px solid var(--brand-aqua, #04E5E5);
-    outline-offset: 2px;
-  }
-  .copy-url-btn.copied {
-    background: rgba(34, 197, 94, 0.2);
-    border-color: rgba(34, 197, 94, 0.4);
-    color: #4ade80;
-  }
-  .copy-url-btn svg { width: 16px; height: 16px; }
 </style>

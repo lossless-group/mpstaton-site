@@ -1,0 +1,184 @@
+---
+/**
+ * YouTubePlaylistScroller — the escape-positioned scroller sibling of the
+ * playlist component family. Renders the click-to-play list of items.
+ *
+ * Spec: context-v/specs/Versatile-Component-Library-for-Video-Players.md §4.1.3
+ *
+ * Layout behaviour at three breakpoints:
+ *
+ *   - ≥1280px — escape-positioned (`position: absolute`) into the right
+ *     margin track of the article column. See §4.1.3.5 for the CSS recipe.
+ *     This is the first concrete consumer of the `aside-escape` pattern.
+ *
+ *   - 768–1279px — stacked below the player card in the article column,
+ *     `max-height: 232px` (~3 items + scroll affordance).
+ *
+ *   - ≤768px — wrapped in MobileFeaturePlaceholder so the inline view becomes
+ *     a compact placeholder + CTA, and the scroller surfaces as a full-screen
+ *     panel on tap or swipe-left.
+ *
+ * MUST be rendered inside a `position: relative` ancestor (`.yt-playlist-block`
+ * in the orchestrator) so the absolute positioning at ≥1280px anchors correctly.
+ *
+ * The Svelte island inside this component finds the iframe by `iframeId` and
+ * sends `playVideoAt(N)` commands via the YouTube IFrame Player API.
+ */
+
+import PlaylistSidebar from './PlaylistSidebar.svelte';
+import MobileFeaturePlaceholder from './MobileFeaturePlaceholder.astro';
+import type { PlaylistItem } from '../../lib/youtube-playlist-types';
+
+interface Props {
+  iframeId: string;
+  playlistId: string;
+  items: PlaylistItem[];
+  totalCount: number;
+  overflow: boolean;
+  initialIndex?: number;
+  title?: string;
+  channelTitle?: string;
+  isUnavailable: boolean;
+}
+
+const {
+  iframeId,
+  playlistId,
+  items,
+  totalCount,
+  overflow,
+  initialIndex = 0,
+  title,
+  channelTitle,
+  isUnavailable,
+} = Astro.props;
+---
+
+<aside class="yt-pl-scroller" aria-label={`${title ?? 'Playlist'} videos`}>
+  {isUnavailable ? (
+    <div class="yt-pl-scroller__unavailable">
+      <p>Playlist details unavailable.</p>
+      <p class="yt-pl-scroller__unavailable-detail">
+        The playlist will still play in the embedded player.
+      </p>
+    </div>
+  ) : (
+    <MobileFeaturePlaceholder
+      label={`Browse ${totalCount} ${totalCount === 1 ? 'video' : 'videos'}`}
+      panelTitle={title}
+    >
+      <Fragment slot="placeholder">
+        <div class="yt-pl-scroller__placeholder">
+          <p class="yt-pl-scroller__placeholder-title">{title}</p>
+          <div class="yt-pl-scroller__placeholder-thumbs">
+            {items.slice(0, 4).map((item) => (
+              <img src={item.thumbnail} alt="" loading="lazy" width="80" height="45" />
+            ))}
+          </div>
+          <p class="yt-pl-scroller__placeholder-count">
+            {channelTitle && `${channelTitle} · `}{totalCount} videos
+          </p>
+        </div>
+      </Fragment>
+
+      <PlaylistSidebar
+        client:visible
+        items={items}
+        playlistId={playlistId}
+        iframeId={iframeId}
+        initialIndex={initialIndex}
+        totalCount={totalCount}
+        overflow={overflow}
+      />
+    </MobileFeaturePlaceholder>
+  )}
+</aside>
+
+<style>
+  /* Default (≤1279px): stacked below the card, capped to ~3 items.
+     `overflow-y: auto` (not `hidden`) so wheel/touchpad/keyboard
+     scrolling works naturally — the previous `overflow: hidden` clipped
+     content but never offered a scroll mechanism because the inner
+     height chain was broken. */
+  .yt-pl-scroller {
+    margin-top: 0.5rem;
+    border: 1px solid var(--border, rgba(145, 56, 224, 0.18));
+    border-radius: 14px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--card, rgba(255, 255, 255, 0.03));
+    max-height: 232px;
+    /* Subtle scrollbar styling so the bar doesn't dominate */
+    scrollbar-width: thin;
+    scrollbar-color: var(--border, rgba(145, 56, 224, 0.4)) transparent;
+  }
+  .yt-pl-scroller::-webkit-scrollbar {
+    width: 8px;
+  }
+  .yt-pl-scroller::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .yt-pl-scroller::-webkit-scrollbar-thumb {
+    background: var(--border, rgba(145, 56, 224, 0.35));
+    border-radius: 4px;
+  }
+
+  /* ≥1280px — the `aside-escape` pattern. The scroller pops out of the article
+     column into the right margin track. Requires a `position: relative`
+     ancestor (the orchestrator's `.yt-playlist-block` wrapper).
+     `100%` resolves to the wrapper's width (= article column inner width).
+     `(100vw - 100%) / 2` is the right margin space outside that column.
+     Vertical centering: top: 50% + translateY(-50%) anchors the scroller's
+     midpoint to the player's midpoint, so it extends equally above and below
+     the player when taller. */
+  @media (min-width: 1280px) {
+    .yt-pl-scroller {
+      position: absolute;
+      top: 50%;
+      left: calc(100% + 1.5rem);
+      transform: translateY(-50%);
+      width: min(340px, calc(((100vw - 100%) / 2) - 2rem));
+      max-height: min(80vh, 720px);
+      margin-top: 0;
+      box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  .yt-pl-scroller__unavailable {
+    padding: 1rem;
+    color: var(--muted-foreground, #94a3b8);
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  .yt-pl-scroller__unavailable-detail {
+    font-size: 0.78rem;
+    margin-top: 0.4rem;
+  }
+
+  /* Mobile placeholder content (rendered into MobileFeaturePlaceholder's
+     `placeholder` slot) — visible only on ≤768px. */
+  .yt-pl-scroller__placeholder-title {
+    margin: 0 0 0.6rem 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--foreground, #e2e8f0);
+  }
+  .yt-pl-scroller__placeholder-thumbs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.4rem;
+    margin-bottom: 0.6rem;
+  }
+  .yt-pl-scroller__placeholder-thumbs img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 4px;
+    background: #000;
+  }
+  .yt-pl-scroller__placeholder-count {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--muted-foreground, #94a3b8);
+  }
+</style>

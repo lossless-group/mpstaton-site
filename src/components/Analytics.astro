@@ -1,12 +1,21 @@
 ---
-// Analytics — Pass 1: passive scripts, production-only.
-// Pass 2 (clicks/events/flows) lives in context-v/prompts/Implement-Deeper-Analytics-Tracking.md
+// Analytics — OpenPanel migration pass, production-only.
+// Rollout plan lives in /Users/mpstaton/code/lossless-monorepo/context-v/prompts/Setup-Analytics-Across-Sites.md
 const isProd = import.meta.env.PROD;
+const openPanelClientId = import.meta.env.OPENPANEL_CLIENT_ID;
 ---
 
-{isProd && (
+{isProd && openPanelClientId && (
   <>
-    <script is:inline defer src="https://cloud.umami.is/script.js" data-website-id="01f9880b-2512-43ce-9504-18299e2196b1"></script>
-    <script is:inline src="https://cdn.usefathom.com/script.js" data-site="LSMKMSBP" defer></script>
+    <script is:inline define:vars={{ openPanelClientId }}>
+      window.op=window.op||function(){var n=[];return new Proxy(function(){arguments.length&&n.push([].slice.call(arguments))},{get:function(t,r){return"q"===r?n:function(){n.push([r].concat([].slice.call(arguments)))}} ,has:function(t,r){return"q"===r}}) }();
+      window.op('init', {
+        clientId: openPanelClientId,
+        trackScreenViews: true,
+        trackOutgoingLinks: true,
+        trackAttributes: true,
+      });
+    </script>
+    <script is:inline src="https://openpanel.dev/op1.js" defer async></script>
   </>
 )}
