@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { existsSync } from 'node:fs'
 import vercel from '@astrojs/vercel'
 import svelte from '@astrojs/svelte'
+import sitemap from '@astrojs/sitemap'
 
 // Detect if we're in the monorepo with local workspace packages available.
 const workspaceRootUrl = new URL('../../..', import.meta.url)
@@ -45,9 +46,22 @@ const aliases = {
 }
 
 export default defineConfig({
+  site: 'https://mpstaton.com',
   output: 'server',
   adapter: vercel(),
-  integrations: [svelte()],
+  integrations: [
+    svelte(),
+    // @astrojs/sitemap auto-generates sitemap-index.xml + sitemap-0.xml from
+    // every prerendered page Astro emits. Filter excludes the llms.txt
+    // endpoints (those serve LLMs, not search engines) and the 404 page.
+    sitemap({
+      filter: (page) =>
+        !page.includes('/llms.txt') &&
+        !page.includes('/llms-full.txt') &&
+        !page.endsWith('/404/') &&
+        !page.endsWith('/404'),
+    }),
+  ],
   vite: {
     plugins: [tailwind(), watchRawContent],
     server: hasWorkspaceTokensCss
