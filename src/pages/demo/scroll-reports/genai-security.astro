@@ -1,0 +1,1166 @@
+---
+// Scroll-report demo: re-creation of Lakera's 2025 GenAI Security Readiness Report.
+// Source: https://www.lakera.ai/genai-security-report-2025
+// All copy + figures belong to Lakera; this page is a structural/visual recreation
+// of the scrolling-narrative pattern for internal study only.
+//
+// Self-contained on purpose: no BaseLayout, no Tailwind preflight, no shared chrome.
+// The report's identity is the dark canvas + animated gradient + section-driven theme
+// transitions; wrapping it in the site shell would dilute that.
+
+const title = "2025 GenAI Security Readiness Report — Scroll Report demo";
+const description = "Recreation of Lakera's 2025 GenAI Security Readiness Report as a scroll-pinned narrative pattern.";
+---
+<!DOCTYPE html>
+<html lang="en" class="scroll-report-html">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
+</head>
+<body class="theme-hero">
+  <header class="report-header">
+    <div class="nav-container">
+      <a href="#hero" class="logo gradient-text">Scroll Report — Demo</a>
+      <div class="header-nav-items">
+        <nav class="top-nav">
+          <a href="#preface" data-section="preface" class="top-nav-link">Preface</a>
+          <a href="#summary" data-section="summary" class="top-nav-link">Summary</a>
+          <a href="#introduction" data-section="introduction" class="top-nav-link">Intro</a>
+          <a href="#demographics" data-section="demographics" class="top-nav-link">Demographics</a>
+          <a href="#adoption" data-section="adoption" class="top-nav-link">Adoption</a>
+          <a href="#confidence" data-section="confidence" class="top-nav-link">Confidence</a>
+          <a href="#risks" data-section="risks" class="top-nav-link">Risks</a>
+          <a href="#outlook" data-section="outlook" class="top-nav-link">Outlook</a>
+          <a href="#conclusion" data-section="conclusion" class="top-nav-link">Conclusion</a>
+        </nav>
+        <button aria-label="Open menu" aria-controls="mobile-nav" aria-expanded="false" class="mobile-menu-button">
+          <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+        </button>
+      </div>
+    </div>
+    <nav id="mobile-nav" class="mobile-nav">
+      <a href="#preface" class="mobile-nav-link">Preface</a>
+      <a href="#summary" class="mobile-nav-link">Summary</a>
+      <a href="#introduction" class="mobile-nav-link">Intro</a>
+      <a href="#demographics" class="mobile-nav-link">Demographics</a>
+      <a href="#adoption" class="mobile-nav-link">Adoption</a>
+      <a href="#confidence" class="mobile-nav-link">Confidence</a>
+      <a href="#risks" class="mobile-nav-link">Risks</a>
+      <a href="#outlook" class="mobile-nav-link">Outlook</a>
+      <a href="#conclusion" class="mobile-nav-link">Conclusion</a>
+    </nav>
+  </header>
+
+  <nav id="side-nav" class="side-nav" aria-label="Section navigation">
+    <a href="#hero" class="nav-dot active" data-section="hero"><span class="tooltip">Home</span></a>
+    <a href="#preface" class="nav-dot" data-section="preface"><span class="tooltip">Preface</span></a>
+    <a href="#summary" class="nav-dot" data-section="summary"><span class="tooltip">Summary</span></a>
+    <a href="#introduction" class="nav-dot" data-section="introduction"><span class="tooltip">Introduction</span></a>
+    <a href="#demographics" class="nav-dot" data-section="demographics"><span class="tooltip">Demographics</span></a>
+    <a href="#adoption" class="nav-dot" data-section="adoption"><span class="tooltip">Adoption</span></a>
+    <a href="#confidence" class="nav-dot" data-section="confidence"><span class="tooltip">Confidence &amp; Concern</span></a>
+    <a href="#risks" class="nav-dot" data-section="risks"><span class="tooltip">Risks &amp; Challenges</span></a>
+    <a href="#outlook" class="nav-dot" data-section="outlook"><span class="tooltip">Voices &amp; Outlook</span></a>
+    <a href="#conclusion" class="nav-dot" data-section="conclusion"><span class="tooltip">Conclusion</span></a>
+  </nav>
+
+  <!-- HERO -->
+  <div data-theme="theme-hero" data-section-id="hero" class="report-section">
+    <div id="hero" class="hero-container">
+      <div class="hero-background"></div>
+      <div class="hero-content">
+        <p class="hero-eyebrow">Scroll Report — Pattern Demo</p>
+        <h1>2025 GenAI Security Readiness Report</h1>
+        <h2>A Practitioners' View of Risk, Readiness, and Reality in the Enterprise</h2>
+        <p class="hero-attribution">Original report &amp; data: <a href="https://www.lakera.ai/genai-security-report-2025" target="_blank" rel="noopener noreferrer">Lakera</a>. Recreated here for pattern study.</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="hero-kpis">
+    <article class="kpi-card kpi1">
+      <h3 class="kpi-num">45%</h3>
+      <p class="kpi-text">of organizations are already implementing GenAI solutions.</p>
+    </article>
+    <article class="kpi-card kpi2">
+      <h3 class="kpi-num">15%</h3>
+      <p class="kpi-text">reported a GenAI-related security incident in the past year.</p>
+    </article>
+    <article class="kpi-card kpi3">
+      <h3 class="kpi-num">4%</h3>
+      <p class="kpi-text">rate their security confidence at the highest possible level.</p>
+    </article>
+    <article class="kpi-card kpi4">
+      <h3 class="kpi-num">39%</h3>
+      <p class="kpi-text">cite talent shortages as the #1 barrier to securing GenAI.</p>
+    </article>
+  </section>
+
+  <main class="report-main">
+    <!-- PREFACE -->
+    <div data-theme="theme-preface" data-section-id="preface" class="report-section">
+      <section id="preface">
+        <div class="preface-content">
+          <h2>Preface</h2>
+          <p>Since the emergence of generative AI—the so-called <span class="highlight">"ChatGPT moment" in late 2022</span>—keeping pace with both the development of AI and the use of AI for development has been staggeringly difficult.</p>
+          <p>As someone who spent years in the trenches of traditional application security, I saw how the move to cloud technologies like Kubernetes transformed our world. The neat "castle-and-moat" perimeter became sprawling microservice cities where single points of failure could lurk anywhere. This forced us to redefine observability, with low-touch technologies like eBPF finally shining a spotlight on hidden systems and containerization bringing infrastructure and application security teams into the same conversation.</p>
+          <p>For a brief moment, it felt like we had a strategy: <span class="highlight">attack paths over static vulnerabilities, provenance in the supply chain, and real improvements in signal-to-noise.</span></p>
+          <p>And then it happened. In what felt like a blink, we were speaking in natural language to stochastic AI systems—connected to tools, data, and other AIs—whose "backbone" could be any number of LLMs, each with its quirks. Ironically, as "smarter" models emerged, they often proved more vulnerable to jailbreaks and manipulation.</p>
+          <p>Ask any security professional three years ago about their "readiness" and you'd likely get a brave "I think so." Fast-forward to today, and that brave face has shifted closer to a wince. In this perfect storm of non-determinism, speed, and scale, what we need most is <span class="highlight">clarity, communication, and community.</span></p>
+          <p>This report delivers on that need. It shines a light on the realities of where we stand, helping ensure that as tomorrow approaches, the next steps we take are made with confidence.</p>
+          <div class="author-block">
+            <div class="author-avatar" aria-hidden="true">SG</div>
+            <div>
+              <strong>Steve Giguere</strong><br />
+              <span class="author-title">Principal AI Security Advocate at Lakera</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- SUMMARY -->
+    <div data-theme="theme-summary" data-section-id="summary" class="report-section">
+      <section id="quote-section">
+        <blockquote class="main-quote">
+          <span>"The window for proactive defense is closing. The cost of inaction far exceeds the investment in protection."</span>
+          <cite>— Ken Huang</cite>
+        </blockquote>
+      </section>
+      <section id="summary">
+        <div class="content-section">
+          <h2>Executive Summary</h2>
+          <blockquote class="intro-quote">
+            <span>"Our adoption has been faster than our ability to build safeguards."</span>
+            <cite>—Survey respondent, IT manager</cite>
+          </blockquote>
+          <p>Generative AI has crossed the line from experiment to everyday reality—but enterprise security hasn't kept pace. Adoption is no longer about <em>if</em>—it's about how fast companies can scale safely. <span class="highlight">Yet in 2025, most organizations remain dangerously underprepared for the risks they've already deployed.</span> Nearly half are implementing GenAI, but only a fraction have the guardrails or expertise to secure it.</p>
+          <p>Incidents are real: <span class="highlight">15% of respondents reported a GenAI-related security incident</span> in the past year. These cases most often involved prompt injection, data leakage, and biased outputs. Yet while incidents raise concern, they do not reliably translate into greater preparedness.</p>
+          <p>Confidence remains fragile. <span class="highlight">Only 4% of organizations rate their security confidence at the highest level</span>. Preparedness shows a similar pattern with just 15% describing themselves as well-prepared for emerging threats.</p>
+          <p>Risks are diversifying. Privacy remains the most-cited concern (46%), but its weight has dropped sharply from 73% in 2024. In its place, adversarial misuse, agent risks, and offensive AI are climbing. Unauthorized access and novel vulnerabilities are flagged less often (<span class="highlight">34% and 29%, respectively</span>), as organizations gain familiarity and redirect focus to newer risks.</p>
+          <p>Challenges are mounting. <span class="highlight">Talent shortages are now the #1 barrier (39%)</span>, and integration complexity has emerged as a major new obstacle. When these two pressures combine, preparedness drops sharply—a compound gap that many organizations struggle to close.</p>
+          <p>Perceptions also diverge by role and size. Developers often highlight misuse risks, while security analysts point to unauthorized access and researchers focus on novel vulnerabilities. Business users remain most concerned with privacy and regulatory fallout. Enterprises tend to report more structure and higher preparedness, but also more incidents; mid-sized firms often feel the least prepared.</p>
+        </div>
+
+        <div class="summary-cards-container">
+          <article class="stat-card acc1">
+            <div class="left">
+              <svg viewBox="0 0 48 48" fill="none" class="icon"><path d="M24 4l14 6v9c0 10-6.5 16.8-14 19-7.5-2.2-14-9-14-19V10l14-6z" stroke="currentColor" stroke-width="2.4" fill="none"/><circle cx="24" cy="23" r="5.5" stroke="currentColor" stroke-width="2.4" fill="none"/></svg>
+              <div>
+                <p class="kicker">Readiness ≠ absence of concern</p>
+                <p class="big">19%</p>
+                <p class="lead">of organizations report high confidence, but 49% still report high concern.</p>
+              </div>
+            </div>
+            <div class="right">
+              <h3>Confidence with vigilance</h3>
+              <p>Readiness means balancing assurance and alertness, not choosing one over the other.</p>
+              <div class="source"><span>Source: Lakera 2025 GenAI Security Readiness Report</span></div>
+            </div>
+          </article>
+
+          <article class="stat-card acc2">
+            <div class="left">
+              <svg viewBox="0 0 48 48" fill="none" class="icon"><path d="M24 5L4 41h40L24 5z" stroke="currentColor" stroke-width="2.4" fill="none"/><path d="M27 21l-6 7h6l-2 8l8-10h-6l2-5z" fill="currentColor"/></svg>
+              <div>
+                <p class="kicker">Incidents ≠ maturity</p>
+                <p class="big">15%</p>
+                <p class="lead">of organizations faced a GenAI security incident last year.</p>
+              </div>
+            </div>
+            <div class="right">
+              <h3>Experience does not equal resilience</h3>
+              <p>Awareness increases after incidents, but real maturity requires structured defenses.</p>
+              <div class="source"><span>Source: Lakera 2025 GenAI Security Readiness Report</span></div>
+            </div>
+          </article>
+
+          <article class="stat-card acc3">
+            <div class="left">
+              <svg viewBox="0 0 48 48" fill="none" class="icon"><circle cx="18" cy="24" r="8" stroke="currentColor" stroke-width="2.4" fill="none"/><circle cx="30" cy="24" r="8" stroke="currentColor" stroke-width="2.4" fill="none" opacity=".7"/></svg>
+              <div>
+                <p class="kicker">Skills and integration gap</p>
+                <p class="big">39%</p>
+                <p class="lead">cite a skills shortage, and 27% struggle with integration complexity.</p>
+              </div>
+            </div>
+            <div class="right">
+              <h3>The bottleneck that defines readiness</h3>
+              <p>Capability and cohesion determine whether security plans translate into action.</p>
+              <div class="source"><span>Source: Lakera 2025 GenAI Security Readiness Report</span></div>
+            </div>
+          </article>
+
+          <article class="stat-card acc4">
+            <div class="left">
+              <svg viewBox="0 0 64 40" fill="none" class="icon"><path d="M32 20C40 12 52 12 60 20" stroke="currentColor" stroke-width="2.4" fill="none"/><path d="M32 20C24 12 12 12 4 20" stroke="currentColor" stroke-width="2.4" fill="none"/></svg>
+              <div>
+                <p class="kicker">Fragmented risk perceptions</p>
+                <p class="big">Multiple views</p>
+                <p class="lead">Developers focus on misuse, analysts on unauthorized access, researchers on new vulnerabilities, and business leaders on privacy.</p>
+              </div>
+            </div>
+            <div class="right">
+              <h3>Alignment prevents drift</h3>
+              <p>Shared risk models keep teams moving in the same direction instead of securing different priorities.</p>
+              <div class="source"><span>Source: Lakera 2025 GenAI Security Readiness Report</span></div>
+            </div>
+          </article>
+
+          <article class="stat-card acc5">
+            <div class="left">
+              <svg viewBox="0 0 48 48" fill="none" class="icon"><rect x="10" y="20" width="28" height="20" rx="4" stroke="currentColor" stroke-width="2.4" fill="none"/><path d="M16 20v-4a8 8 0 0 1 16 0v4" stroke="currentColor" stroke-width="2.4" fill="none"/></svg>
+              <div>
+                <p class="kicker">Frontier shift</p>
+                <p class="big">73% → 46%</p>
+                <p class="lead">Last year, 73% identified privacy as the top concern; this year, only 46% do, as focus shifts to adversarial and agentic threats.</p>
+              </div>
+            </div>
+            <div class="right">
+              <h3>The next era of AI security</h3>
+              <p>Defenses move from compliance to confrontation, with misuse and offensive AI shaping tomorrow's challenges.</p>
+              <div class="source"><span>Source: Lakera 2025 GenAI Security Readiness Report</span></div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <!-- INTRODUCTION -->
+    <div data-theme="theme-introduction" data-section-id="introduction" class="report-section">
+      <section id="introduction">
+        <div class="content-section">
+          <h2>Introduction</h2>
+          <blockquote class="intro-quote">
+            <span>"We rushed adoption without skilled staff, and now we're paying for it in security debt."</span>
+            <cite>—Survey respondent, security professional</cite>
+          </blockquote>
+          <p>Unlike cloud or containers, GenAI security cannot rely on repeating patterns of failure. Models behave stochastically; no two runs are exactly alike, and risks emerge from unexpected combinations of instructions, data, tools, and user context. This is a domain that will never be completely "solved."</p>
+          <p>For security leaders, the implication is clear: prevention and early detection alone are not enough. A strategy anchored in runtime safeguards and adaptive defenses is essential. Yet this shift can be disorienting for teams accustomed to deterministic systems. The danger lies not only in technical gaps, but also in strategic misalignment—as happened in the early days of cloud, when role-based responses often slowed adoption and inflated costs. GenAI risks repeating that cycle unless organizations adapt.</p>
+          <p>Against this backdrop, Lakera fielded the 2025 GenAI Security Readiness Survey to capture the view from practitioners. We set out to understand:</p>
+          <ul class="custom-bullet-list">
+            <li>How organizations are adopting and securing GenAI/LLM systems</li>
+            <li>Which incidents they are encountering in production</li>
+            <li>Where they perceive the greatest risks and gaps</li>
+            <li>What obstacles are slowing their ability to adapt</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="methodology-callout">
+        <div class="content-section">
+          <h2>Methodology (What to Keep in Mind)</h2>
+          <p>Responses were collected mid-2025 from professionals working directly on AI development, deployment, or security. Job titles were grouped into broader categories and results are unweighted. Margins of error for headline figures are non-trivial and larger for subgroups, so small percentage differences should be treated as directional.</p>
+          <p>Open-text answers were thematically coded—these voices appear as anonymized call-outs throughout this report. In addition to survey responses, we also reached out to a select group of featured contributors from last year—recognized voices in cybersecurity and AI security—to reflect on their previous perspectives and update them for 2025.</p>
+          <h3>Key Takeaways</h3>
+          <ul class="custom-bullet-list methodology-list">
+            <li>Treat fine-grained percentage differences as directional, not definitive.</li>
+            <li>Quotes reflect cleaned, practitioner input—not anecdote.</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <!-- DEMOGRAPHICS -->
+    <div data-theme="theme-demographics" data-section-id="demographics" class="report-section">
+      <section id="demographics">
+        <div class="content-section">
+          <h2>Who Took the Survey</h2>
+          <blockquote class="intro-quote">
+            <span>"We don't have the in-house expertise to keep up with adversarial threats."</span>
+            <cite>—Survey respondent, mid-size company CTO</cite>
+          </blockquote>
+          <p>The respondent base spans security practitioners, developers, product leaders, researchers, and independents, and includes organizations ranging from startups to global enterprises. This diversity helps expose where perceptions diverge: enterprises report more structure and exposure; startups move faster with thinner guardrails; mid-sized firms feel the squeeze from both directions.</p>
+        </div>
+
+        <div class="data-visualization-block">
+          <div class="data-list-container">
+            <h3>Roles Represented</h3>
+            <ul class="data-list">
+              <li><span class="label" style="--color:#4f46e5">Other roles</span><span class="percentage">35%</span></li>
+              <li><span class="label" style="--color:#8b5cf6">Security professionals</span><span class="percentage">28%</span></li>
+              <li><span class="label" style="--color:#f59e0b">Developers &amp; engineers</span><span class="percentage">17%</span></li>
+              <li><span class="label" style="--color:#6b7280">Business &amp; product leaders</span><span class="percentage">14%</span></li>
+              <li><span class="label" style="--color:#22c55e">Researchers &amp; academics</span><span class="percentage">6%</span></li>
+            </ul>
+          </div>
+          <div class="chart-visual">
+            <div class="donut" style="--c1:#4f46e5;--c2:#8b5cf6;--c3:#f59e0b;--c4:#6b7280;--c5:#22c55e;--p1:35;--p2:28;--p3:17;--p4:14;--p5:6;"></div>
+          </div>
+        </div>
+
+        <div class="data-visualization-block reverse">
+          <div class="chart-visual">
+            <div class="donut" style="--c1:#8b5cf6;--c2:#4f46e5;--c3:#22c55e;--c4:#6b7280;--c5:#f59e0b;--p1:38;--p2:26;--p3:14;--p4:13;--p5:9;"></div>
+          </div>
+          <div class="data-list-container">
+            <h3>Organizations of All Sizes</h3>
+            <ul class="data-list">
+              <li><span class="label" style="--color:#8b5cf6">Startups (1–50)</span><span class="percentage">38%</span></li>
+              <li><span class="label" style="--color:#4f46e5">Enterprises (5,000+)</span><span class="percentage">26%</span></li>
+              <li><span class="label" style="--color:#22c55e">Large (1,001–5,000)</span><span class="percentage">14%</span></li>
+              <li><span class="label" style="--color:#6b7280">Small (51–200)</span><span class="percentage">13%</span></li>
+              <li><span class="label" style="--color:#f59e0b">Mid-size (201–1,000)</span><span class="percentage">9%</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ADOPTION -->
+    <div data-theme="theme-adoption" data-section-id="adoption" class="report-section">
+      <section id="adoption">
+        <div class="content-section">
+          <h2>Adoption &amp; Usage of GenAI</h2>
+          <p>Most organizations are beyond ideation: one in five remain in the planning stage, a third are actively exploring, and nearly half are already implementing across functions. As adoption matures, the nature of the challenge shifts: planning teams struggle to articulate ROI, exploring teams run into awareness gaps, and implementing teams grapple with benchmarking and cross-team alignment.</p>
+          <p>Among adopters, <span class="highlight">vendor-hosted APIs dominate</span>. Most organizations favor speed and ease of integration over full control, with self-hosting and fine-tuning remaining a niche.</p>
+          <p>Frontiers like multimodal systems and autonomous agents are still early. For multimodal AI, roughly one in six organizations report having systems in production. Agent adoption is even further behind, with just 14% reporting agents live in production. The interest is unmistakable—<span class="highlight">agents in particular are seen as the next game-changing step</span>—but it's tempered by recognition that securing autonomous, tool-using systems is uniquely difficult. The result is a frontier advancing cautiously, with security and governance setting the pace.</p>
+        </div>
+
+        <div class="content-section" style="margin-top:64px">
+          <h3>Key Takeaways</h3>
+          <ul class="custom-bullet-list">
+            <li>Challenges evolve with maturity: business case → awareness → secure scaling.</li>
+            <li>Speed favors vendor APIs; deeper control remains the exception.</li>
+            <li>Multimodal and agent adoption will pull tomorrow's security debates into production.</li>
+          </ul>
+        </div>
+
+        <div class="split-layout">
+          <div class="text-content">
+            <h3>How Challenges Evolve with Maturity</h3>
+            <table class="styled-table">
+              <thead>
+                <tr><th>Stage</th><th>Top Challenge</th><th>%</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Planning</td><td>Unclear ROI / business case</td><td class="value">15.9%</td></tr>
+                <tr><td>Exploring</td><td>Education &amp; awareness gaps</td><td class="value">16.4%</td></tr>
+                <tr><td rowspan="2">Implementing</td><td>Cross-team alignment</td><td class="value">10.2%</td></tr>
+                <tr><td>Benchmarking &amp; tooling gaps</td><td class="value">9.5%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="visual-container bar-chart-container">
+            <h3>Deployment Models Among Adopters</h3>
+            <ul class="hbar-chart">
+              <li><span class="hbar-label">Vendor APIs</span><div class="hbar-track"><div class="hbar-fill" style="--w:65%;--c:#4f46e5"></div></div><span class="hbar-value">65%</span></li>
+              <li><span class="hbar-label">In-house fine-tuning</span><div class="hbar-track"><div class="hbar-fill" style="--w:20%;--c:#8b5cf6"></div></div><span class="hbar-value">20%</span></li>
+              <li><span class="hbar-label">Self-hosted models</span><div class="hbar-track"><div class="hbar-fill" style="--w:15%;--c:#6b7280"></div></div><span class="hbar-value">15%</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="data-visualization-block">
+          <div class="data-list-container">
+            <h3>Multimodal Systems Adoption</h3>
+            <ul class="data-list">
+              <li><span class="label" style="--color:#6b7280">No plans</span><span class="percentage">30%</span></li>
+              <li><span class="label" style="--color:#f59e0b">Researching</span><span class="percentage">23%</span></li>
+              <li><span class="label" style="--color:#8b5cf6">Piloting</span><span class="percentage">21%</span></li>
+              <li><span class="label" style="--color:#4f46e5">Production</span><span class="percentage">17%</span></li>
+              <li><span class="label" style="--color:#22c55e">Mature</span><span class="percentage">8%</span></li>
+            </ul>
+          </div>
+          <div class="chart-visual">
+            <div class="donut" style="--c1:#6b7280;--c2:#f59e0b;--c3:#8b5cf6;--c4:#4f46e5;--c5:#22c55e;--p1:30;--p2:23;--p3:21;--p4:17;--p5:8;"></div>
+          </div>
+        </div>
+
+        <div class="data-visualization-block reverse">
+          <div class="chart-visual">
+            <div class="donut" style="--c1:#6b7280;--c2:#f59e0b;--c3:#8b5cf6;--c4:#4f46e5;--c5:#22c55e;--p1:23;--p2:31;--p3:26;--p4:14;--p5:6;"></div>
+          </div>
+          <div class="data-list-container">
+            <h3>Autonomous Agents Adoption</h3>
+            <ul class="data-list">
+              <li><span class="label" style="--color:#6b7280">No plans</span><span class="percentage">23%</span></li>
+              <li><span class="label" style="--color:#f59e0b">Researching</span><span class="percentage">31%</span></li>
+              <li><span class="label" style="--color:#8b5cf6">Piloting</span><span class="percentage">26%</span></li>
+              <li><span class="label" style="--color:#4f46e5">Production</span><span class="percentage">14%</span></li>
+              <li><span class="label" style="--color:#22c55e">Mature</span><span class="percentage">6%</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- CONFIDENCE -->
+    <div data-theme="theme-confidence" data-section-id="confidence" class="report-section">
+      <section id="confidence">
+        <div class="content-section">
+          <h2>Confidence, Concern &amp; Preparedness</h2>
+          <blockquote class="intro-quote">
+            <span>"Our red-teaming revealed vulnerabilities we hadn't even considered."</span>
+            <cite>—Survey respondent, security analyst</cite>
+          </blockquote>
+          <blockquote class="intro-quote">
+            <span>"Confidence is cautious, rarely strong."</span>
+            <cite>—Survey respondent, product lead</cite>
+          </blockquote>
+          <p>Self-rated confidence clusters around the middle, and preparedness follows the same pattern. These two measures tend to move together with confidence appearing to be a proxy for perceived preparedness. Crucially, neither reliably suppresses concern; <span class="highlight">even confident teams (fewer than one in five) remain wary.</span> Organizations that experienced incidents report higher concern, but not reliably higher preparedness—evidence that pain alone doesn't produce maturity without deliberate investment.</p>
+          <p>This pattern repeats when viewed by company size. Enterprises lead overall, with about one in five rating themselves well-prepared. <span class="highlight">Mid-sized firms are the weakest, with over 40% underprepared</span> and almost none rating themselves at the very highest preparedness level. Startups show the anomaly: highly polarized, with many underprepared but a small, agile minority rating themselves at the very strongest levels.</p>
+          <h3>When mapped together, three postures emerge:</h3>
+          <ul class="numbered-list">
+            <li>Vulnerable (26%) → low confidence paired with high concern.</li>
+            <li>Mature (8%) → high confidence with high concern.</li>
+            <li>Complacent (4%) → high confidence with low concern.</li>
+          </ul>
+          <p>The quadrant that matters most is the mature stance: confidence balanced by vigilance.</p>
+          <h3>Key takeaways:</h3>
+          <ul class="custom-bullet-list">
+            <li>Confidence and preparedness move together, but concern remains high regardless.</li>
+            <li>Incidents raise concern more than they raise readiness — maturity requires deliberate follow-through.</li>
+            <li>Mid-sized firms feel most exposed; startups split between fragility and agility.</li>
+          </ul>
+        </div>
+
+        <div class="full-width-visual">
+          <div class="visual-title"><span>Confidence vs. Concern: Organizational Postures</span></div>
+          <div class="quadrant-chart">
+            <div class="quadrant vulnerable">
+              <h3>Vulnerable</h3>
+              <span class="description">(low conf • high concern)</span>
+              <div class="percentage"><span>26%</span></div>
+            </div>
+            <div class="quadrant mature">
+              <h3>Mature</h3>
+              <span class="description">(high conf • high concern)</span>
+              <div class="percentage"><span>8%</span></div>
+            </div>
+            <div class="quadrant unaware">
+              <h3>Unaware</h3>
+              <span class="description">(low conf • low concern)</span>
+              <div class="percentage"><span>2%</span></div>
+            </div>
+            <div class="quadrant complacent">
+              <h3>Complacent</h3>
+              <span class="description">(high conf • low concern)</span>
+              <div class="percentage"><span>4%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="full-width-visual">
+          <div class="bar-chart-container">
+            <div class="visual-title"><span>Types of Vulnerabilities Encountered (2025)</span></div>
+            <ul class="hbar-chart">
+              <li><span class="hbar-label">Prompt injection</span><div class="hbar-track"><div class="hbar-fill" style="--w:50%;--c:#FFB74D"></div></div><span class="hbar-value">50%</span></li>
+              <li><span class="hbar-label">Data leakage</span><div class="hbar-track"><div class="hbar-fill" style="--w:39%;--c:#81C784"></div></div><span class="hbar-value">39%</span></li>
+              <li><span class="hbar-label">Biased or harmful outputs</span><div class="hbar-track"><div class="hbar-fill" style="--w:39%;--c:#E57373"></div></div><span class="hbar-value">39%</span></li>
+              <li><span class="hbar-label">Unauthorized access</span><div class="hbar-track"><div class="hbar-fill" style="--w:27%;--c:#64B5F6"></div></div><span class="hbar-value">27%</span></li>
+              <li><span class="hbar-label">Misuse of AI outputs</span><div class="hbar-track"><div class="hbar-fill" style="--w:23%;--c:#BA68C8"></div></div><span class="hbar-value">23%</span></li>
+            </ul>
+            <p class="chart-description">The share of organizations reporting GenAI incidents rose from ~9% in 2024 to 15% in 2025. While still a minority, these cases provide a clear signal of what can go wrong once systems move into production.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- RISKS -->
+    <div data-theme="theme-risks" data-section-id="risks" class="report-section">
+      <section id="risks">
+        <div class="content-section">
+          <h2>Top Risks &amp; Challenges</h2>
+          <blockquote class="intro-quote">
+            <span>"Privacy concerns remain the #1 blocker for executive buy-in."</span>
+            <cite>—Survey respondent, product owner</cite>
+          </blockquote>
+          <blockquote class="intro-quote">
+            <span>"The novelty of attacks like prompt injection makes standard playbooks inadequate."</span>
+            <cite>—Survey respondent, developer</cite>
+          </blockquote>
+          <p>In this year's survey, respondents were asked to select their top risks and top challenges from a predefined list, with the option to choose more than one. This means results can be described in two ways: as the share of respondents who selected an item, or as the share of total selections (votes) it received.</p>
+          <p>Data privacy remains the most-cited risk, but its weight is shifting. In 2024, nearly three-quarters of respondents flagged privacy as their top concern. In 2025 that number dropped to just under a half. Privacy hasn't become less important, it has <span class="highlight">normalized into structured compliance.</span></p>
+          <p>Other risks are diversifying. Unauthorized access and novel vulnerabilities are cited less often than a year ago, as technical teams gain familiarity and strengthen controls. At the same time, <span class="highlight">adversarial misuse, agent risks, and offensive AI are rising in visibility.</span> This reflects the industry's pivot from well-defined risks to complex, evolving ones.</p>
+          <p>Challenges tell a parallel story. The <span class="highlight">skills gap is now the defining bottleneck</span>, cited by 39% of respondents (up from ~25% in 2024). Integration complexity emerged as a major obstacle this year, as GenAI collides with legacy infrastructure and governance processes. When skills shortages and integration pressures overlap, preparedness drops sharply. This compound gap is where many organizations feel most exposed, and where investment will matter most in the years ahead.</p>
+        </div>
+
+        <div class="visual-table-container">
+          <div class="visual-title"><span>Top 3 Risks and Challenges: 2024 vs 2025</span></div>
+          <div class="visual-table-grid">
+            <div class="grid-header"><span>Category</span></div>
+            <div class="grid-header"><span>2024</span></div>
+            <div class="grid-header"><span>2025</span></div>
+
+            <div class="grid-cell category"><span>Risks</span></div>
+            <div class="grid-cell">
+              <div class="data-point"><div class="label"><span>Privacy</span><span>73%</span></div><div class="percentage-bar-bg"><div class="percentage-bar bar-2024" style="width:73%"></div></div></div>
+              <div class="data-point"><div class="label"><span>Unauthorized Access</span><span>46%</span></div><div class="percentage-bar-bg"><div class="percentage-bar bar-2024" style="width:46%"></div></div></div>
+              <div class="data-point"><div class="label"><span>Novel Vulnerabilities</span><span>39%</span></div><div class="percentage-bar-bg"><div class="percentage-bar bar-2024" style="width:39%"></div></div></div>
+            </div>
+            <div class="grid-cell">
+              <div class="data-point"><div class="label"><span>Privacy</span><span>46%</span></div><div class="percentage-bar-bg"><div class="percentage-bar bar-2025" style="width:46%"></div></div></div>
+              <div class="data-point"><div class="label"><span>Unauthorized Access</span><span>34%</span></div><div class="percentage-bar-bg"><div class="percentage-bar bar-2025" style="width:34%"></div></div></div>
+              <div class="data-point"><div class="label"><span>Novel Vulnerabilities</span><span>29%</span></div><div class="percentage-bar-bg"><div class="percentage-bar bar-2025" style="width:29%"></div></div></div>
+            </div>
+
+            <div class="grid-cell category" style="padding-top:40px"><span>Challenges</span></div>
+            <div class="grid-cell" style="padding-top:40px">
+              <div class="data-point"><div class="label"><span>Regulation Alignment</span><span>38%</span></div><div class="percentage-bar-bg"><div class="percentage-bar bar-2024" style="width:38%"></div></div></div>
+              <div class="data-point"><div class="label"><span>Talent Shortage</span><span>~25%</span></div><div class="percentage-bar-bg"><div class="percentage-bar bar-2024" style="width:25%"></div></div></div>
+              <div class="data-point"><div class="label"><span>Integration</span><span>Low</span></div><div class="percentage-bar-bg"><div class="percentage-bar bar-2024" style="width:5%"></div></div></div>
+            </div>
+            <div class="grid-cell" style="padding-top:40px">
+              <div class="data-point"><div class="label"><span>Talent Shortage</span><span>39%</span></div><div class="percentage-bar-bg"><div class="percentage-bar bar-2025" style="width:39%"></div></div></div>
+              <div class="data-point"><div class="label"><span>Integration</span><span>27%</span></div><div class="percentage-bar-bg"><div class="percentage-bar bar-2025" style="width:27%"></div></div></div>
+              <div class="data-point"><div class="label"><span>Regulation</span><span>25%</span></div><div class="percentage-bar-bg"><div class="percentage-bar bar-2025" style="width:25%"></div></div></div>
+            </div>
+          </div>
+          <p class="table-description">Privacy, unauthorized access, and novel vulnerabilities declined as "top concerns" between 2024 and 2025, signaling normalization. Meanwhile, talent and integration rose sharply as operational challenges.</p>
+        </div>
+
+        <div class="content-section">
+          <h3>Key takeaways:</h3>
+          <ul class="custom-bullet-list">
+            <li>Privacy has stabilized into compliance; adversarial misuse and agent risks now define the frontier.</li>
+            <li>Skills + integration is the dominant compound drag on readiness.</li>
+            <li>Regulation is still complex, but less of a "black box" than in 2024.</li>
+          </ul>
+        </div>
+
+        <section class="cta-handbook-container">
+          <div class="cta-handbook-content">
+            <div class="cta-handbook-text">
+              <h3>Deepen Your Defense</h3>
+              <p>Gain insights into GenAI security. Explore a full taxonomy of prompt attack strategies, and get practical knowledge to safeguard your AI applications.</p>
+              <a href="https://www.lakera.ai/ai-security-guides/prompt-injection-attacks-handbook" target="_blank" rel="noopener noreferrer" class="cta-button">Read Lakera's Handbook →</a>
+            </div>
+          </div>
+        </section>
+      </section>
+    </div>
+
+    <!-- OUTLOOK -->
+    <div data-theme="theme-outlook" data-section-id="outlook" class="report-section">
+      <section id="outlook">
+        <div class="content-section">
+          <h2>Voices &amp; Outlook</h2>
+          <blockquote class="intro-quote">
+            <span>"Delegated autonomy forces us to confront accountability gaps and blurred trust boundaries."</span>
+            <cite>—Emmanuel Guilherme, Senior Information Technology Auditor</cite>
+          </blockquote>
+          <blockquote class="intro-quote">
+            <span>"The novelty of attacks like prompt injection makes standard playbooks inadequate."</span>
+            <cite>—Ads Dawson, Staff AI Security Researcher</cite>
+          </blockquote>
+          <p>Practitioner and expert voices converge on the same reality: organizations are moving faster than their safeguards. The race to deploy AI-powered products is creating security debt that compounds over time. <span class="highlight">Nate Lee</span>, CISO, notes: "Everyone feels the pressure to move so fast. Unless security is baked in from the start, it gets left by the wayside—and problems will be dealt with later."</p>
+          <p><span class="highlight">Nathan Hamiel</span>, Senior Director of Research, warns that the rush is surfacing vulnerabilities of unusual severity: "We've seen increased occurrences of relatively rare and severe issues, such as remote code execution, through poor coding practices and weak architectural choices." His concern is that, in the drive to show value, developers are shipping products with too much access and too few controls—a trend attackers will continue to exploit.</p>
+          <p><span class="highlight">Alex Joliet</span>, CDPO, observes how quickly the ground has shifted: "Twelve months ago we were still in the early stages of GenAI adoption. Since then, there's been a growing acknowledgment of the expanded attack surface—and with it, rapid development of security tooling to wrap around the GenAI experience as organizations become more conscious of the risks."</p>
+          <p>Privacy is still the most-cited risk, but voices like <span class="highlight">Emmanuel Guilherme</span> stress that the real challenge now lies in governance and accountability. Delegated autonomy forces companies to address blurred trust boundaries, escalation paths, and responsibility gaps.</p>
+          <p>Talent and training emerge as another bottleneck. Precisely's 2024 global AI readiness survey found that 60% of respondents cited a lack of AI skills and training as a significant challenge in launching AI initiatives. The World Economic Forum reinforces this, urging companies to make AI security an operating model, not a silo. Without skilled staff, governance frameworks remain paper exercises.</p>
+          <p>On the attacker side, the tempo is accelerating. <span class="highlight">Ads Dawson</span> emphasizes that defenders are now confronting a pace of offensive AI that outstrips traditional security cycles: "In 2025 the biggest shift is that companies are no longer treating GenAI security as an afterthought—they're operationalizing it with governance, identity-first controls, and formal red-team exercises. Offensive capabilities have scaled quickly: models can now automate attacks at a tempo that changes the threat landscape."</p>
+          <p><span class="highlight">Ken Huang</span>, a leading AI strategist, warns about the convergence of new risks:</p>
+          <ul class="custom-bullet-list">
+            <li>Deepfake attacks surged 680% year-over-year, with Q1 2025 alone seeing $200M in losses from AI-generated executive impersonations.</li>
+            <li>Multi-agent vulnerabilities are opening systemic failure paths, with CVEs published this year against MCP server implementations and agent orchestration frameworks. Once one agent is compromised, cascades can spread misinformation, execute malicious commands, or collapse entire workflows.</li>
+          </ul>
+          <p>Huang's prescription is blunt: "The window for proactive defense is closing. The cost of inaction far exceeds the investment in protection." His strategy centers on layered detection (voice/visual analysis, behavioral biometrics, blockchain verification), process redesign (multi-channel verification for high-value requests), and workforce training.</p>
+          <p>The outlook is clear. Governance and privacy are stabilizing into compliance domains. Skills and integration are rising as the hard bottlenecks to scale. Offensive AI, deepfakes, and multi-agent systems are reshaping the threat surface. Success will depend on treating GenAI security as a continuous operating discipline—governance, runtime safeguards, red-teaming, and skills development built into the everyday fabric of enterprise.</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- CONCLUSION -->
+    <div data-theme="theme-conclusion" data-section-id="conclusion" class="report-section">
+      <section id="conclusion">
+        <div class="content-section">
+          <h2>Conclusion: Readiness in Motion</h2>
+          <p>The readiness story in 2025 is not a scoreboard of small percentage changes; it's a shift in posture. Mature organizations balance confidence with vigilance, invest in skills and integration, and anchor their strategy on runtime safeguards. Where incidents occur, they are treated as hard-won signals—translated into policy, controls, and muscle memory rather than merely heightened concern.</p>
+          <p>Blind spots vary by role and size. Developers, business users, and researchers focus on different risks, while mid-sized firms often report feeling the most exposed. If these perspectives remain fragmented, they cascade into misaligned strategies and wasted investment.</p>
+          <p>Readiness, as our data makes clear, is not about eliminating concern. The most mature organizations are those <span class="highlight">balancing confidence with vigilance:</span> capable enough to innovate, cautious enough to anticipate threats.</p>
+        </div>
+
+        <div class="action-steps-container">
+          <h2 class="action-steps-title">Practical Next Steps</h2>
+          <ul class="numbered-list">
+            <li>Establish a living GenAI security policy with clear ownership.</li>
+            <li>Prioritize runtime protections (policy enforcement, prompt and response vetting, egress controls).</li>
+            <li>Close the skills + integration gap with targeted training and reference architectures.</li>
+            <li>Red-team continuously against modern threats (prompt injection, agent misuse, data leakage).</li>
+            <li>Align stakeholders early to avoid strategy drift across roles.</li>
+          </ul>
+        </div>
+
+        <p class="closing-thought">Security readiness is not a finish line; it's a moving frontier. The challenge for every organization is to adapt as fast as the technology itself.</p>
+
+        <div class="content-section credit-block">
+          <p class="credit">All copy, figures, and survey data are from Lakera's <a href="https://www.lakera.ai/genai-security-report-2025" target="_blank" rel="noopener noreferrer">2025 GenAI Security Readiness Report</a>. This page is a structural recreation of the scrolling-narrative pattern, built for internal study at <a href="/">mpstaton.com</a>.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <style is:global>
+    /* Reset / base — self-contained, no Tailwind preflight in this page. */
+    *, *::before, *::after { box-sizing: border-box; }
+    html.scroll-report-html { scroll-behavior: smooth; }
+
+    :root {
+      --brand-bg: #0b0b10;
+      --brand-surface: #111219;
+      --brand-surface-2: #f6f8fb;
+      --brand-text: #0f1222;
+      --brand-text-inverse: #e9edf5;
+      --brand-muted: #a7b0c4;
+      --brand-border: #e5e7eb;
+      --brand-border-dark: rgba(255,255,255,.14);
+
+      --accent-okay: #22c55e;
+      --accent-warn: #f59e0b;
+      --accent-danger: #ef4444;
+      --g1: #00DFD8; --g2: #00AEEF; --g3: #6F00FF; --g4: #E6007E; --g5: #FF8D00;
+
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-md: 0 8px 24px rgba(0,0,0,.12);
+
+      --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-serif: 'Lora', Georgia, serif;
+      --fs-base: 16px;
+      --lh-normal: 1.6;
+
+      /* Dynamic per-section gradient (set by body theme classes) */
+      --current-grad-start: #4f46e5;
+      --current-grad-end: #8b5cf6;
+      --current-grad-start-rgb: 79, 70, 229;
+      --current-grad-end-rgb: 139, 92, 246;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-sans);
+      font-size: var(--fs-base);
+      background-color: var(--brand-bg);
+      color: var(--brand-text-inverse);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(circle at 10% 10%, rgba(var(--current-grad-start-rgb), 0.10) 0%, transparent 25%),
+        radial-gradient(circle at 90% 80%, rgba(var(--current-grad-end-rgb), 0.10) 0%, transparent 25%);
+      background-attachment: fixed;
+      transition: background-image .8s ease-in-out;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    h1, h2, h3, p, ul, ol, blockquote, figure { margin: 0; padding: 0; }
+    ul { list-style: none; }
+    cite { font-style: normal; }
+
+    /* --- THEME DEFINITIONS (applied to body via JS as user scrolls) --- */
+    body.theme-hero          { --current-grad-start: #4f46e5; --current-grad-end: #8b5cf6; --current-grad-start-rgb: 79, 70, 229;  --current-grad-end-rgb: 139, 92, 246; }
+    body.theme-preface       { --current-grad-start: #4f46e5; --current-grad-end: #00AEEF; --current-grad-start-rgb: 79, 70, 229;  --current-grad-end-rgb: 0, 174, 239; }
+    body.theme-summary       { --current-grad-start: #00AEEF; --current-grad-end: #00DFD8; --current-grad-start-rgb: 0, 174, 239;  --current-grad-end-rgb: 0, 223, 216; }
+    body.theme-introduction  { --current-grad-start: #00DFD8; --current-grad-end: #22c55e; --current-grad-start-rgb: 0, 223, 216;  --current-grad-end-rgb: 34, 197, 94; }
+    body.theme-demographics  { --current-grad-start: #22c55e; --current-grad-end: #6F00FF; --current-grad-start-rgb: 34, 197, 94;  --current-grad-end-rgb: 111, 0, 255; }
+    body.theme-adoption      { --current-grad-start: #6F00FF; --current-grad-end: #8b5cf6; --current-grad-start-rgb: 111, 0, 255;  --current-grad-end-rgb: 139, 92, 246; }
+    body.theme-confidence    { --current-grad-start: #8b5cf6; --current-grad-end: #E6007E; --current-grad-start-rgb: 139, 92, 246; --current-grad-end-rgb: 230, 0, 126; }
+    body.theme-risks         { --current-grad-start: #E6007E; --current-grad-end: #f59e0b; --current-grad-start-rgb: 230, 0, 126;  --current-grad-end-rgb: 245, 158, 11; }
+    body.theme-outlook       { --current-grad-start: #f59e0b; --current-grad-end: #4f46e5; --current-grad-start-rgb: 245, 158, 11; --current-grad-end-rgb: 79, 70, 229; }
+    body.theme-conclusion    { --current-grad-start: #4f46e5; --current-grad-end: #00AEEF; --current-grad-start-rgb: 79, 70, 229;  --current-grad-end-rgb: 0, 174, 239; }
+
+    .gradient-text {
+      background: linear-gradient(90deg, var(--current-grad-start), var(--current-grad-end));
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+    }
+
+    /* --- HEADER / TOP NAV --- */
+    .report-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      width: 100%; padding: 14px 0;
+      background-color: rgba(11, 11, 16, .8);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--brand-border-dark);
+      animation: fadeInDown .5s ease-out;
+    }
+    .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; }
+    .header-nav-items { display: flex; align-items: center; gap: 25px; }
+    .top-nav { display: flex; gap: 25px; }
+    .top-nav a { color: var(--brand-muted); font-size: 14px; font-weight: 500; padding-bottom: 5px; position: relative; transition: color .25s ease; }
+    .top-nav a:hover { color: var(--brand-text-inverse); }
+    .top-nav a.active { color: var(--brand-text-inverse); }
+    .top-nav a.active::after {
+      content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px;
+      background: linear-gradient(90deg, var(--current-grad-start), var(--current-grad-end));
+    }
+
+    /* --- SIDE NAV DOTS --- */
+    .side-nav { position: fixed; top: 50%; right: 30px; transform: translateY(-50%); z-index: 1001; display: flex; flex-direction: column; gap: 26px; }
+    .side-nav a { width: 12px; height: 12px; background-color: rgba(255,255,255,.2); border-radius: 50%; transition: all .3s ease; position: relative; display: block; }
+    .side-nav a .tooltip {
+      position: absolute; top: 50%; right: 25px; transform: translateY(-50%);
+      background-color: var(--brand-surface-2); color: var(--brand-text);
+      padding: 5px 10px; border-radius: var(--radius-sm); font-size: .8rem; font-weight: 600; white-space: nowrap;
+      opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease;
+    }
+    @media (min-width: 992px) {
+      .side-nav a.active, .side-nav a:hover {
+        background-color: var(--current-grad-start);
+        transform: scale(1.3);
+        box-shadow: 0 0 15px var(--current-grad-start), 0 0 25px var(--current-grad-start);
+      }
+      .side-nav a:hover .tooltip, .side-nav a.active .tooltip { opacity: 1; visibility: visible; }
+    }
+    @media (max-width: 1200px) { .side-nav { display: none; } }
+
+    /* --- MAIN LAYOUT --- */
+    .report-main { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 10; }
+    .report-section { opacity: 1; transform: translateY(50px); transition: opacity .4s cubic-bezier(.25,1,.5,1), transform .4s cubic-bezier(.25,1,.5,1); }
+    .report-main > .report-section:not(:first-of-type) { border-top: 1px solid rgba(255,255,255,.1); margin-top: 48px; padding-top: 48px; box-shadow: 0 -1px 0 rgba(255,255,255,.05); }
+    .report-section.visible { opacity: 1; transform: translateY(0); }
+    .report-section section { padding: 24px 0; }
+    .report-section section:last-of-type { padding-bottom: 120px; }
+
+    /* --- HERO --- */
+    .hero-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; color: #fff; overflow: hidden; }
+    .hero-background { position: absolute; inset: 0; z-index: 1; background-color: var(--brand-bg); overflow: hidden; }
+    .hero-background::before, .hero-background::after {
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(90deg,
+        rgba(var(--current-grad-start-rgb), .8) 0%,  rgba(var(--current-grad-start-rgb), .2) 15%,
+        rgba(var(--current-grad-end-rgb),   .2) 35%, rgba(var(--current-grad-end-rgb),   .8) 50%, rgba(var(--current-grad-end-rgb), .2) 65%,
+        rgba(var(--current-grad-start-rgb), .2) 85%, rgba(var(--current-grad-start-rgb), .8) 100%);
+      filter: blur(100px);
+      animation: pan-background 30s linear infinite;
+    }
+    .hero-background::after { filter: blur(150px); opacity: .7; animation-duration: 45s; }
+    .hero-content { position: relative; z-index: 10; padding: 20px; max-width: 760px; }
+    .hero-eyebrow { font-size: .85rem; letter-spacing: .2em; text-transform: uppercase; color: var(--brand-muted); margin-bottom: 16px; }
+    .hero-content h1 {
+      font-size: clamp(2.6rem, 7.5vw, 4.4rem); font-weight: 700; letter-spacing: -.03em; margin: 0; line-height: 1.05;
+      background: linear-gradient(135deg, #ffffff, #d1d1d1);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+      text-shadow: 0 4px 30px rgba(0,0,0,.5);
+      animation: text-focus-in 1.2s cubic-bezier(.55,.085,.68,.53) both;
+    }
+    .hero-content h2 {
+      font-size: clamp(1.05rem, 2.4vw, 1.25rem); font-weight: 400; color: var(--brand-muted);
+      margin: 24px auto 0; max-width: 600px; line-height: var(--lh-normal);
+      animation: text-focus-in 1.5s cubic-bezier(.55,.085,.68,.53) both;
+    }
+    .hero-attribution { margin-top: 40px; font-size: .85rem; color: rgba(255,255,255,.55); }
+    .hero-attribution a { color: var(--brand-text-inverse); border-bottom: 1px dotted rgba(255,255,255,.4); }
+
+    /* --- HERO KPIs --- */
+    .hero-kpis {
+      max-width: 1200px; margin: -100px auto 40px; padding: 0 24px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+      position: relative; z-index: 20; perspective: 1000px;
+    }
+    @media (max-width: 1024px) { .hero-kpis { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px)  { .hero-kpis { grid-template-columns: 1fr; } }
+    .kpi-card {
+      position: relative; border: 1px solid rgba(255,255,255,.14); border-radius: 20px; overflow: hidden;
+      background: rgba(9,12,18,.9);
+      box-shadow: 0 8px 24px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.02);
+      padding: 32px; isolation: isolate;
+    }
+    .kpi-card::before { content: ''; position: absolute; inset: 0; z-index: 0; background: var(--kpi-gradient); opacity: .12; }
+    .kpi-num { position: relative; z-index: 1; font-size: clamp(2.4rem, 8vw, 56px); font-weight: 900; line-height: 1; margin: 0 0 10px;
+      background: var(--knum-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+    }
+    .kpi-text { position: relative; z-index: 1; color: #dfe6f5; font-size: 17px; line-height: 1.45; margin: 0; }
+
+    .kpi1 { --kpi-gradient: linear-gradient(135deg, rgba(139,92,246,.9), rgba(230,0,126,.85));
+            --knum-gradient: linear-gradient(90deg, rgba(139,92,246,.9), rgba(230,0,126,.75)); }
+    .kpi2 { --kpi-gradient: linear-gradient(135deg, rgba(0,174,239,.9), rgba(0,223,216,.85));
+            --knum-gradient: linear-gradient(90deg, rgba(0,174,239,.9), rgba(0,223,216,.75)); }
+    .kpi3 { --kpi-gradient: linear-gradient(135deg, rgba(139,92,246,.9), rgba(230,0,126,.85));
+            --knum-gradient: linear-gradient(90deg, rgba(139,92,246,.9), rgba(230,0,126,.75)); }
+    .kpi4 { --kpi-gradient: linear-gradient(135deg, rgba(230,0,126,.9), rgba(245,158,11,.85));
+            --knum-gradient: linear-gradient(90deg, rgba(230,0,126,.9), rgba(245,158,11,.75)); }
+
+    /* --- TYPOGRAPHY (inside report) --- */
+    .content-section, .preface-content { max-width: 720px; margin: 0 auto; }
+    .report-section h2 { font: 700 clamp(2rem, 5vw, 52.5px)/1.1 var(--font-sans); letter-spacing: -.01em; color: var(--brand-text-inverse); }
+    .content-section h2, .preface-content h2 { text-align: left; margin-bottom: 32px; }
+    .report-section h3 { font: 600 20px/1.2 var(--font-sans); color: var(--brand-text-inverse); margin-top: 48px; margin-bottom: 24px; }
+    .report-section p { font-size: var(--fs-base); line-height: var(--lh-normal); color: var(--brand-muted); }
+    .content-section p, .preface-content p { text-align: left; margin-bottom: 1.5em; }
+    .highlight {
+      background: linear-gradient(90deg, var(--current-grad-start), var(--current-grad-end));
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+      font-weight: 700;
+    }
+
+    /* --- AUTHOR BLOCK --- */
+    .author-block { margin-top: 32px; display: flex; align-items: center; gap: 16px; color: var(--brand-text-inverse); font-size: var(--fs-base); line-height: 1.6; }
+    .author-block strong { font-weight: 600; font-size: 1.05rem; }
+    .author-title { color: var(--brand-muted); }
+    .author-avatar {
+      width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, #4f46e5, #8b5cf6);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: #fff; letter-spacing: .05em; font-size: .95rem;
+      border: 2px solid rgba(255,255,255,.1);
+    }
+
+    /* --- QUOTE SECTION --- */
+    #quote-section { padding: 48px 0; }
+    .main-quote {
+      position: relative; font: 500 italic clamp(1.4rem, 4.5vw, 2rem)/1.5 var(--font-serif);
+      max-width: 800px; margin: 0 auto; padding-left: 50px; color: var(--brand-text-inverse);
+    }
+    .main-quote::before {
+      content: '\201C'; font-size: 10rem; font-weight: 900; position: absolute; top: -2rem; left: -1rem; z-index: 0; opacity: .2;
+      background: linear-gradient(135deg, var(--current-grad-start), var(--current-grad-end));
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+    }
+    .main-quote cite { display: block; margin-top: 20px; font-size: 14px; color: var(--brand-muted); font-family: var(--font-sans); }
+
+    .intro-quote {
+      margin: 0 0 32px 0; padding: 24px;
+      border-left: 3px solid var(--current-grad-start);
+      background-color: rgba(var(--current-grad-start-rgb), .05);
+      font-size: 1.4rem; font-style: italic; line-height: 1.6;
+      max-width: 100%; text-align: left; border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-family: var(--font-serif); color: #f0f3f7;
+    }
+    .intro-quote cite { display: block; margin-top: 10px; font-size: 14px; color: var(--brand-muted); font-family: var(--font-sans); }
+
+    /* --- STAT CARDS --- */
+    .summary-cards-container { max-width: 1100px; margin: 64px auto; }
+    .stat-card {
+      position: relative; display: grid; grid-template-columns: 1fr 1fr;
+      border: 1px solid var(--brand-border-dark);
+      border-radius: 22px; overflow: hidden; margin: 22px 0 40px;
+      background: radial-gradient(120% 160% at 0% 0%, rgba(255,255,255,.05), rgba(255,255,255,0) 60%);
+      box-shadow: 0 10px 28px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.02);
+      isolation: isolate; transform-style: preserve-3d;
+      transition: transform .25s ease, box-shadow .3s ease;
+    }
+    .stat-card::after { content: ''; position: absolute; inset: 0; z-index: 0; background: var(--panel-gradient); clip-path: inset(0 0 0 50%); }
+    .stat-card::before { content: ''; position: absolute; inset: 0; z-index: 0; background: var(--panel-gradient); opacity: .12; }
+    .stat-card .left, .stat-card .right { position: relative; z-index: 1; padding: 60px 48px; }
+    .stat-card .left { display: grid; grid-template-columns: 56px 1fr; gap: 20px; align-items: start; }
+    .stat-card .icon { width: 48px; height: 48px; margin-top: 4px; opacity: .95; }
+    .stat-card .kicker { color: var(--brand-muted); font-size: 18px; font-weight: 600; margin: 0 0 8px; letter-spacing: .25px; }
+    .stat-card .big {
+      font-size: clamp(2.4rem, 9vw, 60px); font-weight: 800; line-height: 1; margin: 0 0 8px;
+      background: var(--big-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+    }
+    .stat-card .lead { font-size: 20px; line-height: 1.35; margin: 0; color: var(--brand-text-inverse); }
+    .stat-card .right { display: flex; flex-direction: column; justify-content: center; }
+    .stat-card .right h3 { font-size: 28px; font-weight: 800; margin: 0 0 16px; color: #fff; }
+    .stat-card .right p { font-size: 18px; line-height: 1.45; margin: 0; color: #f1f4f9; }
+    .stat-card .source { margin-top: 24px; font-size: 13px; color: var(--brand-muted); }
+
+    .stat-card.acc1 { --panel-gradient: linear-gradient(135deg, rgba(139,92,246,.9), rgba(230,0,126,.85)); --big-gradient: linear-gradient(90deg, rgba(139,92,246,.85), rgba(230,0,126,.75)); }
+    .stat-card.acc2 { --panel-gradient: linear-gradient(135deg, rgba(0,174,239,.9), rgba(0,223,216,.85));  --big-gradient: linear-gradient(90deg, rgba(0,174,239,.85), rgba(0,223,216,.75)); }
+    .stat-card.acc3 { --panel-gradient: linear-gradient(135deg, rgba(230,0,126,.9), rgba(245,158,11,.85)); --big-gradient: linear-gradient(90deg, rgba(230,0,126,.85), rgba(245,158,11,.75)); }
+    .stat-card.acc4 { --panel-gradient: linear-gradient(135deg, rgba(34,197,94,.9), rgba(111,0,255,.85));  --big-gradient: linear-gradient(90deg, rgba(34,197,94,.85), rgba(111,0,255,.75)); }
+    .stat-card.acc5 { --panel-gradient: linear-gradient(135deg, rgba(245,158,11,.9), rgba(79,70,229,.85)); --big-gradient: linear-gradient(90deg, rgba(245,158,11,.85), rgba(79,70,229,.75)); }
+
+    /* --- LISTS (custom-bullet & numbered) --- */
+    .custom-bullet-list { padding: 0; margin-top: 40px; }
+    .custom-bullet-list li {
+      display: flex; align-items: flex-start; gap: 16px; margin-bottom: 12px; padding: 20px;
+      background: var(--brand-surface); border: 1px solid var(--brand-border-dark);
+      border-radius: var(--radius-md); font-size: 1.05rem; line-height: 1.6; color: var(--brand-text-inverse);
+    }
+    .custom-bullet-list li::before {
+      content: '\2713'; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: linear-gradient(90deg, var(--current-grad-start), var(--current-grad-end));
+      color: var(--brand-bg); font-weight: 700; font-size: .9rem; margin-top: 2px;
+    }
+    .methodology-list li::before { content: 'i'; font-family: serif; font-weight: bold; font-style: italic; font-size: 1.1rem; }
+    .numbered-list { padding: 0; margin-top: 40px; counter-reset: list-item; }
+    .numbered-list li {
+      display: flex; align-items: flex-start; gap: 16px; margin-bottom: 12px; padding: 20px;
+      background: var(--brand-surface); border: 1px solid var(--brand-border-dark);
+      border-radius: var(--radius-md); font-size: 1.05rem; line-height: 1.6; color: var(--brand-text-inverse);
+    }
+    .numbered-list li::before {
+      content: counter(list-item); counter-increment: list-item;
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: linear-gradient(90deg, var(--current-grad-start), var(--current-grad-end));
+      color: var(--brand-bg); font-weight: 700; font-size: .9rem; margin-top: 2px;
+    }
+
+    /* --- DATA VISUALIZATIONS --- */
+    .data-visualization-block { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; margin-top: 80px; }
+    .data-visualization-block.reverse .data-list-container { order: 2; }
+    .data-list-container h3, .text-content h3, .visual-container h3 {
+      font-size: 1.5625rem; margin-bottom: 24px; text-align: left;
+      background: linear-gradient(90deg, var(--current-grad-start), var(--current-grad-end));
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+    }
+    .data-list { padding: 0; margin: 0; }
+    .data-list li { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 5px; border-bottom: 1px solid var(--brand-border-dark); }
+    .data-list .label { display: flex; align-items: center; font-size: 15px; color: var(--brand-muted); }
+    .data-list .label::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background-color: var(--color); margin-right: 12px; flex-shrink: 0; }
+    .data-list .percentage { font-size: 1.1rem; font-weight: 600; color: var(--brand-text-inverse); }
+
+    /* --- DONUT CHART (CSS conic-gradient) --- */
+    .chart-visual { position: relative; max-width: 380px; margin: 0 auto; padding: 0; display: flex; align-items: center; justify-content: center; }
+    .donut {
+      --p1: 0; --p2: 0; --p3: 0; --p4: 0; --p5: 0;
+      --t1: var(--p1);
+      --t2: calc(var(--p1) + var(--p2));
+      --t3: calc(var(--p1) + var(--p2) + var(--p3));
+      --t4: calc(var(--p1) + var(--p2) + var(--p3) + var(--p4));
+      width: 280px; height: 280px; border-radius: 50%;
+      background: conic-gradient(
+        var(--c1, #4f46e5) 0% calc(var(--t1) * 1%),
+        var(--c2, #8b5cf6) calc(var(--t1) * 1%) calc(var(--t2) * 1%),
+        var(--c3, #22c55e) calc(var(--t2) * 1%) calc(var(--t3) * 1%),
+        var(--c4, #6b7280) calc(var(--t3) * 1%) calc(var(--t4) * 1%),
+        var(--c5, #f59e0b) calc(var(--t4) * 1%) 100%
+      );
+      position: relative;
+      box-shadow: 0 0 0 4px var(--brand-bg) inset, 0 12px 30px rgba(0,0,0,.35);
+    }
+    .donut::after {
+      content: ''; position: absolute; inset: 22%; border-radius: 50%;
+      background: var(--brand-bg);
+      box-shadow: inset 0 0 30px rgba(0,0,0,.4);
+    }
+    @media (max-width: 900px) { .donut { width: 220px; height: 220px; } }
+
+    /* --- HORIZONTAL BAR CHARTS (CSS) --- */
+    .hbar-chart { padding: 0; margin: 8px 0 0 0; display: grid; gap: 18px; }
+    .hbar-chart li { display: grid; grid-template-columns: 200px 1fr 60px; align-items: center; gap: 14px; }
+    .hbar-label { font-size: 14px; color: var(--brand-text-inverse); }
+    .hbar-track { height: 14px; background-color: rgba(255,255,255,.06); border-radius: 999px; overflow: hidden; position: relative; }
+    .hbar-fill { height: 100%; width: var(--w, 0%); background: var(--c, var(--current-grad-start)); border-radius: 999px;
+      box-shadow: 0 0 12px rgba(255,255,255,.06) inset;
+      animation: bar-grow 1s cubic-bezier(.25,1,.5,1) both;
+    }
+    .hbar-value { font-size: 14px; font-weight: 600; color: var(--brand-text-inverse); text-align: right; }
+    @media (max-width: 700px) {
+      .hbar-chart li { grid-template-columns: 1fr; gap: 4px; }
+      .hbar-value { text-align: left; }
+    }
+
+    /* --- TABLE / SPLIT LAYOUT --- */
+    .split-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 48px; align-items: start; margin: 64px 0; }
+    .styled-table { width: 100%; border-collapse: collapse; }
+    .styled-table th, .styled-table td { padding: 18px 15px; text-align: left; border-bottom: 1px solid var(--brand-border-dark); color: var(--brand-text-inverse); }
+    .styled-table th { font-weight: 500; color: var(--brand-muted); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+    .styled-table .value { font-weight: 600; }
+    .styled-table tbody tr:hover { background-color: rgba(255,255,255,.03); }
+
+    /* --- VISUAL TITLES + FULL WIDTH --- */
+    .full-width-visual { max-width: 100%; margin: 80px auto; }
+    .visual-title {
+      font-size: 1.5625rem; font-weight: 700; margin-bottom: 30px; text-align: center;
+      background: linear-gradient(90deg, var(--current-grad-start), var(--current-grad-end));
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+    }
+    .bar-chart-container .visual-title, .visual-table-container .visual-title { text-align: left; }
+
+    /* --- QUADRANT --- */
+    .quadrant-chart { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; perspective: 1000px; }
+    .quadrant {
+      padding: 40px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;
+      border-radius: 20px; transition: transform .4s cubic-bezier(.25,1,.5,1);
+      background-color: rgba(var(--current-grad-start-rgb), .15);
+      border: 1px solid var(--current-grad-start);
+    }
+    .quadrant:nth-child(2) { background-color: rgba(var(--current-grad-end-rgb), .15); border: 1px solid var(--current-grad-end); }
+    .quadrant:nth-child(3) { background-color: rgba(var(--current-grad-start-rgb), .1); border: 1px solid var(--current-grad-start); opacity: .8; }
+    .quadrant:nth-child(4) { background-color: rgba(var(--current-grad-end-rgb), .1); border: 1px solid var(--current-grad-end); opacity: .8; }
+    .quadrant h3 { font-size: 1.5rem; margin: 0; color: var(--brand-text-inverse); }
+    .quadrant .description { font-size: 1rem; color: var(--brand-muted); margin: 5px 0 20px; }
+    .quadrant .percentage { font-size: 3rem; font-weight: 900; transition: transform .4s ease, text-shadow .4s ease; color: var(--brand-text-inverse); }
+    @media (min-width: 992px) {
+      .quadrant:hover { transform: scale(1.04) rotate3d(0,1,0,5deg); z-index: 10; box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+      .quadrant:hover .percentage { transform: scale(1.15); text-shadow: 0 0 15px rgba(255,255,255,.5); }
+    }
+
+    /* --- 2024 vs 2025 GRID --- */
+    .visual-table-container { max-width: 100%; margin: 60px 0; }
+    .visual-table-grid { display: grid; grid-template-columns: .8fr 2fr 2fr; gap: 20px; }
+    .grid-header { font-weight: 700; color: var(--brand-muted); padding-bottom: 15px; border-bottom: 1px solid var(--brand-border-dark); }
+    .grid-cell { padding: 25px 0; }
+    .grid-cell.category { font-weight: 700; font-size: 1.2rem; color: var(--brand-text-inverse); }
+    .data-point { margin-bottom: 30px; }
+    .data-point:last-child { margin-bottom: 0; }
+    .data-point .label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: .9rem; color: var(--brand-muted); }
+    .percentage-bar-bg { width: 100%; height: 8px; background-color: rgba(255,255,255,.05); border-radius: 4px; overflow: hidden; }
+    .percentage-bar { height: 100%; border-radius: 4px; }
+    .bar-2024 { background-color: #666; }
+    .bar-2025 { background: linear-gradient(90deg, var(--current-grad-start), var(--current-grad-end)); }
+    .table-description, .chart-description { max-width: 600px; margin: 20px auto 0; text-align: left; font-size: .9rem; color: var(--brand-muted); line-height: 1.6; }
+
+    /* --- CTA HANDBOOK --- */
+    .cta-handbook-container {
+      max-width: 900px; width: 100%; margin: 80px auto 0;
+      background-color: var(--brand-surface-2); color: var(--brand-text);
+      border-radius: var(--radius-lg); position: relative; overflow: hidden;
+      border: 1px solid var(--brand-border); box-shadow: var(--shadow-md);
+    }
+    .cta-handbook-container::before {
+      content: ''; position: absolute; top: -50%; right: -50%; bottom: -50%; left: -50%;
+      background-image: radial-gradient(circle at 20% 20%, var(--current-grad-start) 0%, transparent 35%),
+                        radial-gradient(circle at 80% 80%, var(--current-grad-end) 0%, transparent 35%);
+      filter: blur(120px); opacity: .7; z-index: 1; animation: cta-blob-spin 20s linear infinite;
+    }
+    .cta-handbook-content { position: relative; z-index: 3; padding: 56px 48px; }
+    .cta-handbook-text h3 { font-size: 1.75rem; font-weight: 800; margin: 0 0 12px; color: var(--brand-text); }
+    .cta-handbook-text p { color: #2a2f3d; font-size: 1rem; line-height: 1.6; margin: 0 0 24px; max-width: 540px; }
+    .cta-button {
+      display: inline-block; padding: 12px 22px; border-radius: 999px;
+      background: linear-gradient(90deg, var(--current-grad-start), var(--current-grad-end));
+      color: #fff; font-weight: 600; font-size: .95rem;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .cta-button:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,.25); }
+
+    /* --- ACTION STEPS / CONCLUSION --- */
+    .action-steps-container { margin: 80px auto; max-width: 720px; }
+    .action-steps-title { text-align: center; font-size: 2rem; font-weight: 700; margin-bottom: 40px; }
+    .closing-thought { text-align: center; font-size: 1.5rem; font-style: italic; font-weight: 500; max-width: 600px; margin: 80px auto 0; line-height: 1.6; border-top: 1px solid var(--brand-border-dark); padding-top: 40px; color: var(--brand-text-inverse); }
+    .credit-block { margin-top: 80px; }
+    .credit { font-size: .85rem; color: var(--brand-muted); text-align: center; }
+    .credit a { color: var(--brand-text-inverse); border-bottom: 1px dotted rgba(255,255,255,.4); }
+
+    /* --- MOBILE NAV --- */
+    .mobile-menu-button { display: none; background: none; border: none; cursor: pointer; z-index: 1010; padding: 10px; }
+    .mobile-menu-button .icon-bar { display: block; width: 24px; height: 3px; background-color: var(--brand-text-inverse); border-radius: 3px; transition: all .3s ease; }
+    .mobile-menu-button .icon-bar + .icon-bar { margin-top: 5px; }
+    .mobile-nav {
+      display: none; position: fixed; inset: 0; padding-top: 5rem; background-color: rgba(11,11,16,.95);
+      backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 1005;
+      flex-direction: column; align-items: center; justify-content: center; gap: 30px;
+      opacity: 0; transform: translateY(-20px); transition: opacity .3s ease, transform .3s ease; pointer-events: none;
+    }
+    body.mobile-nav-open .mobile-nav { display: flex; opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .mobile-nav a { color: var(--brand-text-inverse); font-size: 1.5rem; font-weight: 600; }
+    body.mobile-nav-open .mobile-menu-button .icon-bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    body.mobile-nav-open .mobile-menu-button .icon-bar:nth-child(2) { opacity: 0; }
+    body.mobile-nav-open .mobile-menu-button .icon-bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    @media (max-width: 900px) {
+      .top-nav { display: none; }
+      .mobile-menu-button { display: block; }
+      .data-visualization-block, .data-visualization-block.reverse { grid-template-columns: 1fr; }
+      .data-visualization-block.reverse .data-list-container { order: 0; }
+      .stat-card { grid-template-columns: 1fr; }
+      .stat-card::after { clip-path: inset(51.5% 0 0 0); }
+      .stat-card .left, .stat-card .right { padding: 40px 24px; }
+      .quadrant-chart { grid-template-columns: 1fr; }
+      .visual-table-grid { display: block; }
+      .visual-table-grid .grid-header { display: none; }
+      .visual-table-grid .grid-cell { padding: 15px 0; border-bottom: 1px solid var(--brand-border-dark); }
+      .visual-table-grid .grid-cell.category { padding-top: 30px; }
+      .visual-table-grid .grid-cell:nth-of-type(3n-1) .data-point .label::before { content: '2024: '; font-weight: 600; color: var(--brand-muted); margin-right: 6px; }
+      .visual-table-grid .grid-cell:nth-of-type(3n) .data-point .label::before   { content: '2025: '; font-weight: 600; color: var(--brand-muted); margin-right: 6px; }
+      .cta-handbook-content { padding: 40px 28px; }
+    }
+    @media (max-width: 500px) {
+      .report-main, .hero-kpis { padding: 0 16px; }
+      .main-quote { padding-left: 10px; }
+      .main-quote::before { left: -20px; top: -3rem; opacity: .1; }
+      .stat-card .left { grid-template-columns: 1fr; gap: 10px; text-align: center; }
+      .stat-card .icon { margin: 0 auto 10px; }
+      .stat-card .right { text-align: center; }
+    }
+
+    /* --- ANIMATIONS --- */
+    @keyframes fadeInDown   { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes text-focus-in { 0% { filter: blur(12px); opacity: 0; } 100% { filter: blur(0); opacity: 1; } }
+    @keyframes pan-background { 0% { transform: translateX(-50%); } 100% { transform: translateX(50%); } }
+    @keyframes bar-grow { 0% { width: 0; } 100% { width: var(--w, 0%); } }
+    @keyframes cta-blob-spin { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+  </style>
+
+  <script is:inline>
+    // -------- Section theme + nav active state via IntersectionObserver --------
+    (function () {
+      const sections = Array.from(document.querySelectorAll('[data-section-id]'));
+      const navDots = Array.from(document.querySelectorAll('.nav-dot'));
+      const topNavLinks = Array.from(document.querySelectorAll('.top-nav-link'));
+      const themeClasses = sections.map(s => s.getAttribute('data-theme')).filter(Boolean);
+
+      const setActive = (sectionId) => {
+        navDots.forEach(d => d.classList.toggle('active', d.dataset.section === sectionId));
+        topNavLinks.forEach(l => l.classList.toggle('active', l.dataset.section === sectionId));
+      };
+
+      const setBodyTheme = (themeClass) => {
+        if (!themeClass) return;
+        themeClasses.forEach(c => { if (c !== themeClass) document.body.classList.remove(c); });
+        document.body.classList.add(themeClass);
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        // Pick the entry closest to the top of the viewport that's intersecting.
+        const visible = entries.filter(e => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible.length === 0) return;
+        const top = visible[0].target;
+        const sectionId = top.getAttribute('data-section-id');
+        const themeClass = top.getAttribute('data-theme');
+        setActive(sectionId);
+        setBodyTheme(themeClass);
+      }, { rootMargin: '-30% 0px -50% 0px', threshold: 0 });
+
+      sections.forEach(s => observer.observe(s));
+
+      // Mark sections visible on enter for the subtle reveal.
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+      }, { threshold: 0.05 });
+      document.querySelectorAll('.report-section').forEach(s => revealObserver.observe(s));
+    })();
+
+    // -------- Mobile menu toggle --------
+    (function () {
+      const btn = document.querySelector('.mobile-menu-button');
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        const open = document.body.classList.toggle('mobile-nav-open');
+        btn.setAttribute('aria-expanded', String(open));
+      });
+      document.querySelectorAll('.mobile-nav a').forEach(a =>
+        a.addEventListener('click', () => {
+          document.body.classList.remove('mobile-nav-open');
+          btn.setAttribute('aria-expanded', 'false');
+        })
+      );
+    })();
+
+    // -------- Hero parallax (subtle) --------
+    (function () {
+      const heroContent = document.querySelector('.hero-content');
+      if (!heroContent) return;
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const y = window.scrollY;
+          const opacity = Math.max(0, 1 - y / (window.innerHeight * 0.6));
+          heroContent.style.transform = `translateY(${y * 0.4}px) scale(${1 - y * 0.0002})`;
+          heroContent.style.opacity = String(opacity);
+          ticking = false;
+        });
+      }, { passive: true });
+    })();
+  </script>
+</body>
+</html>
