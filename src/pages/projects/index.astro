@@ -3,39 +3,329 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const meta = {
   title: 'Projects · Michael P. Staton',
-  description: 'Tools and small products from the Lossless Group — including MemoPop, the native desktop app for AI-assisted investment memos.',
+  description:
+    'A field guide to the tools and frameworks I am building — investment workflows, AI collaboration patterns, content infrastructure, and the learning community where VCs practice using AI.',
   type: 'website' as const,
 };
+
+type Project = {
+  /** Display number for the field-guide rhythm. */
+  index: string;
+  /** One-word eyebrow that frames where the project lives. */
+  kind: string;
+  /** Human name. */
+  name: string;
+  /** Italic one-liner positioning under the name. */
+  tagline: string;
+  /** First-person editorial body — 2-3 short paragraphs, plain HTML allowed. */
+  body: string[];
+  /** Small fact row rendered under the body. Three to five items max. */
+  facts: { label: string; value: string }[];
+  /** Action links — primary first. `external` opens in a new tab. */
+  links: { label: string; href: string; external?: boolean }[];
+  /** One of three brand accents — rotates across the page for visual rhythm. */
+  accent: 'primary' | 'secondary' | 'accent';
+};
+
+const projects: Project[] = [
+  {
+    index: '01',
+    kind: 'Workflow · Open Source',
+    name: 'MemoPop AI',
+    tagline: 'A multi-agent investment memo orchestrator. Bring your own keys.',
+    body: [
+      'Real investment memos take days. Most of that time is research most VCs do the same way every time — pulling Crunchbase data, sizing TAM, cross-referencing team backgrounds, sourcing expert commentary. So I built a coordinated pipeline of 33 specialized agents that turns a company name into an institutional-quality memo with full citation trails and firm-branded exports.',
+      'It is not a chatbot. Each agent produces a research-analyst artifact — a deck deconstruction, a Perplexity Sonar Pro source bundle, a section draft, a fact-check report — that lives as a file you can re-run, override, or audit. The orchestrator (LangGraph) coordinates them, manages state, and handles retries.',
+      'Bring your own Claude and Perplexity keys; deal data stays on your machine. Used by nine VC firms so far. The "draft a memo" → "polished firm-branded memo" loop is now ten to fifteen minutes for a first pass; one to two hours with an analyst on top.',
+    ],
+    facts: [
+      { label: 'Specialized agents', value: '33' },
+      { label: 'Firms using it', value: '9' },
+      { label: 'Time per draft', value: '10–15 min' },
+      { label: 'License', value: 'MIT · Open source' },
+    ],
+    links: [
+      {
+        label: 'View on GitHub',
+        href: 'https://github.com/lossless-group/investment-memo-orchestrator',
+        external: true,
+      },
+      {
+        label: 'Project page on lossless.group',
+        href: 'https://www.lossless.group/projects/gallery/memopop-ai',
+        external: true,
+      },
+    ],
+    accent: 'primary',
+  },
+  {
+    index: '02',
+    kind: 'Framework · Open Spec',
+    name: 'Context Vigilance',
+    tagline: 'Treat context with the same vigilance you give code.',
+    body: [
+      'Every AI session starts from zero. Vibe coding produces spaghetti. Prompt engineering is ad hoc. The thing missing is not a better model — it is externalized memory: documentation modular enough to fit in a context window and structured enough to be loaded selectively.',
+      'Context Vigilance is a deceptively simple framework: a <code>context-v/</code> directory in every project, with four folders that pair into two cognitive modes. <em>Specs</em> and <em>prompts</em> handle planning — what you are building and the step-by-step path to get there. <em>Blueprints</em> and <em>reminders</em> handle reflection — codified patterns and the short, sharp corrections that keep AI from drifting.',
+      'When the work does not fit a known loop, two more folders appear — <em>explorations</em> for "I do not know where this is going yet," and <em>issues</em> for the half-day debugging journeys that "debug" does not honor. The kit, schema, and reference catalog are open source.',
+    ],
+    facts: [
+      { label: 'Directory roles', value: '4 + 2' },
+      { label: 'context-v files cataloged', value: '583' },
+      { label: 'Projects using it', value: '28+' },
+    ],
+    links: [
+      {
+        label: 'Spec & catalog',
+        href: 'https://lossless-group.github.io/context-vigilance-kit/',
+        external: true,
+      },
+      {
+        label: 'Read the long version',
+        href: 'https://www.lossless.group/projects/gallery/context-vigilance',
+        external: true,
+      },
+    ],
+    accent: 'secondary',
+  },
+  {
+    index: '03',
+    kind: 'Pseudomonorepo · Pattern Library',
+    name: 'Astro Knots',
+    tagline: 'A pseudomonorepo for the age of AI-assisted development.',
+    body: [
+      'Twelve Astro sites in one workspace. Not a true monorepo — every site is its own git repository, independently deployable. Not a loose pile of repos either — co-located so patterns, brand conventions, and AI context can travel between them without coupling deployments.',
+      'The honest reckoning is part of the project. We tried the "one shared component package, all sites import it" approach. It collapsed under abstraction overhead the moment two sites needed different colors. So <code>@knots/*</code> packages stayed as workspace-local pattern references — code you copy and adapt, not import. Where sharing genuinely earned its keep was the markdown processing pipeline, which became the only published package: <code>@lossless-group/lfm</code>.',
+      'This site (mpstaton.com) lives in the workspace. So does <a href="https://fullstack-vc.com" target="_blank" rel="noopener noreferrer">FullStack VC</a>, the Hypernova site, the Water Foundation, Cilantro, Dark Matter, and a handful of in-progress sites.',
+    ],
+    facts: [
+      { label: 'Astro sites', value: '12' },
+      { label: 'Theme modes', value: '3 (light / dark / vibrant)' },
+      { label: 'Published package', value: '1 (LFM)' },
+    ],
+    links: [
+      {
+        label: 'GitHub',
+        href: 'https://github.com/lossless-group/astro-knots',
+        external: true,
+      },
+      {
+        label: 'Splash page',
+        href: 'https://lossless-group.github.io/astro-knots/',
+        external: true,
+      },
+    ],
+    accent: 'accent',
+  },
+  {
+    index: '04',
+    kind: 'Package · Published',
+    name: 'Lossless Flavored Markdown',
+    tagline: 'MDX power without MDX’s opinions.',
+    body: [
+      'Every site I work on ends up wanting more from markdown — Obsidian callouts, citations that renumber themselves, bare YouTube URLs that become embedded players, link cards with build-time OpenGraph metadata. After writing the same render pipeline three times across different sites, I extracted it into a real package.',
+      'LFM is a polyglot remark/rehype pipeline. Authors keep authoring in whatever flavor they prefer (CommonMark, GFM, Obsidian, remark-directive); LFM normalizes the variations into one canonical AST. <em>Syntax</em> declares what you want; a <em>trigger</em> plugin parses it; one <em>component</em> renders it. Three steps, no MDX lock-in.',
+      'Published to GitHub Packages and JSR. The <code>llms.txt</code> endpoints, context-v document rendering, and demo Scroll Report on this site all run through it.',
+    ],
+    facts: [
+      { label: 'Plugins', value: '8+' },
+      { label: 'Latest', value: 'v0.3.0' },
+      { label: 'Registries', value: 'JSR · GitHub Packages' },
+      { label: 'License', value: 'MIT' },
+    ],
+    links: [
+      {
+        label: 'Install from JSR',
+        href: 'https://jsr.io/@lossless-group/lfm',
+        external: true,
+      },
+      {
+        label: 'Source on GitHub',
+        href: 'https://github.com/lossless-group/lfm',
+        external: true,
+      },
+      {
+        label: 'Spec & docs',
+        href: 'https://lossless-group.github.io/lossless-flavored-markdown-package/',
+        external: true,
+      },
+    ],
+    accent: 'primary',
+  },
+  {
+    index: '05',
+    kind: 'Plugin Suite · Obsidian',
+    name: 'Content Farm',
+    tagline: 'A small farm of writing tools — nine plugins, one vault, working in chorus.',
+    body: [
+      'I write in Obsidian. So do most of the people I work with. Out of the box, Obsidian is excellent for thinking; for AI-assisted drafting, citations, image generation, and search-augmented enhancement, it needs help. Content Farm is what fills that gap.',
+      'Nine plugins that share a vault and complement each other: drafting helpers, citation tools, an image-generation bridge, OG-metadata enrichment, a context-loader for AI sessions. None of them try to be everything; together they form a content-creation surface that lets me move from a half-formed thought to a published piece without leaving the editor.',
+      'Open source, small footprint, no telemetry. If a plugin earns its place in the chorus, it stays; if not, it goes.',
+    ],
+    facts: [
+      { label: 'Plugins in the suite', value: '9' },
+      { label: 'Editor', value: 'Obsidian' },
+      { label: 'License', value: 'Open source' },
+    ],
+    links: [
+      {
+        label: 'GitHub',
+        href: 'https://github.com/lossless-group/content-farm',
+        external: true,
+      },
+      {
+        label: 'Splash page',
+        href: 'https://lossless-group.github.io/content-farm/',
+        external: true,
+      },
+    ],
+    accent: 'secondary',
+  },
+  {
+    index: '06',
+    kind: 'Community · Practice',
+    name: 'FullStack VC',
+    tagline: 'An Agentic VC Dojo. We come together to practice.',
+    body: [
+      'Most VCs I know are either "AI is a toy" or "AI is going to eat our jobs," and neither is a useful working stance. The middle path — actually practicing with the tools, in the open, with people doing the same thing — does not have many natural homes. So we made one.',
+      'FullStack VC is a learning community where venture capitalists deliberately practice using AI to give their firms superpowers. Monthly working sessions, recordings, working groups around specific use cases (sourcing, memo writing, portfolio support, LP reporting), and a coalition of people willing to share what is working and what is not.',
+      'It is not a course. There are no certificates. Show up, bring a real problem, leave with three things you can use Monday morning.',
+    ],
+    facts: [
+      { label: 'Cadence', value: 'Monthly working sessions' },
+      { label: 'Format', value: 'Live + recorded' },
+      { label: 'Structure', value: 'Coalition · working groups' },
+    ],
+    links: [
+      {
+        label: 'Visit fullstack-vc.com',
+        href: 'https://fullstack-vc.com/',
+        external: true,
+      },
+    ],
+    accent: 'accent',
+  },
+];
+
+const accentClassMap: Record<Project['accent'], { dot: string; rule: string; eyebrow: string; index: string; link: string }> = {
+  primary: {
+    dot: 'bg-[var(--primary)]',
+    rule: 'from-[var(--primary)]/60 via-[var(--primary)]/10 to-transparent',
+    eyebrow: 'text-[var(--primary)]',
+    index: 'text-[var(--primary)]/80',
+    link: 'hover:text-[var(--primary)]',
+  },
+  secondary: {
+    dot: 'bg-[var(--secondary)]',
+    rule: 'from-[var(--secondary)]/60 via-[var(--secondary)]/10 to-transparent',
+    eyebrow: 'text-[var(--secondary)]',
+    index: 'text-[var(--secondary)]/80',
+    link: 'hover:text-[var(--secondary)]',
+  },
+  accent: {
+    dot: 'bg-[var(--accent)]',
+    rule: 'from-[var(--accent)]/60 via-[var(--accent)]/10 to-transparent',
+    eyebrow: 'text-[var(--accent)]',
+    index: 'text-[var(--accent)]/80',
+    link: 'hover:text-[var(--accent)]',
+  },
+};
 ---
+
 <BaseLayout title={meta.title} description={meta.description} meta={meta}>
-  <section class="mx-auto max-w-5xl px-6 py-16">
-    <header class="mb-10">
-      <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Projects</p>
-      <h1 class="mt-2 text-4xl font-semibold tracking-tight text-foreground">Tools we build</h1>
-      <p class="mt-3 max-w-2xl text-muted-foreground">
-        A short list of tools and small products from the Lossless Group.
-        Most are companions to the workflows you'll see across this site.
+  <section class="mx-auto max-w-4xl px-6 py-16 md:py-24">
+    <!-- Hero -->
+    <header class="mb-20 md:mb-28">
+      <p class="text-xs uppercase tracking-[0.22em] text-muted-foreground">A field guide</p>
+      <h1 class="mt-3 text-4xl md:text-6xl font-semibold tracking-tight text-foreground leading-[1.05]">
+        Things I&rsquo;m building
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed">
+        Six projects, in roughly the order I would describe them at a dinner table. Some are open
+        source software, some are infrastructure, one is a learning community for VCs. They share a
+        thread: each one is a tool I wanted to exist before I built it.
+      </p>
+      <p class="mt-3 text-sm text-muted-foreground/80">
+        Most are made through <a class="underline underline-offset-4 decoration-muted-foreground/40 hover:decoration-foreground" href="https://lossless.group" target="_blank" rel="noopener noreferrer">The Lossless Group</a>, which I cofounded. The longer write-ups live there.
       </p>
     </header>
 
-    <article class="rounded-xl border border-border bg-card/40 p-8">
-      <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">For investment professionals</p>
-      <h2 class="mt-2 text-xl font-semibold tracking-tight text-foreground">
-        Don't want to run LangChain through the command line?
-      </h2>
-      <p class="mt-3 max-w-2xl text-muted-foreground">
-        Don't know what that means, but you're still an investment professional?
-        Check out our <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground">MemoPop</code>
-        native desktop app — the same memo-generation pipeline behind the
-        opportunities pages, packaged for your laptop without the terminal.
+    <!-- Field guide entries -->
+    <div class="space-y-24 md:space-y-32">
+      {projects.map((p) => {
+        const a = accentClassMap[p.accent];
+        return (
+          <article class="group relative">
+            <!-- Accent rule -->
+            <div class={`mb-10 h-px w-24 bg-gradient-to-r ${a.rule}`} aria-hidden="true"></div>
+
+            <header class="mb-6">
+              <div class="flex items-baseline gap-4">
+                <span class={`font-mono text-sm tabular-nums ${a.index}`}>{p.index}</span>
+                <span class={`text-[0.7rem] uppercase tracking-[0.18em] font-medium ${a.eyebrow}`}>
+                  {p.kind}
+                </span>
+              </div>
+              <h2 class="mt-3 text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
+                {p.name}
+              </h2>
+              <p class="mt-2 text-lg italic text-foreground/70 max-w-2xl leading-snug">
+                {p.tagline}
+              </p>
+            </header>
+
+            <div class="space-y-4 max-w-2xl text-[1.0625rem] leading-relaxed text-muted-foreground">
+              {p.body.map((para) => (
+                <p set:html={para} />
+              ))}
+            </div>
+
+            <!-- Facts row -->
+            <dl class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4 max-w-2xl border-t border-border/60 pt-6">
+              {p.facts.map((fact) => (
+                <div>
+                  <dt class="text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground/70 font-medium">
+                    {fact.label}
+                  </dt>
+                  <dd class="mt-1 text-sm font-medium text-foreground">
+                    {fact.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            <!-- Links -->
+            <ul class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+              {p.links.map((link, i) => (
+                <li>
+                  <a
+                    href={link.href}
+                    target={link.external ? '_blank' : undefined}
+                    rel={link.external ? 'noopener noreferrer' : undefined}
+                    class:list={[
+                      'inline-flex items-center gap-1.5 text-sm font-medium transition-colors',
+                      i === 0 ? 'text-foreground' : 'text-muted-foreground',
+                      a.link,
+                    ]}
+                  >
+                    {link.label}
+                    <span aria-hidden="true" class="opacity-60">{link.external ? '↗' : '→'}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </article>
+        );
+      })}
+    </div>
+
+    <!-- Closing -->
+    <footer class="mt-32 border-t border-border/60 pt-10">
+      <p class="text-sm text-muted-foreground max-w-xl leading-relaxed">
+        If any of these are interesting and you want to talk shop, the easiest place to find me is
+        <a class="text-foreground underline underline-offset-4 decoration-muted-foreground/40 hover:decoration-foreground" href="https://x.com/mpstaton" target="_blank" rel="noopener noreferrer">@mpstaton</a>.
+        For commercial work,
+        <a class="text-foreground underline underline-offset-4 decoration-muted-foreground/40 hover:decoration-foreground" href="https://lossless.group" target="_blank" rel="noopener noreferrer">The Lossless Group</a>.
       </p>
-      <a
-        href="https://www.lossless.group/projects/gallery/memopop-ai"
-        class="mt-5 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:text-brand-aqua transition-colors"
-      >
-        Visit MemoPop
-        <span aria-hidden="true">→</span>
-      </a>
-    </article>
+    </footer>
   </section>
 </BaseLayout>
