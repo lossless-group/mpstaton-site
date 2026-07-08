@@ -620,6 +620,17 @@
     ]
   },
   {
+    "company": "Giide",
+    "vehicle": "LearnStart I",
+    "countries": "US",
+    "sector": "Digital Storytelling",
+    "initialInvestmentDate": 2018,
+    "costOfInvestment": 250000,
+    "stage": "Pre-Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
     "company": "Bold Health",
     "vehicle": "LearnStart I",
     "countries": "UK",

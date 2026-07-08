@@ -1,7 +1,7 @@
 {
   "name": "mpstaton-site",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "fetch-context": "bun scripts/fetch-context-v.ts",
     "fetch-essays": "bun scripts/fetch-essays.ts",
