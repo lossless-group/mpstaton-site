@@ -124,7 +124,35 @@ function mergedTags(group: GroupedDeal): string[] {
       <h2 class="text-foreground mb-2">Deal History*</h2>
       <p class="text-sm text-muted-foreground italic mb-6">* DRAFT. Given the official data is scattered across firms and private, this is a best estimate based on memory. As I track down official data, this will be continuously updated.</p>
 
-      <TagRowTableSummary tags={tagSummary} totalCompanies={seenCompanies.size} />
+      <TagRowTableSummary tags={tagSummary} totalCompanies={seenCompanies.size}>
+        {markupsExist && (showMarkups ? (
+          <form method="POST" action="/api/portfolio/unlock" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-muted/40 text-sm text-muted-foreground">
+            <span aria-hidden="true">&#128275;</span>
+            <span>Confidential columns unlocked for 7 days.</span>
+            <input type="hidden" name="intent" value="lock" />
+            <button type="submit" class="font-medium text-foreground/80 hover:text-foreground underline underline-offset-2">
+              Lock
+            </button>
+          </form>
+        ) : (
+          <form method="POST" action="/api/portfolio/unlock" class="flex flex-wrap items-center gap-2 px-4 py-2 rounded-lg border border-border bg-muted/40 text-sm text-muted-foreground">
+            <span aria-hidden="true">&#128274;</span>
+            <label for="markups-code">Ask Michael for passcode to see more confidential information</label>
+            <input
+              id="markups-code"
+              name="code"
+              type="password"
+              autocomplete="off"
+              placeholder="Passcode"
+              class="w-28 text-xs px-2 py-1 rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40"
+            />
+            <button type="submit" class="text-xs font-medium px-2.5 py-1 rounded-md border border-border text-foreground hover:bg-muted transition-colors">
+              Unlock
+            </button>
+            {unlockFailed && <span class="text-xs text-[#D9233B]" role="alert">Nope — try again.</span>}
+          </form>
+        ))}
+      </TagRowTableSummary>
 
       <!-- Filters -->
       <div class="flex flex-wrap gap-3 mb-4" id="filters">
@@ -157,47 +185,6 @@ function mergedTags(group: GroupedDeal): string[] {
         </span>
       </div>
 
-      {markupsExist && (
-        <div class="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
-          {showMarkups ? (
-            <>
-              <span class="text-xs text-muted-foreground">
-                <span aria-hidden="true">&#128275;</span> Markup columns unlocked on this device for 7 days.
-              </span>
-              <form method="POST" action="/api/portfolio/unlock" class="ml-auto">
-                <input type="hidden" name="intent" value="lock" />
-                <button type="submit" class="text-xs font-medium px-3 py-1.5 rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-                  Lock again
-                </button>
-              </form>
-            </>
-          ) : (
-            <>
-              <span class="text-xs text-muted-foreground">
-                <span aria-hidden="true">&#128274;</span> Multiple and valuation are private. Have a passcode?
-              </span>
-              <form method="POST" action="/api/portfolio/unlock" class="ml-auto flex items-center gap-2">
-                <label class="sr-only" for="markups-code">Passcode</label>
-                <input
-                  id="markups-code"
-                  name="code"
-                  type="password"
-                  autocomplete="off"
-                  placeholder="Passcode"
-                  class="text-xs px-3 py-1.5 rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
-                <button type="submit" class="text-xs font-medium px-3 py-1.5 rounded-md border border-border text-foreground hover:bg-muted transition-colors">
-                  Unlock
-                </button>
-              </form>
-              {unlockFailed && (
-                <p class="w-full text-xs text-[#D9233B]" role="alert">That passcode didn't work.</p>
-              )}
-            </>
-          )}
-        </div>
-      )}
-
       <div class="overflow-x-auto rounded-lg border border-border">
         <table class="w-full text-sm" id="deals-table">
           <thead>
@@ -223,7 +210,7 @@ function mergedTags(group: GroupedDeal): string[] {
               ) : (
                 <th class="text-right px-4 py-3 font-semibold text-muted-foreground whitespace-nowrap">Multiple <span aria-hidden="true">&#128274;</span></th>
               )}
-              <th class="text-right px-4 py-3 font-semibold text-foreground whitespace-nowrap">
+              <th class={`text-right px-4 py-3 font-semibold whitespace-nowrap ${showMarkups ? 'text-foreground' : 'text-muted-foreground'}`}>
                 Valuation {!showMarkups && <span aria-hidden="true">&#128274;</span>}
               </th>
             </tr>
@@ -346,7 +333,7 @@ function mergedTags(group: GroupedDeal): string[] {
               <th class="text-right px-4 py-3 font-semibold text-foreground">Fund Size</th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Stages</th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Status</th>
-              <th class="text-right px-4 py-3 font-semibold text-foreground whitespace-nowrap">
+              <th class={`text-right px-4 py-3 font-semibold whitespace-nowrap ${showMarkups ? 'text-foreground' : 'text-muted-foreground'}`}>
                 Multiple {!showMarkups && <span aria-hidden="true">&#128274;</span>}
               </th>
             </tr>

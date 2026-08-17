@@ -48,6 +48,9 @@ const sorted = tagOrder
       </Tag>
     );
   })}
+  {/* Trailing slot — lets a caller add a sibling to the pill row (e.g. the
+      portfolio's passcode prompt) without duplicating the row's layout. */}
+  <slot />
 </div>
 
 <script>
