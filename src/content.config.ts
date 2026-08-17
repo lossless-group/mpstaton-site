@@ -5,8 +5,35 @@ const changelog = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/changelog' }),
   schema: z.object({
     title: z.string(),
-    date: z.coerce.date(),
-  }),
+
+    // Dates — every spelling optional + nullable.
+    // `date` is the legacy key this site was built on; the tree-wide
+    // frontmatter standard renames it to the editorial pair below. Requiring
+    // `date` made that rename a build-breaking change, so nothing date-shaped
+    // is required now — consumers resolve one through the fallback chain in
+    // src/utils/changelog-date.ts.
+    //
+    // This matters past the build: Graphiti anchors each changelog episode on
+    // `date_authored_initial_draft`, falling back to `date`, then the
+    // filesystem dates, then mtime. An entry that reaches the mtime fallback
+    // lands at the wrong point in the temporal graph, because a reformat pass
+    // rewrites mtime.
+    date: z.coerce.date().nullable().optional(),
+    date_authored_initial_draft: z.coerce.date().nullable().optional(),
+    date_authored_current_draft: z.coerce.date().nullable().optional(),
+    date_created: z.coerce.date().nullable().optional(),
+    date_modified: z.coerce.date().nullable().optional(),
+
+    // Editorial + identity — accepted so the keys round-trip through the
+    // standard and reach the retrieval layers.
+    publish: z.boolean().optional(),
+    lede: z.string().optional(),
+    summary: z.string().optional(),
+    site_uuid: z.string().optional(),
+    hex_code: z.string().optional(),
+    authors: z.array(z.string()).optional(),
+    tags: z.array(z.string()).optional(),
+  }).passthrough(),
 });
 
 const notes = defineCollection({

@@ -17,6 +17,7 @@ import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { SITE_SEO } from '../config/seo';
 import template from '../llms/llms.md?raw';
+import { resolveEntryDate, toIsoDate } from '../utils/changelog-date';
 
 export const prerender = true;
 
@@ -128,8 +129,9 @@ export const GET: APIRoute = async () => {
   // ── Changelog ────────────────────────────────────────────────────────
   let changelogAll: Awaited<ReturnType<typeof getCollection<'changelog'>>> = [];
   try { changelogAll = await getCollection('changelog'); } catch { changelogAll = []; }
-  // changelog schema only has `title` + `date` — no publish gate, but apply
-  // the defensive predicate anyway in case fields are added later.
+  // `publish` is now accepted by the changelog schema, so this predicate is
+  // load-bearing rather than defensive: an entry marked `publish: false` drops
+  // out of llms.txt here, and out of the Graphiti episode set at ingest.
   const changelog = changelogAll.filter((e) => isPublished(e.data as AnyData));
   changelog.sort((a, b) => {
     const da = entryDateMs(a.data as AnyData);
@@ -144,12 +146,10 @@ export const GET: APIRoute = async () => {
   for (const entry of changelog) {
     const data = entry.data as AnyData;
     const title = data.title ?? entry.id;
-    const dateStr = (() => {
-      const d = data.date;
-      if (!d) return '';
-      const dt = d instanceof Date ? d : new Date(d);
-      return Number.isNaN(dt.getTime()) ? '' : dt.toISOString().slice(0, 10);
-    })();
+    // Resolved through the changelog fallback chain rather than read bare, so
+    // the line survives the legacy `date:` key being retired. Prefers the ship
+    // date and falls back to the YYYY-MM-DD in the entry id.
+    const dateStr = toIsoDate(resolveEntryDate(data, entry.id));
     const label = dateStr ? `${dateStr} — ${title}` : title;
     // No detail pages for changelog today; reference the filename for traceability.
     changelogLines.push(`- ${label} (\`${entry.id}\`)`);
