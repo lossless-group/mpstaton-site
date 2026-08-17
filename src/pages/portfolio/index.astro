@@ -3,6 +3,24 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import TagRowTableSummary from '../../components/ui/TagRow--TableSummary.astro';
 import rawDeals from '../../data/track-record/deals.json';
 import funds from '../../data/track-record/funds.json';
+import { loadMarkups, hasMarkups } from '../../lib/track-record/markups';
+
+// ── Markup gate ──
+// `multiple` and `relevantValuation` are not in the committed JSON at all; they
+// load from a gitignored file (dev) or TRACK_RECORD_MARKUPS_JSON (production),
+// and ONLY for a request that cleared the passcode. A locked render never
+// receives the numbers — not in a cell, not in a data- attribute — so there is
+// nothing for View Source to reveal.
+const markupsUnlocked = Astro.locals.trackRecordMarkups?.unlocked === true;
+const markupsExist = hasMarkups();
+const showMarkups = markupsUnlocked && markupsExist;
+const markups = showMarkups ? loadMarkups() : { deals: {}, funds: {} };
+const unlockFailed = Astro.url.searchParams.get('e') === '1';
+
+// This page renders differently per-viewer, so it must never land in a shared
+// cache — a CDN holding one unlocked render would serve the numbers to everyone.
+Astro.response.headers.set('Cache-Control', 'private, no-store, max-age=0');
+Astro.response.headers.set('Vary', 'Cookie');
 
 // Default sort: year descending (most recent first), then vehicle alphabetically
 const deals = [...rawDeals].sort((a, b) => {
@@ -139,6 +157,47 @@ function mergedTags(group: GroupedDeal): string[] {
         </span>
       </div>
 
+      {markupsExist && (
+        <div class="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
+          {showMarkups ? (
+            <>
+              <span class="text-xs text-muted-foreground">
+                <span aria-hidden="true">&#128275;</span> Markup columns unlocked on this device for 7 days.
+              </span>
+              <form method="POST" action="/api/portfolio/unlock" class="ml-auto">
+                <input type="hidden" name="intent" value="lock" />
+                <button type="submit" class="text-xs font-medium px-3 py-1.5 rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                  Lock again
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <span class="text-xs text-muted-foreground">
+                <span aria-hidden="true">&#128274;</span> Multiple and valuation are private. Have a passcode?
+              </span>
+              <form method="POST" action="/api/portfolio/unlock" class="ml-auto flex items-center gap-2">
+                <label class="sr-only" for="markups-code">Passcode</label>
+                <input
+                  id="markups-code"
+                  name="code"
+                  type="password"
+                  autocomplete="off"
+                  placeholder="Passcode"
+                  class="text-xs px-3 py-1.5 rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                />
+                <button type="submit" class="text-xs font-medium px-3 py-1.5 rounded-md border border-border text-foreground hover:bg-muted transition-colors">
+                  Unlock
+                </button>
+              </form>
+              {unlockFailed && (
+                <p class="w-full text-xs text-[#D9233B]" role="alert">That passcode didn't work.</p>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
       <div class="overflow-x-auto rounded-lg border border-border">
         <table class="w-full text-sm" id="deals-table">
           <thead>
@@ -157,10 +216,16 @@ function mergedTags(group: GroupedDeal): string[] {
               </th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Stage</th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Exit</th>
-              <th class="sortable-th px-4 py-3 font-semibold text-foreground cursor-pointer select-none hover:text-primary transition-colors" id="sort-multiple" data-sort-key="multiple">
-                <span class="sort-header"><span class="sort-label">Multiple</span><span class="sort-indicator">&#8597;</span></span>
+              {showMarkups ? (
+                <th class="sortable-th px-4 py-3 font-semibold text-foreground cursor-pointer select-none hover:text-primary transition-colors" id="sort-multiple" data-sort-key="multiple">
+                  <span class="sort-header"><span class="sort-label">Multiple</span><span class="sort-indicator">&#8597;</span></span>
+                </th>
+              ) : (
+                <th class="text-right px-4 py-3 font-semibold text-muted-foreground whitespace-nowrap">Multiple <span aria-hidden="true">&#128274;</span></th>
+              )}
+              <th class="text-right px-4 py-3 font-semibold text-foreground whitespace-nowrap">
+                Valuation {!showMarkups && <span aria-hidden="true">&#128274;</span>}
               </th>
-              <th class="text-right px-4 py-3 font-semibold text-foreground">Valuation</th>
             </tr>
           </thead>
           <tbody>
@@ -179,7 +244,7 @@ function mergedTags(group: GroupedDeal): string[] {
                     data-exit={deal.exit}
                     data-year={String(deal.initialInvestmentDate)}
                     data-tags={tags.join(',')}
-                    data-multiple={parseFloat(deal.multiple) || 0}
+                    data-multiple={showMarkups ? (parseFloat(markups.deals[deal.id]?.multiple ?? '') || 0) : undefined}
                     data-cost={deal.costOfInvestment || 0}
                     data-group={groupId}
                     data-has-children={group.hasMultiple ? 'true' : 'false'}
@@ -216,8 +281,8 @@ function mergedTags(group: GroupedDeal): string[] {
                     <td class="px-4 py-2.5 text-right font-mono text-muted-foreground">{formatCurrency(deal.costOfInvestment)}</td>
                     <td class="px-4 py-2.5 text-muted-foreground whitespace-nowrap">{deal.stage}</td>
                     <td class="px-4 py-2.5 text-muted-foreground">{deal.exit}</td>
-                    <td class="px-4 py-2.5 text-right font-mono font-semibold text-foreground">{deal.multiple}</td>
-                    <td class="px-4 py-2.5 text-right font-mono text-muted-foreground">{formatValuation(deal.relevantValuation)}</td>
+                    <td class="px-4 py-2.5 text-right font-mono font-semibold text-foreground">{showMarkups ? markups.deals[deal.id]?.multiple ?? '—' : <span class="text-muted-foreground/50">&#8226;&#8226;&#8226;</span>}</td>
+                    <td class="px-4 py-2.5 text-right font-mono text-muted-foreground">{showMarkups ? formatValuation(markups.deals[deal.id]?.relevantValuation ?? null) : <span class="text-muted-foreground/50">&#8226;&#8226;&#8226;</span>}</td>
                   </tr>
 
                   {/* Sub-rows (hidden by default) */}
@@ -231,7 +296,7 @@ function mergedTags(group: GroupedDeal): string[] {
                       data-exit={sub.exit}
                       data-year={String(sub.initialInvestmentDate)}
                       data-tags={sub.tags.join(',')}
-                      data-multiple={parseFloat(sub.multiple) || 0}
+                      data-multiple={showMarkups ? (parseFloat(markups.deals[sub.id]?.multiple ?? '') || 0) : undefined}
                       data-cost={sub.costOfInvestment || 0}
                       data-parent-group={groupId}
                     >
@@ -255,8 +320,8 @@ function mergedTags(group: GroupedDeal): string[] {
                       <td class="px-4 py-2 text-right font-mono text-muted-foreground/80 text-xs">{formatCurrency(sub.costOfInvestment)}</td>
                       <td class="px-4 py-2 text-muted-foreground/80 whitespace-nowrap text-xs">{sub.stage}</td>
                       <td class="px-4 py-2 text-muted-foreground/80 text-xs">{sub.exit}</td>
-                      <td class="px-4 py-2 text-right font-mono font-semibold text-foreground/70 text-xs">{sub.multiple}</td>
-                      <td class="px-4 py-2 text-right font-mono text-muted-foreground/80 text-xs">{formatValuation(sub.relevantValuation)}</td>
+                      <td class="px-4 py-2 text-right font-mono font-semibold text-foreground/70 text-xs">{showMarkups ? markups.deals[sub.id]?.multiple ?? '—' : <span class="text-muted-foreground/50">&#8226;&#8226;&#8226;</span>}</td>
+                      <td class="px-4 py-2 text-right font-mono text-muted-foreground/80 text-xs">{showMarkups ? formatValuation(markups.deals[sub.id]?.relevantValuation ?? null) : <span class="text-muted-foreground/50">&#8226;&#8226;&#8226;</span>}</td>
                     </tr>
                   ))}
                 </>
@@ -281,7 +346,9 @@ function mergedTags(group: GroupedDeal): string[] {
               <th class="text-right px-4 py-3 font-semibold text-foreground">Fund Size</th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Stages</th>
               <th class="text-left px-4 py-3 font-semibold text-foreground">Status</th>
-              <th class="text-right px-4 py-3 font-semibold text-foreground">Multiple</th>
+              <th class="text-right px-4 py-3 font-semibold text-foreground whitespace-nowrap">
+                Multiple {!showMarkups && <span aria-hidden="true">&#128274;</span>}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -294,7 +361,7 @@ function mergedTags(group: GroupedDeal): string[] {
                 <td class="px-4 py-2.5 text-right font-mono text-muted-foreground">{formatCurrency(fund.costOfInvestment)}</td>
                 <td class="px-4 py-2.5 text-muted-foreground whitespace-nowrap">{fund.stages}</td>
                 <td class="px-4 py-2.5 text-muted-foreground">{fund.exit}</td>
-                <td class="px-4 py-2.5 text-right font-mono font-semibold text-foreground">{fund.multiple}</td>
+                <td class="px-4 py-2.5 text-right font-mono font-semibold text-foreground">{showMarkups ? markups.funds[fund.id]?.multiple ?? '—' : <span class="text-muted-foreground/50">&#8226;&#8226;&#8226;</span>}</td>
               </tr>
             ))}
           </tbody>

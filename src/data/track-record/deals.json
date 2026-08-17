@@ -1,5 +1,6 @@
 [
   {
+    "id": "nearpod-2012",
     "company": "NearPod",
     "vehicle": "NewSchools Venture Fund",
     "countries": "US/Brazil",
@@ -14,6 +15,7 @@
     ]
   },
   {
+    "id": "sano-intelligence-2012",
     "company": "Sano Intelligence",
     "vehicle": "Angel",
     "countries": "US",
@@ -27,6 +29,7 @@
     ]
   },
   {
+    "id": "plethora-2013",
     "company": "Plethora",
     "vehicle": "Angel",
     "countries": "US",
@@ -38,6 +41,7 @@
     "tags": []
   },
   {
+    "id": "clever-2012",
     "company": "Clever",
     "vehicle": "Angel",
     "countries": "US",
@@ -52,6 +56,7 @@
     ]
   },
   {
+    "id": "udemy-2012",
     "company": "Udemy",
     "vehicle": "Learn Capital II",
     "countries": "US/Turkey",
@@ -67,6 +72,7 @@
     ]
   },
   {
+    "id": "brck-2014",
     "company": "BRCK",
     "vehicle": "Angel",
     "countries": "Kenya",
@@ -78,6 +84,7 @@
     "tags": []
   },
   {
+    "id": "general-assembly-2013",
     "company": "General Assembly",
     "vehicle": "Learn Capital II",
     "countries": "US",
@@ -92,6 +99,7 @@
     ]
   },
   {
+    "id": "cobalt-2013",
     "company": "Cobalt",
     "vehicle": "Angel",
     "countries": "US",
@@ -105,6 +113,7 @@
     ]
   },
   {
+    "id": "classdojo-2013",
     "company": "ClassDojo",
     "vehicle": "Learn Capital II",
     "countries": "US",
@@ -118,6 +127,7 @@
     ]
   },
   {
+    "id": "coursera-2013",
     "company": "Coursera",
     "vehicle": "Learn Capital SPV",
     "countries": "US",
@@ -133,6 +143,7 @@
     ]
   },
   {
+    "id": "andela-2014-1",
     "company": "Andela",
     "vehicle": "Angel",
     "countries": "US/Nigeria",
@@ -146,6 +157,7 @@
     ]
   },
   {
+    "id": "andela-2014-2",
     "company": "Andela",
     "vehicle": "Learn Capital III",
     "countries": "US/Nigeria",
@@ -159,6 +171,7 @@
     ]
   },
   {
+    "id": "disruption-corporation-2014",
     "company": "Disruption Corporation",
     "vehicle": "Angel",
     "countries": "US",
@@ -172,6 +185,7 @@
     ]
   },
   {
+    "id": "hipcamp-2014",
     "company": "HipCamp",
     "vehicle": "Angel",
     "countries": "US",
@@ -185,6 +199,7 @@
     ]
   },
   {
+    "id": "brainly-2014",
     "company": "Brainly",
     "vehicle": "Learn Capital III",
     "countries": "Poland",
@@ -196,6 +211,7 @@
     "tags": []
   },
   {
+    "id": "jibu-2014",
     "company": "Jibu",
     "vehicle": "Angel",
     "countries": "Kenya",
@@ -207,6 +223,7 @@
     "tags": []
   },
   {
+    "id": "kidadmit-2014",
     "company": "KidAdmit",
     "vehicle": "Learn Capital III",
     "countries": "US",
@@ -218,6 +235,7 @@
     "tags": []
   },
   {
+    "id": "brilliant-org-2015",
     "company": "Brilliant.org",
     "vehicle": "Learn Capital III",
     "countries": "US",
@@ -231,6 +249,7 @@
     ]
   },
   {
+    "id": "maker-s-row-2015",
     "company": "Maker's Row",
     "vehicle": "Angel",
     "countries": "US",
@@ -242,6 +261,7 @@
     "tags": []
   },
   {
+    "id": "standard-cyborg-2015",
     "company": "Standard Cyborg",
     "vehicle": "Angel",
     "countries": "US",
@@ -253,6 +273,7 @@
     "tags": []
   },
   {
+    "id": "sololearn-2015",
     "company": "SoloLearn",
     "vehicle": "Learn Capital III",
     "countries": "Armenia",
@@ -264,6 +285,7 @@
     "tags": []
   },
   {
+    "id": "ontra-2015",
     "company": "Ontra",
     "vehicle": "Angel",
     "countries": "US",
@@ -277,6 +299,7 @@
     ]
   },
   {
+    "id": "willing-2015",
     "company": "Willing",
     "vehicle": "Angel",
     "countries": "US",
@@ -290,6 +313,7 @@
     ]
   },
   {
+    "id": "village-market-2015",
     "company": "Village Market",
     "vehicle": "Angel",
     "countries": "UK",
@@ -301,6 +325,7 @@
     "tags": []
   },
   {
+    "id": "trusted-2015",
     "company": "Trusted",
     "vehicle": "Angel",
     "countries": "US",
@@ -314,6 +339,7 @@
     ]
   },
   {
+    "id": "vipkid-2016",
     "company": "VIPKid",
     "vehicle": "Learn Capital III",
     "countries": "China",
@@ -327,6 +353,7 @@
     ]
   },
   {
+    "id": "binti-2016",
     "company": "Binti",
     "vehicle": "Angel",
     "countries": "US",
@@ -340,6 +367,7 @@
     ]
   },
   {
+    "id": "bitty-foods-2016",
     "company": "Bitty Foods",
     "vehicle": "Angel",
     "countries": "US",
@@ -351,6 +379,7 @@
     "tags": []
   },
   {
+    "id": "photomath-2016",
     "company": "Photomath",
     "vehicle": "Learn Capital III",
     "countries": "Croatia",
@@ -365,6 +394,7 @@
     ]
   },
   {
+    "id": "wish-2015",
     "company": "Wish",
     "vehicle": "Alpha Partners II",
     "countries": "USA",
@@ -380,6 +410,7 @@
     ]
   },
   {
+    "id": "vroom-2015",
     "company": "Vroom",
     "vehicle": "Alpha Partners II",
     "countries": "US",
@@ -395,6 +426,7 @@
     ]
   },
   {
+    "id": "coupang-2016",
     "company": "Coupang",
     "vehicle": "Alpha Partners II",
     "countries": "Korea",
@@ -410,6 +442,7 @@
     ]
   },
   {
+    "id": "careem-2016",
     "company": "Careem",
     "vehicle": "Alpha Partners II",
     "countries": "UAE",
@@ -424,6 +457,7 @@
     ]
   },
   {
+    "id": "pathrise-2017",
     "company": "Pathrise",
     "vehicle": "LearnStart I",
     "countries": "US",
@@ -435,6 +469,7 @@
     "tags": []
   },
   {
+    "id": "vessel-health-2017",
     "company": "Vessel Health",
     "vehicle": "LearnStart I",
     "countries": "US",
@@ -446,6 +481,7 @@
     "tags": []
   },
   {
+    "id": "coral-vita-2017",
     "company": "Coral Vita",
     "vehicle": "Syndicate",
     "countries": "US",
@@ -457,6 +493,7 @@
     "tags": []
   },
   {
+    "id": "compass-2017",
     "company": "Compass",
     "vehicle": "Angel",
     "countries": "US",
@@ -470,6 +507,7 @@
     ]
   },
   {
+    "id": "minerva-2015",
     "company": "Minerva",
     "vehicle": "Learn Capital III",
     "countries": "US",
@@ -481,6 +519,7 @@
     "tags": []
   },
   {
+    "id": "ligandal-2017",
     "company": "Ligandal",
     "vehicle": "Angel",
     "countries": "US",
@@ -492,6 +531,7 @@
     "tags": []
   },
   {
+    "id": "explorer-surgical-2017",
     "company": "Explorer Surgical",
     "vehicle": "Angel",
     "countries": "US",
@@ -505,6 +545,7 @@
     ]
   },
   {
+    "id": "maven-clinic-2017",
     "company": "Maven Clinic",
     "vehicle": "Angel",
     "countries": "US",
@@ -518,6 +559,7 @@
     ]
   },
   {
+    "id": "teachable-2017",
     "company": "Teachable",
     "vehicle": "Learn Capital III",
     "countries": "US",
@@ -531,6 +573,7 @@
     ]
   },
   {
+    "id": "makeschool-2017",
     "company": "MakeSchool",
     "vehicle": "Learn Capital III",
     "countries": "US",
@@ -542,6 +585,7 @@
     "tags": []
   },
   {
+    "id": "cottageclass-2017",
     "company": "CottageClass",
     "vehicle": "Learn Capital III",
     "countries": "US",
@@ -553,6 +597,7 @@
     "tags": []
   },
   {
+    "id": "outschool-2017",
     "company": "Outschool",
     "vehicle": "Learn Capital III",
     "countries": "US",
@@ -566,6 +611,7 @@
     ]
   },
   {
+    "id": "hack-reactor-2017",
     "company": "Hack Reactor",
     "vehicle": "Angel",
     "countries": "US",
@@ -579,6 +625,7 @@
     ]
   },
   {
+    "id": "pinch-2017",
     "company": "Pinch",
     "vehicle": "Angel",
     "countries": "US",
@@ -592,6 +639,7 @@
     ]
   },
   {
+    "id": "henry-the-dentist-2017",
     "company": "Henry the Dentist",
     "vehicle": "Angel",
     "countries": "US",
@@ -605,6 +653,7 @@
     ]
   },
   {
+    "id": "varsity-tutors-2018",
     "company": "Varsity Tutors",
     "vehicle": "Learn Capital SPV",
     "countries": "US",
@@ -620,6 +669,7 @@
     ]
   },
   {
+    "id": "giide-2018",
     "company": "Giide",
     "vehicle": "LearnStart I",
     "countries": "US",
@@ -631,6 +681,7 @@
     "tags": []
   },
   {
+    "id": "bold-health-2018",
     "company": "Bold Health",
     "vehicle": "LearnStart I",
     "countries": "UK",
@@ -642,6 +693,7 @@
     "tags": []
   },
   {
+    "id": "sana-labs-2018",
     "company": "Sana Labs",
     "vehicle": "LearnStart I",
     "countries": "Sweden",
@@ -656,6 +708,7 @@
     ]
   },
   {
+    "id": "osmosis-2018",
     "company": "Osmosis",
     "vehicle": "LearnStart I",
     "countries": "US",
@@ -670,6 +723,7 @@
     ]
   },
   {
+    "id": "bedu-2018",
     "company": "Bedu",
     "vehicle": "LearnStart I",
     "countries": "Mexico",
@@ -681,6 +735,7 @@
     "tags": []
   },
   {
+    "id": "wonderschool-2018",
     "company": "WonderSchool",
     "vehicle": "LearnStart I",
     "countries": "US",
@@ -694,6 +749,7 @@
     ]
   },
   {
+    "id": "podium-education-2018",
     "company": "Podium Education",
     "vehicle": "LearnStart I",
     "countries": "US",
@@ -707,6 +763,7 @@
     ]
   },
   {
+    "id": "equal-play-2019",
     "company": "Equal Play",
     "vehicle": "Angel",
     "countries": "US",
@@ -718,6 +775,7 @@
     "tags": []
   },
   {
+    "id": "gopuff-2019",
     "company": "GoPuff",
     "vehicle": "Alpha Partners III",
     "countries": "US",
@@ -731,6 +789,7 @@
     ]
   },
   {
+    "id": "spothero-2019",
     "company": "SpotHero",
     "vehicle": "Alpha Partners II",
     "countries": "US",
@@ -742,6 +801,7 @@
     "tags": []
   },
   {
+    "id": "gecko-robotics-2019",
     "company": "Gecko Robotics",
     "vehicle": "Alpha Partners II",
     "countries": "US",
@@ -753,6 +813,7 @@
     "tags": []
   },
   {
+    "id": "prenda-2019",
     "company": "Prenda",
     "vehicle": "LearnStart I",
     "countries": "US",
@@ -764,6 +825,7 @@
     "tags": []
   },
   {
+    "id": "creatorup-2019",
     "company": "CreatorUp",
     "vehicle": "LearnStart I",
     "countries": "US",
@@ -775,6 +837,7 @@
     "tags": []
   },
   {
+    "id": "chime-2020",
     "company": "Chime",
     "vehicle": "Acquired Angel Investment",
     "countries": "US",
@@ -790,6 +853,7 @@
     ]
   },
   {
+    "id": "teachmint-2020",
     "company": "TeachMint",
     "vehicle": "Learn Capital IV",
     "countries": "India",
@@ -801,6 +865,7 @@
     "tags": []
   },
   {
+    "id": "avive-2020",
     "company": "Avive",
     "vehicle": "Million Lives I",
     "countries": "US",
@@ -812,6 +877,7 @@
     "tags": []
   },
   {
+    "id": "novakid-2020",
     "company": "NovaKid",
     "vehicle": "LearnStart I",
     "countries": "Poland",
@@ -823,6 +889,7 @@
     "tags": []
   },
   {
+    "id": "our-ritual-2021",
     "company": "Our Ritual",
     "vehicle": "LearnStart II",
     "countries": "US",
@@ -834,6 +901,7 @@
     "tags": []
   },
   {
+    "id": "avela-2022",
     "company": "Avela",
     "vehicle": "LearnStart II",
     "countries": "US",
@@ -845,6 +913,7 @@
     "tags": []
   },
   {
+    "id": "shikho-2020",
     "company": "Shikho",
     "vehicle": "LearnStart II",
     "countries": "Bangladesh",
@@ -858,6 +927,7 @@
     ]
   },
   {
+    "id": "copper-banking-2021",
     "company": "Copper Banking",
     "vehicle": "Angel",
     "countries": "US",
@@ -869,6 +939,7 @@
     "tags": []
   },
   {
+    "id": "coursera-2021",
     "company": "Coursera",
     "vehicle": "Alpha Partners III",
     "countries": "US",
@@ -884,6 +955,7 @@
     ]
   },
   {
+    "id": "udemy-2021",
     "company": "Udemy",
     "vehicle": "Alpha Partners III",
     "countries": "US/Turkey",
@@ -899,6 +971,7 @@
     ]
   },
   {
+    "id": "thirty-madison-2021",
     "company": "Thirty Madison",
     "vehicle": "Alpha Partners III",
     "countries": "US",
@@ -913,6 +986,7 @@
     ]
   },
   {
+    "id": "brave-health-2021",
     "company": "Brave Health",
     "vehicle": "Alpha Partners III",
     "countries": "US",
@@ -924,6 +998,7 @@
     "tags": []
   },
   {
+    "id": "yassir-2021",
     "company": "Yassir",
     "vehicle": "Angel",
     "countries": "Algeria",
@@ -937,6 +1012,7 @@
     ]
   },
   {
+    "id": "allocate-2021",
     "company": "Allocate",
     "vehicle": "Angel",
     "countries": "US",
@@ -948,6 +1024,7 @@
     "tags": []
   },
   {
+    "id": "trela-2021",
     "company": "Trela",
     "vehicle": "Angel",
     "countries": "Brazil",
@@ -959,6 +1036,7 @@
     "tags": []
   },
   {
+    "id": "seabound-2021",
     "company": "Seabound",
     "vehicle": "Angel",
     "countries": "US/UK",
@@ -970,6 +1048,7 @@
     "tags": []
   },
   {
+    "id": "vana-2021",
     "company": "Vana",
     "vehicle": "Angel",
     "countries": "US",
@@ -981,6 +1060,7 @@
     "tags": []
   },
   {
+    "id": "cybernut-2023",
     "company": "Cybernut",
     "vehicle": "Avalanche II",
     "countries": "US",
@@ -992,6 +1072,7 @@
     "tags": []
   },
   {
+    "id": "bluelayer-2021",
     "company": "BlueLayer",
     "vehicle": "Hypernova SPV",
     "countries": "US",
@@ -1003,6 +1084,7 @@
     "tags": []
   },
   {
+    "id": "harmonic-fun-2024",
     "company": "Harmonic.fun",
     "vehicle": "Hypernova I",
     "countries": "US",
@@ -1014,6 +1096,7 @@
     "tags": []
   },
   {
+    "id": "thinking-machines-2025",
     "company": "Thinking Machines",
     "vehicle": "Hypernova I",
     "countries": "US",
@@ -1027,6 +1110,7 @@
     ]
   },
   {
+    "id": "aalo-atomics-2025",
     "company": "Aalo Atomics",
     "vehicle": "AngelList Syndicate Lead",
     "countries": "US",
@@ -1040,6 +1124,7 @@
     ]
   },
   {
+    "id": "workback-2025",
     "company": "Workback",
     "vehicle": "Avalanche II",
     "countries": "US",
@@ -1051,6 +1136,7 @@
     "tags": []
   },
   {
+    "id": "bruin-2025",
     "company": "Bruin",
     "vehicle": "Hypernova I",
     "countries": "Europe",
@@ -1062,6 +1148,7 @@
     "tags": []
   },
   {
+    "id": "star-catcher-2025",
     "company": "Star Catcher",
     "vehicle": "Hypernova I",
     "countries": "US",
@@ -1073,6 +1160,7 @@
     "tags": []
   },
   {
+    "id": "science-xyz-2025",
     "company": "Science.xyz",
     "vehicle": "Avalanche II",
     "countries": "US",
@@ -1086,6 +1174,7 @@
     ]
   },
   {
+    "id": "science-xyz-2026-1",
     "company": "Science.xyz",
     "vehicle": "Avalanche II",
     "countries": "US",
@@ -1099,6 +1188,7 @@
     ]
   },
   {
+    "id": "science-xyz-2026-2",
     "company": "Science.xyz",
     "vehicle": "Hypernova I",
     "countries": "US",
@@ -1112,6 +1202,7 @@
     ]
   },
   {
+    "id": "sava-2026-1",
     "company": "Sava",
     "vehicle": "Avalanche II",
     "countries": "US",
@@ -1123,6 +1214,7 @@
     "tags": []
   },
   {
+    "id": "sava-2026-2",
     "company": "Sava",
     "vehicle": "Hypernova I",
     "countries": "US",
@@ -1134,6 +1226,7 @@
     "tags": []
   },
   {
+    "id": "singularity-university-2012",
     "company": "Singularity University",
     "vehicle": "Learn Capital II",
     "countries": "US",
@@ -1145,6 +1238,7 @@
     "tags": []
   },
   {
+    "id": "yellowbrick-2015",
     "company": "Yellowbrick",
     "vehicle": "LearnStart I",
     "countries": "US",
@@ -1156,6 +1250,7 @@
     "tags": []
   },
   {
+    "id": "millie-clinic-2018",
     "company": "Millie Clinic",
     "vehicle": "LearnStart II",
     "countries": "US",
@@ -1167,6 +1262,7 @@
     "tags": []
   },
   {
+    "id": "climb-credit-2014",
     "company": "Climb Credit",
     "vehicle": "Learn Capital III",
     "countries": "US",

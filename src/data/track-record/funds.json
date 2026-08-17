@@ -1,5 +1,6 @@
 [
   {
+    "id": "reach-capital-fund-i-2013",
     "fund": "Reach Capital Fund I",
     "role": "Community Advisor, Venture Partner",
     "countries": "International",
@@ -10,6 +11,7 @@
     "exit": "FMV"
   },
   {
+    "id": "alpha-partners-ii-2015",
     "fund": "Alpha Partners II",
     "role": "Venture Partner",
     "countries": "International",
@@ -20,6 +22,7 @@
     "exit": "FMV"
   },
   {
+    "id": "learnstart-i-2017",
     "fund": "LearnStart I",
     "role": "Cofounder, General Partner",
     "countries": "International",
@@ -30,6 +33,7 @@
     "exit": "FMV"
   },
   {
+    "id": "learn-capital-fund-ii-2012",
     "fund": "Learn Capital Fund II",
     "role": "Partner",
     "countries": "International",
@@ -40,6 +44,7 @@
     "exit": "FMV"
   },
   {
+    "id": "learn-capital-fund-iii-2015",
     "fund": "Learn Capital Fund III",
     "role": "General Partner",
     "countries": "International",
@@ -50,6 +55,7 @@
     "exit": "FMV"
   },
   {
+    "id": "alpha-partners-iii-2018",
     "fund": "Alpha Partners III",
     "role": "Venture Partner",
     "countries": "International",
@@ -60,6 +66,7 @@
     "exit": "FMV"
   },
   {
+    "id": "learnstart-ii-2019",
     "fund": "LearnStart II",
     "role": "Cofounder, General Partner",
     "countries": "International",
@@ -70,6 +77,7 @@
     "exit": "FMV"
   },
   {
+    "id": "learn-capital-fund-iv-2020",
     "fund": "Learn Capital Fund IV",
     "role": "Venture Partner",
     "countries": "International",
@@ -80,6 +88,7 @@
     "exit": "FMV"
   },
   {
+    "id": "laerdal-million-lives-fund-i-2020",
     "fund": "Laerdal Million Lives Fund I",
     "role": "Catalyst, Venture Advisor",
     "countries": "International",
@@ -90,6 +99,7 @@
     "exit": "FMV"
   },
   {
+    "id": "avalanche-ii-2023",
     "fund": "Avalanche II",
     "role": "Venture Partner",
     "countries": "International",
@@ -100,6 +110,7 @@
     "exit": "FMV"
   },
   {
+    "id": "hypernova-i-2025",
     "fund": "Hypernova I",
     "role": "Catalyst, Venture Partner",
     "countries": "International",
@@ -110,6 +121,7 @@
     "exit": "FMV"
   },
   {
+    "id": "angel-portfolio-2013-2023",
     "fund": "Angel Portfolio",
     "role": "Principal",
     "countries": "International",

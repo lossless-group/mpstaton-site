@@ -28,3 +28,11 @@ src/layouts/sections/promote/*/
 !src/layouts/sections/promote/_*/
 public/promote/*/
 !public/promote/_*/
+
+# Track-record markups — local-only (this is a public repo).
+# deals.json / funds.json carry the public track record and stay committed;
+# `multiple` and `relevantValuation` live here and are joined back by `id` at
+# render time, only for a request that cleared the /portfolio passcode gate.
+# Production reads the same payload from the TRACK_RECORD_MARKUPS_JSON env var,
+# because a gitignored file does not exist on the Vercel builder.
+src/data/track-record/private/
