@@ -39,6 +39,15 @@ const changelog = defineCollection({
     site_uuid: z.string().optional(),
     hex_code: z.string().optional(),
     authors: z.array(z.string()).optional(),
+
+    // The AI counterpart to `authors`, in `<tool> on <model name version>` form.
+    // Deliberately the most permissive field here: never required, and a scalar
+    // is accepted alongside the canonical list. Attribution a contributor forgot
+    // — or wrote as one line instead of a ul — is a frontmatter nit, not a reason
+    // to fail a build, and a hard failure here would only teach people to drop
+    // the key. Consumers normalize with `[data.augmented_with ?? []].flat()`.
+    augmented_with: z.union([z.string(), z.array(z.string())]).nullable().optional(),
+
     tags: z.array(z.string()).optional(),
   }).passthrough(),
 });
