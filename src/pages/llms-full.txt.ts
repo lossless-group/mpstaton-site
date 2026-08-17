@@ -133,7 +133,7 @@ export const GET: APIRoute = async () => {
       sourcePath = (data._context_v?.file_path as string | undefined) ?? entry.id;
     } else if (kind === 'changelog') {
       url = `${root}/`;
-      sourcePath = `src/content/changelog/${entry.id}.md`;
+      sourcePath = `changelog/${entry.id}.md`;
     }
 
     bodyParts.push('---');

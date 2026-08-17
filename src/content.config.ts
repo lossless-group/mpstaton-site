@@ -2,7 +2,14 @@ import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
 const changelog = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/changelog' }),
+  // Repo-root `changelog/`, matching the tree-wide convention every other
+  // Lossless repo uses. It was previously `./src/content/changelog`, which
+  // split this site's log in two: entries written before 2026-05-09 lived
+  // here and rendered, while later ones were authored at the repo root and
+  // rendered nowhere. The corpus ingester made the same split in reverse —
+  // it skips any path containing `/src/`, so it saw only the root entries.
+  // One directory now serves both the site and retrieval.
+  loader: glob({ pattern: '**/*.md', base: './changelog' }),
   schema: z.object({
     title: z.string(),
 

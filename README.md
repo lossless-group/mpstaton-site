@@ -145,7 +145,9 @@ src/content/promote/{slug}/
 
 ## 📜 Changelog
 
-Site-level changelog lives at `src/content/changelog/{YYYY-MM-DD}_{NN}.md`. Each entry is a full markdown post — feature name + body, with diagrams allowed — that becomes a public changelog page.
+Site-level changelog lives at `changelog/{YYYY-MM-DD}_{NN}.md` — the repo root, matching the tree-wide Lossless convention. Each entry is a full markdown post: feature name + body, with diagrams allowed.
+
+Entries surface through `/llms.txt` and `/llms-full.txt`, and the same directory is what the Lossless corpus ingester reads. There are no per-entry changelog pages on this site today.
 
 ***
 
