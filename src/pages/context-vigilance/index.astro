@@ -6,20 +6,54 @@ import DocCard from '../../components/context-v/DocCard.astro';
 
 const allDocs = await getCollection('context-v');
 
-const categories = ['Specifications', 'Blueprints', 'Prompts', 'Reminders', 'Sitemap'] as const;
+/**
+ * Filter by the context-v directory a document came from, NOT by its
+ * frontmatter `category`.
+ *
+ * The directory is structural — a doc under specs/ is a spec, and the fetcher
+ * only pulls the directories context-v-sources.yaml lists, so the set is
+ * closed and every doc has exactly one. `category` is free text maintained by
+ * hand across repos and has drifted accordingly: "Specification" and
+ * "Specifications" both appear, alongside one-off values like "Components",
+ * "Marketing-Site" and "UI-Design". Eighteen documents carried a category that
+ * matched no tab, so they rendered under All and were reachable from no
+ * filter at all. Grouping by folder cannot produce that state.
+ */
+const FOLDER_ORDER = ['specs', 'blueprints', 'prompts', 'reminders', 'sitemap'];
+const FOLDER_LABELS: Record<string, string> = {
+  specs: 'Specs',
+  blueprints: 'Blueprints',
+  prompts: 'Prompts',
+  reminders: 'Reminders',
+  sitemap: 'Sitemap',
+};
 
-// Group docs by category
+function folderOf(doc: (typeof allDocs)[number]): string {
+  // `context-v/specs/Foo.md` -> `specs`; nested paths keep their top folder,
+  // so `context-v/sitemap/pages/team/Foo.md` is still `sitemap`.
+  const filePath = doc.data._context_v?.file_path;
+  if (filePath) {
+    const parts = filePath.split('/');
+    if (parts.length > 2) return parts[1];
+  }
+  // Fallback for anything without provenance: the id is `<repo>/<folder>/...`
+  const idParts = doc.id.split('/');
+  return idParts.length > 1 ? idParts[1] : 'other';
+}
+
 const byCategory = new Map<string, typeof allDocs>();
-for (const cat of categories) {
-  byCategory.set(cat, []);
-}
-byCategory.set('Uncategorized', []);
-
 for (const doc of allDocs) {
-  const cat = doc.data.category || 'Uncategorized';
-  if (!byCategory.has(cat)) byCategory.set(cat, []);
-  byCategory.get(cat)!.push(doc);
+  const folder = folderOf(doc);
+  if (!byCategory.has(folder)) byCategory.set(folder, []);
+  byCategory.get(folder)!.push(doc);
 }
+
+// Configured folders first in their canonical order, then anything unexpected
+// alphabetically — a new upstream directory shows up rather than vanishing.
+const categories = [
+  ...FOLDER_ORDER.filter((f) => byCategory.has(f)),
+  ...[...byCategory.keys()].filter((f) => !FOLDER_ORDER.includes(f)).sort(),
+];
 
 // Sort each category by date_modified or date_created descending
 for (const [, docs] of byCategory) {
@@ -65,7 +99,7 @@ const repoCount = new Set(allDocs.map(d => d.data._context_v?.repo_label).filter
             data-filter={cat}
             class="category-tab px-4 py-2 rounded-full text-sm font-medium border border-border transition-colors"
           >
-            {humanizeTerm(cat)} ({count})
+            {FOLDER_LABELS[cat] ?? humanizeTerm(cat)} ({count})
           </button>
         );
       })}
@@ -80,7 +114,7 @@ const repoCount = new Set(allDocs.map(d => d.data._context_v?.repo_label).filter
           return dateB.localeCompare(dateA);
         })
         .map(doc => (
-          <div data-category={doc.data.category || 'Uncategorized'}>
+          <div data-category={folderOf(doc)}>
             <DocCard
               title={doc.data.title}
               lede={doc.data.lede}
