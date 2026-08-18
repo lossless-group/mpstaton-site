@@ -1,19 +1,55 @@
 ---
 import brand from '@brand';
 import SocialsFaviconRow from './SocialsFaviconRow.astro';
+
+/**
+ * Site header. One set of links, two layouts.
+ *
+ * At >=768px the links sit inline. Below that they collapse behind a
+ * hamburger and drop down as a panel — six text links plus a six-icon
+ * socials row does not fit a phone width, and previously just wrapped into
+ * a stack that pushed the page content down the screen.
+ *
+ * The markup is deliberately NOT duplicated per breakpoint. A second copy of
+ * the nav is a second place to forget to add a link, and it puts the same
+ * href in the accessibility tree twice.
+ */
+const links = [
+  { href: '/essays', label: 'Essays' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/portfolio', label: 'Portfolio' },
+  { href: '/cv', label: 'CV' },
+  { href: '/context-vigilance', label: 'Context' },
+];
 ---
 <header class="px-6 py-4">
   <div class="gradient-line mb-0"></div>
-  <nav class="max-w-6xl mx-auto flex items-center justify-between">
+  <nav class="max-w-6xl mx-auto flex items-center justify-between relative" id="site-nav">
     <a href="/" class="hover:opacity-80 transition-opacity">
       <img src={brand.assets?.logoDark} alt={brand.name} class="h-8 w-auto" />
     </a>
-    <div class="flex items-center gap-6 text-sm font-medium">
-      <a href="/essays" class="text-muted-foreground hover:text-foreground transition-colors">Essays</a>
-      <a href="/projects" class="text-muted-foreground hover:text-foreground transition-colors">Projects</a>
-      <a href="/portfolio" class="text-muted-foreground hover:text-foreground transition-colors">Portfolio</a>
-      <a href="/cv" class="text-muted-foreground hover:text-foreground transition-colors">CV</a>
-      <a href="/playlists" class="inline-flex items-center gap-1.5 text-muted-foreground hover:text-[#FF0000] transition-colors" aria-label="Playlists">
+
+    <button
+      type="button"
+      class="nav-toggle"
+      id="nav-toggle"
+      aria-expanded="false"
+      aria-controls="nav-menu"
+      aria-label="Open menu"
+    >
+      <svg class="nav-toggle__open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+      </svg>
+      <svg class="nav-toggle__close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="5" y1="5" x2="19" y2="19" /><line x1="19" y1="5" x2="5" y2="19" />
+      </svg>
+    </button>
+
+    <div class="nav-menu" id="nav-menu">
+      {links.map((link) => (
+        <a href={link.href} class="nav-link text-muted-foreground hover:text-foreground transition-colors">{link.label}</a>
+      ))}
+      <a href="/playlists" class="nav-link nav-link--yt inline-flex items-center gap-1.5 text-muted-foreground hover:text-[#FF0000] transition-colors" aria-label="Playlists">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
         <span>Playlists</span>
       </a>
@@ -21,3 +57,119 @@ import SocialsFaviconRow from './SocialsFaviconRow.astro';
     </div>
   </nav>
 </header>
+
+<style>
+  /* Desktop: inline row, no toggle. */
+  .nav-toggle { display: none; }
+
+  .nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  @media (max-width: 767px) {
+    .nav-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.4rem;
+      margin: -0.4rem;
+      background: transparent;
+      border: 0;
+      color: var(--muted-foreground);
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+    .nav-toggle:hover { color: var(--foreground); }
+    .nav-toggle__close { display: none; }
+    .nav-toggle[aria-expanded='true'] .nav-toggle__open { display: none; }
+    .nav-toggle[aria-expanded='true'] .nav-toggle__close { display: block; }
+
+    /* Absolute rather than in-flow: an in-flow panel shoves the hero down the
+       page as it opens, which reads as the layout breaking rather than as a
+       menu appearing. */
+    .nav-menu {
+      position: absolute;
+      top: calc(100% + 0.75rem);
+      right: 0;
+      left: 0;
+      z-index: 50;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+      padding: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      background: var(--background);
+      box-shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+    }
+
+    /* `display: none` rather than a height/opacity transition: the links must
+       leave the tab order when the panel is shut, and a hidden-but-focusable
+       menu is worse than an unanimated one. */
+    .nav-menu:not([data-open]) { display: none; }
+
+    .nav-menu :global(a) { width: 100%; }
+    .nav-link {
+      display: block;
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+    }
+    .nav-link:hover { background: var(--muted, rgb(255 255 255 / 0.06)); }
+    .nav-link--yt { display: inline-flex; }
+  }
+</style>
+
+<script>
+  function wireNav() {
+    const toggle = document.getElementById('nav-toggle');
+    const menu = document.getElementById('nav-menu');
+    if (!toggle || !menu || toggle.dataset.wired) return;
+    toggle.dataset.wired = 'true';
+
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      if (open) menu.setAttribute('data-open', '');
+      else menu.removeAttribute('data-open');
+    };
+
+    toggle.addEventListener('click', () => {
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    // Collapse on choosing a destination. Same-page anchors and the socials
+    // row count: the panel covers the content either way, so leaving it open
+    // hides whatever the reader just asked to see.
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) setOpen(false);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (toggle.getAttribute('aria-expanded') !== 'true') return;
+      const target = e.target as HTMLElement;
+      if (!menu.contains(target) && !toggle.contains(target)) setOpen(false);
+    });
+
+    // Crossing back to the desktop layout must clear the open state, or the
+    // panel's data-open survives and reappears on the next return to mobile.
+    window.matchMedia('(min-width: 768px)').addEventListener('change', (e) => {
+      if (e.matches) setOpen(false);
+    });
+  }
+
+  wireNav();
+  document.addEventListener('astro:page-load', wireNav);
+</script>
