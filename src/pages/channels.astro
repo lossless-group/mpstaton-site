@@ -30,8 +30,8 @@ const channels = getTopChannels().filter(
     <div class="text-center max-w-2xl mx-auto">
       <h1 class="gradient-text mb-3">Channels</h1>
       <p class="text-lg text-muted-foreground">
-        {stats.shownChannels} channels with {MIN_VIDEOS} or more videos in
-        <a href="/playlists" class="underline underline-offset-4 hover:text-foreground transition-colors">the playlists</a>
+        {stats.shownChannels} channels with {MIN_VIDEOS} or more videos in{' '}
+        <a href="/playlists" class="underline underline-offset-4 hover:text-foreground transition-colors">the playlists</a>{' '}
         — {stats.shownVideos.toLocaleString()} videos between them, out of {stats.totalChannels.toLocaleString()} channels in all.
       </p>
     </div>
