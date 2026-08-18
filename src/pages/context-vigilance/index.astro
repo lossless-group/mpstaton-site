@@ -6,7 +6,7 @@ import DocCard from '../../components/context-v/DocCard.astro';
 
 const allDocs = await getCollection('context-v');
 
-const categories = ['Specifications', 'Blueprints', 'Prompts', 'Reminders'] as const;
+const categories = ['Specifications', 'Blueprints', 'Prompts', 'Reminders', 'Sitemap'] as const;
 
 // Group docs by category
 const byCategory = new Map<string, typeof allDocs>();
@@ -34,7 +34,7 @@ const totalDocs = allDocs.length;
 const repoCount = new Set(allDocs.map(d => d.data._context_v?.repo_label).filter(Boolean)).size;
 ---
 
-<BaseLayout title="Rabbit Holes — Context Vigilance" description="Project documentation across multiple repositories. Specs, Blueprints, Prompts, and Reminders.">
+<BaseLayout title="Rabbit Holes — Context Vigilance" description="Project documentation across multiple repositories. Specs, Blueprints, Prompts, Reminders, and Sitemaps.">
 
   <!-- Hero: half above-the-fold -->
   <section class="flex items-center justify-center px-6" style="min-height: 45vh;">

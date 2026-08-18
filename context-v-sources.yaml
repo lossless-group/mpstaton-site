@@ -3,7 +3,7 @@ auth:
 
 defaults:
   branch: main
-  categories: [specs, blueprints, prompts, reminders]
+  categories: [specs, blueprints, prompts, reminders, sitemap]
   include_root_files: false
 
 sources:

@@ -247,6 +247,7 @@ async function main() {
           blueprints: 'Blueprints',
           prompts: 'Prompts',
           reminders: 'Reminders',
+          sitemap: 'Sitemap',
         };
         data.category = DIR_TO_CATEGORY[firstDir] || firstDir;
       }
