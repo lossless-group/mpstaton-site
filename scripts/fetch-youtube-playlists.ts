@@ -17,6 +17,7 @@
 
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { PLAYLISTS } from '../src/config/playlists';
 
 const SITE_ROOT = path.resolve(import.meta.dirname, '..');
 const CONTENT_DIR = path.join(SITE_ROOT, 'src', 'content');
@@ -46,7 +47,8 @@ interface PlaylistCacheEntry {
   channelId: string;
   itemCount: number;
   thumbnail: string;
-  fetchedAt: string; // ISO timestamp
+  fetchedAt: string; // ISO timestamp — anchors the 30-day ITEMS ttl
+  countsFetchedAt?: string; // ISO timestamp — anchors the per-build COUNTS refresh
   items: PlaylistItem[];
   unavailable?: boolean;
 }
@@ -71,6 +73,12 @@ async function walkMarkdownFiles(dir: string): Promise<string[]> {
 
 async function discoverPlaylistIds(): Promise<Set<string>> {
   const ids = new Set<string>();
+
+  // Curated playlists come first: /playlists surfaces them whether or not any
+  // markdown file mentions them, so scraping content alone would leave the
+  // page's own playlists uncached and stuck in facade mode.
+  for (const p of PLAYLISTS) ids.add(p.id);
+
   const files = await walkMarkdownFiles(CONTENT_DIR);
   for (const file of files) {
     const raw = await fs.readFile(file, 'utf8');
@@ -231,10 +239,55 @@ async function fetchPlaylist(id: string, key: string): Promise<PlaylistCacheEntr
   };
 }
 
+/**
+ * Refresh title + itemCount for every id in ONE call, without re-pulling items.
+ *
+ * The 30-day TTL on `fetchedAt` exists because a full fetch of these playlists
+ * costs ~241 quota units — 119 pages of playlistItems plus 119 of videos. But
+ * that TTL also froze the *counts*, so a build inside the window rendered
+ * whatever number was true up to a month ago.
+ *
+ * `playlists.list` takes comma-separated ids and costs 1 unit total regardless
+ * of how many playlists or videos are involved. So counts refresh on every
+ * build for a single unit, while the expensive item list keeps its TTL.
+ *
+ * Deliberately does NOT touch `fetchedAt` — updating it here would reset the
+ * items TTL and mean the item list never refreshed again.
+ */
+async function refreshCounts(
+  ids: string[],
+  key: string,
+  cache: PlaylistCache
+): Promise<number> {
+  if (!ids.length) return 0;
+  const url = `${API_BASE}/playlists?id=${ids.join(',')}&part=snippet,contentDetails&key=${key}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`playlists.list ${res.status} ${await res.text()}`);
+  const json = (await res.json()) as YTPlaylistResponse;
+
+  const now = new Date().toISOString();
+  let updated = 0;
+  for (const p of json.items ?? []) {
+    const entry = cache[p.id];
+    if (!entry) continue;
+    const before = entry.itemCount;
+    entry.title = p.snippet.title;
+    entry.channelTitle = p.snippet.channelTitle;
+    entry.itemCount = p.contentDetails.itemCount;
+    entry.countsFetchedAt = now;
+    if (before !== entry.itemCount) {
+      updated++;
+      const delta = entry.itemCount - before;
+      console.log(`  ~ ${entry.title} — ${before} → ${entry.itemCount} (${delta >= 0 ? '+' : ''}${delta})`);
+    }
+  }
+  return updated;
+}
+
 async function main() {
   const key = process.env.YOUTUBE_API_KEY;
   const ids = await discoverPlaylistIds();
-  console.log(`📺 YouTube playlist fetcher — discovered ${ids.size} unique playlist ID${ids.size === 1 ? '' : 's'} in src/content/`);
+  console.log(`📺 YouTube playlist fetcher — ${ids.size} unique playlist ID${ids.size === 1 ? '' : 's'} (${PLAYLISTS.length} curated + src/content/)`);
 
   if (ids.size === 0) {
     await writeCache({});
@@ -298,8 +351,26 @@ async function main() {
     }
   }
 
+  // Counts refresh on EVERY build for 1 quota unit, even for entries whose
+  // items were skipped as fresh — otherwise a build inside the 30-day window
+  // renders a subscriber-facing number that is up to a month stale.
+  let countsChanged = 0;
+  const skippedIds = [...ids].filter((id) => next[id] && !next[id].unavailable);
+  if (skippedIds.length) {
+    try {
+      countsChanged = await refreshCounts(skippedIds, key, next);
+    } catch (err) {
+      // Never fail a build over a counter. The cached number is still shown.
+      console.warn(`  ! counts refresh failed, keeping cached counts — ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
   await writeCache(next);
-  console.log(`✓ Done. ${fetched} fetched, ${skipped} skipped (cache fresh), ${failed} failed.`);
+  const totalItems = Object.values(next).reduce((n, e) => n + (e.itemCount ?? 0), 0);
+  console.log(
+    `✓ Done. ${fetched} fetched, ${skipped} skipped (items cache fresh), ${failed} failed; ` +
+    `counts refreshed for ${skippedIds.length} (${countsChanged} changed), ${totalItems.toLocaleString()} videos total.`
+  );
 }
 
 main().catch((err) => {
