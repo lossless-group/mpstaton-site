@@ -100,10 +100,42 @@ async function main() {
   const configRaw = await fs.readFile(CONFIG_PATH, 'utf-8');
   const config: FetcherConfig = yaml.parse(configRaw);
 
-  // 2. Resolve token (optional for public repos)
-  const token = process.env[config.auth.token_env] || undefined;
-  if (!token) {
-    console.log('  No GitHub token found — using unauthenticated requests (60/hr limit)');
+  // 2. Resolve token. Optional for public repos in the sense that the requests
+  // succeed — but anonymous callers get 60/hr against api.github.com, and one
+  // cold run of this script costs a ref, a tree, and one Contents call per
+  // file: ~65 for astro-knots alone. So "optional" means "works locally and
+  // truncates the corpus in CI", which is exactly what happened — a deploy
+  // fetched 58 files and lost the last 7 to a 403 without failing the build.
+  //
+  // The name is a fallback chain rather than one key because this credential
+  // has different names in different places: .env carries both
+  // GITHUB_PERSONAL_ACCESS_TOKEN and GITHUB_CONTENT_PAT, while the Vercel
+  // project only has the latter. One hardcoded name authenticates on a laptop
+  // and silently downgrades in the build.
+  const TOKEN_ENV_NAMES = [
+    config.auth.token_env,
+    'GITHUB_CONTENT_PAT',
+    'GITHUB_TOKEN',
+    'GH_TOKEN',
+  ].filter(Boolean);
+
+  let token: string | undefined;
+  let tokenFrom: string | undefined;
+  for (const name of TOKEN_ENV_NAMES) {
+    if (process.env[name]) {
+      token = process.env[name];
+      tokenFrom = name;
+      break;
+    }
+  }
+
+  if (token) {
+    console.log(`  Authenticated via ${tokenFrom} (5,000/hr limit)`);
+  } else {
+    console.warn(
+      `  ⚠️  No GitHub token in any of ${TOKEN_ENV_NAMES.join(', ')} — ` +
+      'using unauthenticated requests (60/hr). Expect truncation.'
+    );
   }
   const headers = makeHeaders(token);
 
