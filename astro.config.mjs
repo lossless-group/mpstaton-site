@@ -49,6 +49,25 @@ export default defineConfig({
   site: 'https://mpstaton.com',
   output: 'server',
   adapter: vercel(),
+  // The dev-only toolbar overlays the bottom-centre of every page and sits
+  // above the site's own chrome, which puts it on top of anything anchored
+  // there — the playlist panel's controls among them — and makes it the hit
+  // target for clicks aimed underneath it.
+  devToolbar: {
+    enabled: false,
+  },
+  markdown: {
+    shikiConfig: {
+      // Shiki language ids are lowercase and case-sensitive, so a ```R fence
+      // misses the bundled `r` grammar and falls back to plaintext with a
+      // build warning. R is the language whose community actually capitalises
+      // its name, so the fence is written the way an R author would write it
+      // and the alias meets them there rather than rewriting their prose.
+      langAlias: {
+        R: 'r',
+      },
+    },
+  },
   integrations: [
     svelte(),
     // @astrojs/sitemap auto-generates sitemap-index.xml + sitemap-0.xml from
