@@ -1,70 +1,63 @@
 /**
- * youtube-channels — roll the cached playlist items up into a per-channel view.
+ * youtube-channels — the site-facing channel view: the cache rolled up by
+ * channel, ranked, and overlaid with the hand-picked favorites.
  *
  * Derived at build time from the same cache /playlists renders from, so this
- * surface has no fetch of its own and no list to hand-maintain: adding videos
- * to a playlist moves a channel up the page on the next deploy.
+ * surface has no fetch of its own and no ranking to hand-maintain: adding
+ * videos to a playlist moves a channel up the page on the next deploy. What
+ * IS hand-maintained is which channels are favorites — a judgement the counts
+ * cannot make — and that lives in src/config/channel-favorites.json, seeded by
+ * `pnpm seed-channels` and edited by a human.
  *
- * Server-only, like the cache it reads.
+ * Server-only, like the cache it reads. The ranking itself lives in
+ * ./youtube-channels-rollup so scripts/ can share it under Bun.
  */
 
 import { PLAYLISTS } from '../config/playlists';
 import { getPlaylist } from './youtube-playlist-cache';
+import { rollupChannels, rankChannels, MIN_VIDEOS } from './youtube-channels-rollup';
+import type { ChannelRollup } from './youtube-channels-rollup';
+import favorites from '../config/channel-favorites.json';
 
-/** Channels below this many videos are left off the page. */
-export const MIN_VIDEOS = 10;
+export { channelUrl, MIN_VIDEOS } from './youtube-channels-rollup';
+export type { ChannelRollup } from './youtube-channels-rollup';
 
-export interface ChannelRollup {
-  /** UC... id. Absent only for pre-fix cache entries; the URL falls back to search. */
-  channelId?: string;
+interface FavoriteEntry {
   title: string;
-  videoCount: number;
-  /** Labels of the curated playlists this channel shows up in. */
-  playlists: string[];
+  favorite: boolean;
+  note?: string;
+}
+
+const overlay = favorites as Record<string, FavoriteEntry>;
+
+export interface Channel extends ChannelRollup {
+  isFavorite: boolean;
+  note?: string;
+}
+
+function collect() {
+  return rollupChannels(PLAYLISTS.map((p) => ({ label: p.label, entry: getPlaylist(p.id) })));
+}
+
+function decorate(c: ChannelRollup): Channel {
+  const pick = c.channelId ? overlay[c.channelId] : undefined;
+  return { ...c, isFavorite: pick?.favorite === true, note: pick?.note || undefined };
+}
+
+/** Channels at or above the threshold, most-kept first. */
+export function getTopChannels(min: number = MIN_VIDEOS): Channel[] {
+  return rankChannels(collect(), min).map(decorate);
 }
 
 /**
- * Keyed by channelId where we have one. Two channels can share a display name
- * and one channel can rename itself, so the id is the identity whenever the
- * API gave us one; the title is only a fallback key for the 44 private/deleted
- * items and any entry cached before videoOwnerChannelId was recorded.
+ * The hand-picked ones, in the same volume order.
+ *
+ * Ranked across EVERY channel rather than the shown ones, so a favorite that
+ * sits below the display threshold still surfaces — the whole point of picking
+ * by hand is to say something the counts do not.
  */
-function collect(): Map<string, ChannelRollup> {
-  const byKey = new Map<string, ChannelRollup>();
-
-  for (const p of PLAYLISTS) {
-    const data = getPlaylist(p.id);
-    if (!data) continue;
-
-    for (const item of data.items) {
-      // Private and deleted videos carry no owner at all — nothing to credit.
-      if (!item.channelTitle) continue;
-
-      const key = item.channelId ?? `title:${item.channelTitle}`;
-      const existing = byKey.get(key);
-
-      if (existing) {
-        existing.videoCount++;
-        if (!existing.playlists.includes(p.label)) existing.playlists.push(p.label);
-      } else {
-        byKey.set(key, {
-          channelId: item.channelId,
-          title: item.channelTitle,
-          videoCount: 1,
-          playlists: [p.label],
-        });
-      }
-    }
-  }
-
-  return byKey;
-}
-
-/** Channels at or above MIN_VIDEOS, most-watched first, ties broken by name. */
-export function getTopChannels(min: number = MIN_VIDEOS): ChannelRollup[] {
-  return [...collect().values()]
-    .filter((c) => c.videoCount >= min)
-    .sort((a, b) => b.videoCount - a.videoCount || a.title.localeCompare(b.title));
+export function getFavoriteChannels(): Channel[] {
+  return rankChannels(collect(), 1).map(decorate).filter((c) => c.isFavorite);
 }
 
 /** Totals for the page's standfirst — computed over every channel, not just the shown ones. */
@@ -76,12 +69,6 @@ export function getChannelStats() {
     shownChannels: shown.length,
     shownVideos: shown.reduce((n, c) => n + c.videoCount, 0),
     totalVideos: all.reduce((n, c) => n + c.videoCount, 0),
+    favoriteCount: getFavoriteChannels().length,
   };
-}
-
-/** Channel page URL, or a search fallback when the cache predates channelId. */
-export function channelUrl(c: ChannelRollup): string {
-  return c.channelId
-    ? `https://www.youtube.com/channel/${c.channelId}`
-    : `https://www.youtube.com/results?search_query=${encodeURIComponent(c.title)}`;
 }

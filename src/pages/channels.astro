@@ -7,10 +7,14 @@
  * it cannot drift from /playlists. See src/lib/youtube-channels.ts.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getTopChannels, getChannelStats, channelUrl, MIN_VIDEOS } from '../lib/youtube-channels';
+import { getTopChannels, getFavoriteChannels, getChannelStats, channelUrl, MIN_VIDEOS } from '../lib/youtube-channels';
 
-const channels = getTopChannels();
+const favorites = getFavoriteChannels();
 const stats = getChannelStats();
+
+// Favorites are repeated in the full list rather than subtracted from it, so
+// the ranking below stays a complete, honest picture of the library.
+const channels = getTopChannels();
 ---
 
 <BaseLayout
@@ -28,7 +32,30 @@ const stats = getChannelStats();
     </div>
   </section>
 
+  {favorites.length > 0 && (
+    <section class="max-w-4xl mx-auto px-6 pb-10">
+      <h2 class="text-sm uppercase tracking-wide text-muted-foreground mb-3">Favorites</h2>
+      <ul class="channel-grid">
+        {favorites.map((c) => (
+          <li class="channel-card channel-card--favorite">
+            <span class="channel-rank" aria-hidden="true">★</span>
+            <a href={channelUrl(c)} target="_blank" rel="noopener noreferrer" class="channel-name">
+              {c.title}
+            </a>
+            <span class="channel-meta">
+              {c.videoCount.toLocaleString()} videos
+              <span class="channel-playlists">{c.note ?? c.playlists.join(' · ')}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
   <section class="max-w-4xl mx-auto px-6 pb-16">
+    {favorites.length > 0 && (
+      <h2 class="text-sm uppercase tracking-wide text-muted-foreground mb-3">Most kept</h2>
+    )}
     <ol class="channel-grid">
       {channels.map((c, i) => (
         <li class="channel-card">
@@ -68,6 +95,7 @@ const stats = getChannelStats();
     transition: border-color 0.15s ease, background-color 0.15s ease;
   }
   .channel-card:hover { border-color: var(--primary); }
+  .channel-card--favorite { border-color: var(--primary); }
 
   .channel-rank {
     grid-row: 1 / span 2;
