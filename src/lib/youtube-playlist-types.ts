@@ -10,7 +10,12 @@ export interface PlaylistItem {
   thumbnail: string;
   duration?: string;      // ISO 8601 — PT4M30S
   addedAt?: string;       // ISO timestamp; when the video was added to the playlist
+  // The channel the video LIVES ON, from playlistItems' videoOwnerChannel*
+  // fields. Not snippet.channelTitle — that one names whoever added the item
+  // to the playlist, so it is the playlist owner on every single row.
+  // Both are absent on private/deleted videos.
   channelTitle?: string;
+  channelId?: string;
   unavailable?: boolean;
 }
 
