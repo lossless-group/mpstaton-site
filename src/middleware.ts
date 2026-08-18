@@ -6,6 +6,15 @@ const GATED_PATTERN = /^\/promote\/[^/]+\/.+$/;
 const HUB_PATTERN = /^\/promote\/([^/]+)\/?$/;
 
 export const onRequest = defineMiddleware(async (context, next) => {
+  // Middleware runs for prerendered routes too — at build time, where there is
+  // no real request and `request.headers` is a stub Astro warns about. This
+  // middleware exists only to read session cookies, which a route baked at
+  // build time can never have, so there is nothing here for it to do.
+  // /llms.txt and /llms-full.txt are the site's only `prerender = true` routes.
+  // Both consumers of these locals read them optionally, so leaving them unset
+  // on a prerendered route is the same as leaving them locked.
+  if (context.isPrerendered) return next();
+
   const path = context.url.pathname;
   const cookieHeader = context.request.headers.get('cookie');
   const session = readSessionFromRequest(cookieHeader);

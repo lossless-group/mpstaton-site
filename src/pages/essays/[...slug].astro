@@ -3,6 +3,10 @@ import { getCollection } from 'astro:content';
 import { createLfmProcessor } from '@lossless-group/lfm';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AstroMarkdown from '../../components/markdown/AstroMarkdown.astro';
+import TableOfContents from '../../components/markdown/TableOfContents.astro';
+import { hasTableOfContents } from '../../lib/markdown/toc';
+import { formatDate, toIsoDate } from '../../utils/format-date';
+import { humanizeTerm } from '../../utils/humanize-term';
 import Sources from '../../components/markdown/Sources.astro';
 import { remarkLosslessWikilinksLocal, type WikilinkPluginStats } from '../../lib/remark-lossless-wikilinks-local';
 
@@ -24,6 +28,22 @@ const processor = createLfmProcessor().use(remarkLosslessWikilinksLocal, wikilin
 const parsed = processor.parse(entry.body);
 const tree = await processor.run(parsed);
 const citations = (tree as any).data?.citations?.ordered ?? [];
+// Outline comes from LFM's remarkHeadingIds — no DOM scraping, no local slug
+// computation, and a `#` line inside a code fence is a `code` node so it can
+// never leak in. TableOfContents renders nothing below 3 entries; half of the
+// essays are short enough that it won't, so the layout has to ask first rather
+// than reserve a rail column the article would then fall into.
+const headings = (tree as any).data?.headings ?? [];
+const showToc = hasTableOfContents(headings);
+
+// Essays carry both dates and they are never the same day — the median gap
+// across the collection is 315 days and the widest is 651, so an "Updated"
+// line on its own reads an essay drafted in 2024 as if it were written this
+// month. `date_authored_initial_draft` is present on 48 of 50; the other two
+// fall back to `date_created`, which every essay has.
+const authoredDate = data.date_authored_initial_draft ?? data.date_created;
+// Only worth showing both when they actually differ.
+const showAuthored = authoredDate && toIsoDate(authoredDate) !== toIsoDate(data.date_modified);
 
 if (import.meta.env.DEV && wikilinkStats.unresolved.length > 0) {
   console.log(`[wikilinks] ${slug}: ${wikilinkStats.resolved} resolved, ${wikilinkStats.unresolved.length} unresolved (${wikilinkStats.unresolved.slice(0, 3).join(', ')}${wikilinkStats.unresolved.length > 3 ? ', …' : ''})`);
@@ -31,13 +51,17 @@ if (import.meta.env.DEV && wikilinkStats.unresolved.length > 0) {
 ---
 
 <BaseLayout title={data.title || 'Essay'} description={data.lede}>
-  <div class="max-w-4xl mx-auto px-6 py-8">
+  <div class="essay-shell px-6 py-8" data-has-toc={showToc || undefined}>
 
     <a href="/essays" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
       Back to Essays
     </a>
 
+  <div class="essay-layout" data-has-toc={showToc || undefined}>
+    <TableOfContents headings={headings} />
+
+    <div class="essay-article">
     <header class="mb-10">
       {data.banner_image && (
         <img
@@ -61,11 +85,14 @@ if (import.meta.env.DEV && wikilinkStats.unresolved.length > 0) {
         )}
         {data.category && (
           <span class="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-xs font-medium">
-            {data.category}
+            {humanizeTerm(data.category)}
           </span>
         )}
+        {showAuthored && (
+          <span>Written <time datetime={toIsoDate(authoredDate)}>{formatDate(authoredDate)}</time></span>
+        )}
         {data.date_modified && (
-          <span>Updated {data.date_modified}</span>
+          <span>Updated <time datetime={toIsoDate(data.date_modified)}>{formatDate(data.date_modified)}</time></span>
         )}
       </div>
 
@@ -73,7 +100,7 @@ if (import.meta.env.DEV && wikilinkStats.unresolved.length > 0) {
         <div class="flex gap-1.5 flex-wrap mt-3">
           {data.tags.map((tag: string) => (
             <span class="text-xs px-2 py-0.5 rounded bg-muted text-muted-foreground">
-              {tag}
+              {humanizeTerm(tag)}
             </span>
           ))}
         </div>
@@ -85,6 +112,48 @@ if (import.meta.env.DEV && wikilinkStats.unresolved.length > 0) {
     </article>
 
     <Sources citations={citations} />
+    </div>
+  </div>
 
   </div>
 </BaseLayout>
+
+<style>
+  /* The shell widens only where the rail has somewhere to live. Below 1280 the
+     ToC collapses itself, so the essay keeps exactly the measure it had before
+     the ToC existed. */
+  .essay-shell {
+    max-width: 56rem;
+    margin-inline: auto;
+  }
+
+  /* `main` is a flex item (BaseLayout wraps the slot in body.flex.flex-col) and
+     flex descendants refuse to shrink below their content unless told to.
+     Without this chain the widest child — a table with a min-width, a mermaid
+     diagram, a long code fence — propagates its width all the way up and the
+     page bleeds sideways, which makes a reading-position ToC worthless.
+     `overflow-x: clip` rather than `hidden`: clip does not create a scroll
+     container, so it cannot break the `position: sticky` ToC nested inside. */
+  .essay-layout {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+  .essay-article { min-width: 0; max-width: 100%; }
+
+  /* Only essays that actually render a ToC get the rail — and therefore the
+     extra width. On a short essay the component renders nothing, so a grid
+     declared unconditionally would drop the article into the 15rem rail track. */
+  @media (min-width: 1280px) {
+    .essay-shell[data-has-toc] { max-width: 74rem; }
+    .essay-layout[data-has-toc] {
+      display: grid;
+      grid-template-columns: 15rem minmax(0, 1fr);
+      gap: 3rem;
+      align-items: start;
+    }
+    /* Keep the prose measure where it was; the rail takes the new space. */
+    .essay-layout[data-has-toc] .essay-article { max-width: 56rem; }
+  }
+</style>

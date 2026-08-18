@@ -5,6 +5,8 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import AstroMarkdown from '../../../components/markdown/AstroMarkdown.astro';
 import Sources from '../../../components/markdown/Sources.astro';
 import { remarkLosslessWikilinksLocal } from '../../../lib/remark-lossless-wikilinks-local';
+import { formatDate, toIsoDate } from '../../../utils/format-date';
+import { humanizeTerm } from '../../../utils/humanize-term';
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect('/notes/from-the-rabbit-hole');
@@ -42,7 +44,7 @@ const citations = (tree as any).data?.citations?.ordered ?? [];
           <span>{data.authors.join(', ')}</span>
         )}
         {data.date_modified && (
-          <span>Updated {data.date_modified}</span>
+          <span>Updated <time datetime={toIsoDate(data.date_modified)}>{formatDate(data.date_modified)}</time></span>
         )}
       </div>
 
@@ -50,7 +52,7 @@ const citations = (tree as any).data?.citations?.ordered ?? [];
         <div class="flex gap-1.5 flex-wrap mt-3">
           {data.tags.map((tag: string) => (
             <span class="text-xs px-2 py-0.5 rounded bg-muted text-muted-foreground">
-              {tag}
+              {humanizeTerm(tag)}
             </span>
           ))}
         </div>

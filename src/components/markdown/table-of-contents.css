@@ -1,0 +1,316 @@
+/**
+ * table-of-contents.css — block, elements, and the three viewport states.
+ *
+ * State is expressed as media queries plus `[data-open]`, never as a modifier
+ * class, because the states are viewport-driven rather than author-chosen.
+ *
+ * Breakpoints
+ *   ≥ 1280px   Rail       persistent left column
+ *   768–1279   Collapsed  hamburger, expands right as an overlay
+ *   < 768px    Header     top bar, expands downward
+ *
+ * POSITIONING — the one deliberate departure from the fullstack-vc reference.
+ * That site pins its header, so its ToC is `position: fixed` under a known
+ * obstruction. This site's header scrolls away, so a fixed bar would sit on
+ * top of the logo and nav at rest. Here the ToC is `position: sticky` and lives
+ * in normal flow instead: at scroll-top it sits below the header where it
+ * belongs, and it pins to the viewport the moment the header leaves. That
+ * requires its containing block to be as tall as the article — see the
+ * `.essay-layout` note in src/pages/essays/[...slug].astro. `--lfm-toc-header-bottom`
+ * is still honoured, so the day this site's header becomes sticky the ToC
+ * clears it with no change here.
+ *
+ * The Rail threshold is set where the article column plus a 15rem rail stops
+ * fitting comfortably — i.e. roughly a laptop window sharing a screen.
+ */
+
+.lfm-toc {
+  --lfm-toc-w: 15rem;
+  --lfm-toc-fg: var(--muted-foreground);
+  --lfm-toc-fg-active: var(--primary);
+  --lfm-toc-bg: var(--card);
+  --lfm-toc-border: var(--border);
+  --lfm-toc-radius: var(--radius);
+  /* Below the site's fixed toasts (z-50) — the ToC is reading chrome, not an
+     alert, and it clears the header vertically instead of competing with it. */
+  --lfm-toc-z: 40;
+  /* JS publishes --lfm-toc-header-bottom (the measured pinned-header edge) on
+     :root; this is the breathing room added on top of it, per state. Never
+     declare --lfm-toc-header-bottom here: an element's own declaration shadows
+     the inherited one and the measurement silently does nothing. */
+  --lfm-toc-gap: 0.75rem;
+
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+/* ── Panel: shared by all three states ─────────────────────────────────── */
+.lfm-toc__panel {
+  background: var(--lfm-toc-bg);
+  border: 1px solid var(--lfm-toc-border);
+  border-radius: var(--lfm-toc-radius);
+  padding: 1rem;
+}
+
+.lfm-toc__title {
+  margin: 0 0 0.625rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--lfm-toc-fg) 70%, transparent);
+  line-height: 1.4;
+}
+
+/* Scoped under the block so the prose reset (.prose ul/ol/li/a) can't reach
+   in: class+element is (0,1,1) and beats a lone class, so every list rule here
+   carries the block for (0,2,0). Tailwind preflight is handled the same way. */
+.lfm-toc .lfm-toc__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lfm-toc .lfm-toc__list[data-level='1'] {
+  margin-left: 0.75rem;
+  padding-left: 0.5rem;
+  border-left: 1px solid var(--lfm-toc-border);
+}
+
+.lfm-toc .lfm-toc__item {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lfm-toc .lfm-toc__item::marker {
+  content: '';
+}
+
+.lfm-toc .lfm-toc__link {
+  display: block;
+  padding: 0.4rem 0 0.4rem 0.5rem;
+  margin-left: -0.5rem;
+  color: var(--lfm-toc-fg);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: color 0.12s ease, border-color 0.12s ease;
+}
+
+.lfm-toc .lfm-toc__link:hover {
+  color: var(--lfm-toc-fg-active);
+  text-decoration: none;
+}
+
+.lfm-toc .lfm-toc__link[data-active] {
+  color: var(--lfm-toc-fg-active);
+  border-left-color: var(--lfm-toc-fg-active);
+  font-weight: 600;
+}
+
+/* ── Affordances ───────────────────────────────────────────────────────── */
+.lfm-toc__bar,
+.lfm-toc__burger {
+  display: none;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  background: var(--lfm-toc-bg);
+  border: 1px solid var(--lfm-toc-border);
+}
+
+.lfm-toc__bar {
+  width: 100%;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--lfm-toc-radius);
+  text-align: left;
+}
+
+.lfm-toc__bar-kicker {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--lfm-toc-fg) 70%, transparent);
+  flex: 0 0 auto;
+}
+
+.lfm-toc__bar-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--foreground);
+}
+
+.lfm-toc__chevron {
+  flex: 0 0 auto;
+  color: var(--lfm-toc-fg);
+  transition: transform 0.15s ease;
+}
+
+.lfm-toc[data-open] .lfm-toc__chevron {
+  transform: rotate(180deg);
+}
+
+/* The burger sits in the gutter above the article at these widths and has to
+   announce itself. Accent border + accent glow, both riding the mode-loudness
+   tokens the same way the callouts do: near-invisible wash in light, full
+   blast when --fx-glow-opacity is turned up. */
+.lfm-toc__burger {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--lfm-toc-radius);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--lfm-toc-fg-active);
+  border-color: color-mix(in srgb, var(--lfm-toc-fg-active) 70%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--lfm-toc-fg-active) calc(var(--fx-glow-opacity, 0.08) * 60%),
+    var(--card)
+  );
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--lfm-toc-fg-active) 35%, transparent),
+    0 0 var(--fx-glow-spread, 12px) calc(var(--fx-glow-spread, 12px) / -6)
+      color-mix(in srgb, var(--lfm-toc-fg-active) calc(var(--fx-glow-opacity, 0.08) * 200%), transparent),
+    0 4px 14px rgba(0, 0, 0, 0.18);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.lfm-toc__burger:hover,
+.lfm-toc__burger[aria-expanded='true'] {
+  border-color: var(--lfm-toc-fg-active);
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 1px var(--lfm-toc-fg-active),
+    0 0 calc(var(--fx-glow-spread, 12px) * 1.4) 0
+      color-mix(in srgb, var(--lfm-toc-fg-active) calc(var(--fx-glow-opacity, 0.08) * 260%), transparent),
+    0 6px 18px rgba(0, 0, 0, 0.22);
+}
+
+.lfm-toc__burger span {
+  display: block;
+  width: 1.125rem;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+/* Shared by both collapsed states: the panel floats over body text, so it has
+   to read as a surface rather than a smudge. */
+@media (max-width: 1279.98px) {
+  .lfm-toc[data-open] .lfm-toc__panel {
+    display: block;
+    border-color: color-mix(in srgb, var(--lfm-toc-fg-active) 55%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--lfm-toc-fg-active) calc(var(--fx-glow-opacity, 0.08) * 40%),
+      var(--card)
+    );
+    backdrop-filter: blur(10px);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--lfm-toc-fg-active) 30%, transparent),
+      0 0 var(--fx-glow-spread, 12px) calc(var(--fx-glow-spread, 12px) / -6)
+        color-mix(in srgb, var(--lfm-toc-fg-active) calc(var(--fx-glow-opacity, 0.08) * 180%), transparent),
+      0 10px 30px rgba(0, 0, 0, 0.25);
+  }
+}
+
+/* ── State: Rail (≥1280px) ─────────────────────────────────────────────── */
+@media (min-width: 1280px) {
+  .lfm-toc {
+    position: sticky;
+    top: calc(var(--lfm-toc-header-bottom, 0px) + 2rem);
+    align-self: start;
+    width: var(--lfm-toc-w);
+    max-height: calc(100vh - var(--lfm-toc-header-bottom, 0px) - 4rem);
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+  .lfm-toc__panel {
+    display: block;
+  }
+}
+
+/* ── State: Collapsed (768–1279px) ─────────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1279.98px) {
+  .lfm-toc {
+    position: sticky;
+    top: calc(var(--lfm-toc-header-bottom, 0px) + var(--lfm-toc-gap));
+    z-index: var(--lfm-toc-z);
+    width: max-content;
+    margin-bottom: 0.5rem;
+  }
+  .lfm-toc__burger {
+    display: flex;
+    backdrop-filter: blur(6px);
+  }
+  /* Expands rightward as an overlay. Deliberately does NOT push the article —
+     reflowing body text mid-read is disorienting, and the reader opened this
+     to leave, not to re-read a re-laid-out paragraph. */
+  .lfm-toc__panel {
+    display: none;
+    position: absolute;
+    top: 3.25rem;
+    left: 0;
+    width: max-content;
+    min-width: 16rem;
+    max-width: 22rem;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+}
+
+/* ── State: Header (<768px) ────────────────────────────────────────────── */
+@media (max-width: 767.98px) {
+  .lfm-toc {
+    --lfm-toc-gap: 0.25rem;
+    position: sticky;
+    top: calc(var(--lfm-toc-header-bottom, 0px) + var(--lfm-toc-gap));
+    z-index: var(--lfm-toc-z);
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+  }
+  .lfm-toc .lfm-toc__link {
+    padding: 0.55rem 0 0.55rem 0.5rem;
+  }
+  .lfm-toc__bar {
+    display: flex;
+    border-color: color-mix(in srgb, var(--lfm-toc-fg-active) 55%, transparent);
+    backdrop-filter: blur(10px);
+    box-shadow:
+      0 0 var(--fx-glow-spread, 12px) calc(var(--fx-glow-spread, 12px) / -6)
+        color-mix(in srgb, var(--lfm-toc-fg-active) calc(var(--fx-glow-opacity, 0.08) * 160%), transparent),
+      0 4px 14px rgba(0, 0, 0, 0.18);
+  }
+  .lfm-toc__panel {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-top: 0.375rem;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 0.85rem 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lfm-toc .lfm-toc__link,
+  .lfm-toc__chevron,
+  .lfm-toc__burger {
+    transition: none;
+  }
+  .lfm-toc__burger:hover,
+  .lfm-toc__burger[aria-expanded='true'] {
+    transform: none;
+  }
+}

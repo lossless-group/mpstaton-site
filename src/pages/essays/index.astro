@@ -1,22 +1,34 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatDate, toIsoDate } from '../../utils/format-date';
+import { humanizeTerm } from '../../utils/humanize-term';
 
 const allEssays = await getCollection('essays');
 
-// Sort by date_modified descending
-allEssays.sort((a, b) => {
-  const dateA = a.data.date_modified || a.data.date_created || '';
-  const dateB = b.data.date_modified || b.data.date_created || '';
-  return dateB.localeCompare(dateA);
-});
+// Two sortable axes. "Written" is the initial draft — present on 48 of 50
+// essays, with `date_created` as the fallback the other two need. It is a
+// genuinely different ordering from "Updated": no essay has both dates on the
+// same day, and the median gap between them is 315 days.
+const essays = allEssays.map((essay) => ({
+  essay,
+  updated: toIsoDate(essay.data.date_modified),
+  written: toIsoDate(essay.data.date_authored_initial_draft ?? essay.data.date_created),
+}));
+
+// Server-rendered order is the default the control starts on, so a reader with
+// JavaScript off gets a sorted list rather than collection order.
+essays.sort((a, b) => b.updated.localeCompare(a.updated));
 ---
 
 <BaseLayout title="Essays" description="Long-form essays on technology, investing, and building from The Lossless Group.">
 
-  <section class="flex items-center justify-center px-6" style="min-height: 40vh;">
-    <div class="text-center max-w-2xl">
-      <h1 class="gradient-text mb-4">Essays</h1>
+  {/* Sized to its content rather than to the viewport. A title plus one line of
+      copy does not need 40vh, and reserving it pushed the list — the reason
+      anyone opens this page — below the fold on a laptop. */}
+  <section class="px-6 pt-12 pb-8 md:pt-14 md:pb-10">
+    <div class="text-center max-w-2xl mx-auto">
+      <h1 class="gradient-text mb-3">Essays</h1>
       <p class="text-lg text-muted-foreground">
         {allEssays.length} {allEssays.length === 1 ? 'essay' : 'essays'} — long-form writing on technology, investing, and building from The Lossless Group.
       </p>
@@ -24,9 +36,21 @@ allEssays.sort((a, b) => {
   </section>
 
   <section class="max-w-3xl mx-auto px-6 pb-16">
-    <div class="grid gap-3">
-      {allEssays.map(essay => (
-        <a href={`/essays/${essay.id}`} class="block group">
+    {/* Hidden until the script marks it ready — inert buttons are worse than
+        no buttons, and the server-rendered order is already Updated-descending. */}
+    <div class="essay-sort mb-6 flex items-center justify-center gap-2 flex-wrap" id="essay-sort">
+      <span class="text-xs uppercase tracking-[0.15em] text-muted-foreground/70 mr-1">Sort</span>
+      <button type="button" class="sort-pill active" data-sort-key="updated" aria-pressed="true">
+        Updated <span class="sort-arrow" aria-hidden="true">↓</span>
+      </button>
+      <button type="button" class="sort-pill" data-sort-key="written" aria-pressed="false">
+        Written <span class="sort-arrow" aria-hidden="true">↓</span>
+      </button>
+    </div>
+
+    <div class="grid gap-3" id="essay-list" data-sort="updated" aria-live="polite">
+      {essays.map(({ essay, updated, written }) => (
+        <a href={`/essays/${essay.id}`} class="block group" data-updated={updated} data-written={written}>
           <article class="border border-border rounded-lg p-5 hover:border-primary/50 transition-colors bg-card">
             <div class="flex gap-4">
               {essay.data.portrait_image && (
@@ -49,17 +73,27 @@ allEssays.sort((a, b) => {
                 <div class="flex items-center gap-3 flex-wrap">
                   {essay.data.category && (
                     <span class="text-xs px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
-                      {essay.data.category}
+                      {humanizeTerm(essay.data.category)}
                     </span>
                   )}
-                  {essay.data.date_modified && (
-                    <span class="text-xs text-muted-foreground">{essay.data.date_modified}</span>
+                  {/* Both dates, always — the sort changes the order, not which
+                      facts a card is willing to state. Written first, matching
+                      the detail page's meta row and reading chronologically. */}
+                  {written && (
+                    <span class="essay-date essay-date--written text-xs text-muted-foreground">
+                      Written <time datetime={written}>{formatDate(written)}</time>
+                    </span>
+                  )}
+                  {updated && (
+                    <span class="essay-date essay-date--updated text-xs text-muted-foreground">
+                      Updated <time datetime={updated}>{formatDate(updated)}</time>
+                    </span>
                   )}
                   {essay.data.tags && essay.data.tags.length > 0 && (
                     <div class="flex gap-1.5 flex-wrap">
                       {essay.data.tags.slice(0, 4).map((tag: string) => (
                         <span class="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
-                          {tag}
+                          {humanizeTerm(tag)}
                         </span>
                       ))}
                       {essay.data.tags.length > 4 && (
@@ -77,3 +111,112 @@ allEssays.sort((a, b) => {
   </section>
 
 </BaseLayout>
+
+<style>
+  /* The control is inert without JS, so it stays hidden until the script
+     marks it ready. The server-rendered order is already Updated-descending,
+     which is what the control would start on anyway — nothing is lost. */
+  .essay-sort { display: none; }
+  .essay-sort[data-ready] { display: flex; }
+
+  .sort-pill {
+    cursor: pointer;
+    background: transparent;
+    color: var(--muted-foreground);
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  }
+  .sort-pill:hover {
+    border-color: var(--primary);
+    color: var(--foreground);
+  }
+  .sort-pill.active {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border-color: var(--primary);
+  }
+  .sort-arrow {
+    display: inline-block;
+    margin-left: 0.15rem;
+    font-size: 0.75em;
+    transition: transform 0.15s ease;
+  }
+  /* Only the active pill's arrow means anything — the inactive one is a hint
+     about what you'd get, not a statement about the current order. */
+  .sort-pill:not(.active) .sort-arrow { opacity: 0.4; }
+  .sort-pill[data-dir='asc'] .sort-arrow { transform: rotate(180deg); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sort-pill, .sort-arrow { transition: none; }
+  }
+</style>
+
+<script>
+  function initEssaySort() {
+    const nav = document.getElementById('essay-sort');
+    const list = document.getElementById('essay-list');
+    if (!nav || !list || nav.dataset.ready) return;
+
+    const cards = Array.from(list.querySelectorAll<HTMLAnchorElement>('a[data-updated]'));
+    if (!cards.length) return;
+
+    // Reveal only now that sorting will actually work.
+    nav.dataset.ready = 'true';
+
+    const apply = (key: string, dir: 'asc' | 'desc') => {
+      // ISO dates (YYYY-MM-DD) compare correctly as strings, which is the whole
+      // reason the sort keys are emitted as ISO rather than as display text.
+      const sorted = [...cards].sort((a, b) => {
+        const av = a.dataset[key] ?? '';
+        const bv = b.dataset[key] ?? '';
+        if (av === bv) {
+          // Stable, meaningful tiebreak so equal dates don't shuffle between
+          // renders — fall back to title.
+          const at = a.querySelector('h3')?.textContent?.trim().toLowerCase() ?? '';
+          const bt = b.querySelector('h3')?.textContent?.trim().toLowerCase() ?? '';
+          return at.localeCompare(bt);
+        }
+        // Missing dates sort last in both directions rather than winning `asc`.
+        if (!av) return 1;
+        if (!bv) return -1;
+        return dir === 'desc' ? bv.localeCompare(av) : av.localeCompare(bv);
+      });
+
+      const frag = document.createDocumentFragment();
+      sorted.forEach((c) => frag.appendChild(c));
+      list.appendChild(frag);
+      list.setAttribute('data-sort', key);
+    };
+
+    nav.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest('.sort-pill') as HTMLButtonElement | null;
+      if (!btn) return;
+      const key = btn.dataset.sortKey;
+      if (!key) return;
+
+      // Clicking the active axis flips direction; clicking the other axis
+      // switches to it at descending, which is what "newest first" means and
+      // what a reader expects from a fresh axis.
+      const wasActive = btn.classList.contains('active');
+      const dir: 'asc' | 'desc' = wasActive && btn.dataset.dir !== 'asc' ? 'asc' : 'desc';
+
+      nav.querySelectorAll('.sort-pill').forEach((p) => {
+        p.classList.remove('active');
+        p.setAttribute('aria-pressed', 'false');
+        (p as HTMLElement).removeAttribute('data-dir');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+      btn.dataset.dir = dir;
+
+      apply(key, dir);
+    });
+  }
+
+  initEssaySort();
+  document.addEventListener('astro:page-load', initEssaySort);
+</script>

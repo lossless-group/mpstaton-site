@@ -1,0 +1,410 @@
+---
+/**
+ * Section__VentureCapital-AgentOS
+ *
+ * A diagram-shaped section rather than a list. The relationships between these
+ * products ARE the story, so the layout carries them:
+ *
+ *        [ didi.sh ]                 identity cap — small, because it is
+ *             │                      plumbing, not a destination
+ *      ┌──────┴──────┐
+ *   [MemoPop]   [DidiDecks]          equal peers, two sides of one coin
+ *      └──────┬──────┘
+ *      [   Augment-It   ]            same weight, underneath both, because
+ *                                    it feeds them
+ *
+ * The VC Self Host Stack renders as an adjacent block, not a layer — it is a
+ * sibling offering, not part of this runtime.
+ *
+ * Accents come from the semantic --brand-* tier; no raw hex in this file.
+ */
+
+type Product = {
+  name: string;
+  tagline: string;
+  body: string;
+  accent: string;
+  repo: string;
+  live?: string;
+  liveLabel?: string;
+};
+
+// Inlined rather than imported: this site has no icon helper, and two paths do
+// not justify inventing one. The GitHub mark matches SocialsFaviconRow so the
+// two surfaces stay visually identical.
+const ICON_GITHUB =
+  'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12';
+// Globe — reads as "go to the live site" more plainly than an arrow-out-of-box,
+// which is already used site-wide to mean "opens in a new tab".
+const ICON_SITE =
+  'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.93 6h-2.95a15.65 15.65 0 0 0-1.38-3.56A8.03 8.03 0 0 1 18.93 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14A7.96 7.96 0 0 1 4 12c0-.69.1-1.36.26-2h3.38a16.6 16.6 0 0 0 0 4H4.26zm.81 2h2.95c.32 1.25.78 2.45 1.38 3.56A7.99 7.99 0 0 1 5.07 16zm2.95-8H5.07a7.99 7.99 0 0 1 4.33-3.56A15.65 15.65 0 0 0 8.02 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66a14.9 14.9 0 0 1 0-4h4.68a14.9 14.9 0 0 1 0 4zm.26 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a7.99 7.99 0 0 1-4.33 3.56zM16.36 14a16.6 16.6 0 0 0 0-4h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z';
+
+const identity = {
+  name: 'didi.sh',
+  tagline: 'Light SSO carrying your own API keys',
+  body:
+    'One account across the family. It holds the keys you bring — your Claude, your Perplexity, your models — and hands them to whichever app needs them. Your keys, your billing, your data.',
+  accent: 'var(--brand-orange)',
+  repo: 'https://github.com/lossless-group/id-didi-sh',
+  live: 'https://id-didi-sh.vercel.app',
+};
+
+const apps: Product[] = [
+  {
+    name: 'MemoPop AI',
+    tagline: 'AI-native investment memo generator',
+    body:
+      'Turns a company into an institutional-quality investment memo — research, sourcing, and citation trails included. The memo is the artifact, and every part of it is traceable back to where it came from.',
+    accent: 'var(--brand-purple)',
+    repo: 'https://github.com/lossless-group/memopop-ai',
+    live: 'https://splashmemopop-ai.vercel.app',
+  },
+  {
+    name: 'DidiDecks AI',
+    tagline: 'AI-native deck designer',
+    body:
+      'A code-first slide-deck OS for due-diligence-grade content. Give it the content once and it renders that same substance in different styles — because the argument and its presentation are separate problems.',
+    accent: 'var(--brand-aqua)',
+    repo: 'https://github.com/lossless-group/dididecks-ai',
+    live: 'https://lossless-group.github.io/dididecks-ai/',
+  },
+];
+
+const foundation: Product = {
+  name: 'Augment-It',
+  tagline: 'Agentic data augmentation pipeline',
+  body:
+    'Takes input data and enriches it through agent-based web research, with human-in-the-loop guardrails at the points where being wrong is expensive. It is what makes the memos and the decks worth reading — everything above is only as good as what this hands them.',
+  accent: 'var(--brand-lime)',
+  repo: 'https://github.com/lossless-group/augment-it',
+  live: 'https://lossless-group.github.io/augment-it/',
+};
+
+const selfHost: Product = {
+  name: 'VC Self Host Stack',
+  tagline: 'Run your firm on software you own',
+  body:
+    'A curated, deployable open-source stack a firm can self-host instead of renting: CRM, document sharing, scheduling, chat, analytics — each wrapped in thin deploy artifacts so standing it up is a weekend, not a quarter.',
+  accent: 'var(--brand-cyan)',
+  repo: 'https://github.com/lossless-group/vc-self-host-stack',
+  live: 'https://lossless.at/',
+  liveLabel: 'lossless.at',
+};
+---
+
+<section class="agent-os" aria-labelledby="agent-os-heading">
+  <header class="mb-12">
+    <p class="text-xs uppercase tracking-[0.22em] text-muted-foreground">An operating system</p>
+    <h2 id="agent-os-heading" class="mt-3 text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
+      The Venture Capital Agent OS
+    </h2>
+    <p class="mt-4 max-w-2xl text-lg text-muted-foreground leading-relaxed">
+      Four pieces that assume a firm wants to own its stack rather than rent it. Every one is a
+      public repo.
+    </p>
+  </header>
+
+  <!-- ── The stack ────────────────────────────────────────────────── -->
+  <div class="os-stack">
+    <!-- Identity cap — deliberately small -->
+    <div class="os-cap" style={`--accent:${identity.accent}`}>
+      <div class="os-chip">
+        <span class="os-chip__dot" aria-hidden="true"></span>
+        <span class="os-chip__name">{identity.name}</span>
+        <span class="os-chip__tagline">{identity.tagline}</span>
+      </div>
+      <p class="os-cap__body">{identity.body}</p>
+      <div class="os-card__links os-card__links--center">
+        <a class="os-icon" href={identity.repo} target="_blank" rel="noopener noreferrer" aria-label={`${identity.name} on GitHub`} title="Repo on GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={ICON_GITHUB} /></svg>
+        </a>
+        {identity.live && (
+          <a class="os-icon" href={identity.live} target="_blank" rel="noopener noreferrer" aria-label={`${identity.name} website`} title="Go to the site">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={ICON_SITE} /></svg>
+          </a>
+        )}
+      </div>
+    </div>
+
+    <div class="os-connector os-connector--fan" aria-hidden="true">
+      <span class="os-connector__label">passes your keys to</span>
+    </div>
+
+    <!-- Two peers -->
+    <div class="os-row">
+      {apps.map((p) => (
+        <article class="os-card" style={`--accent:${p.accent}`}>
+          <span class="os-card__rule" aria-hidden="true"></span>
+          <h3 class="os-card__name">{p.name}</h3>
+          <p class="os-card__tagline">{p.tagline}</p>
+          <p class="os-card__body">{p.body}</p>
+          <div class="os-card__links">
+            <a class="os-icon" href={p.repo} target="_blank" rel="noopener noreferrer" aria-label={`${p.name} on GitHub`} title="Repo on GitHub">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={ICON_GITHUB} /></svg>
+            </a>
+            {p.live && (
+              <a class="os-icon" href={p.live} target="_blank" rel="noopener noreferrer" aria-label={`${p.name} website`} title={p.liveLabel ?? 'Go to the site'}>
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={ICON_SITE} /></svg>
+              </a>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class="os-connector os-connector--merge" aria-hidden="true">
+      <span class="os-connector__label">both are fed by</span>
+    </div>
+
+    <!-- Foundation — same weight, spanning both -->
+    <article class="os-card os-card--foundation" style={`--accent:${foundation.accent}`}>
+      <span class="os-card__rule" aria-hidden="true"></span>
+      <h3 class="os-card__name">{foundation.name}</h3>
+      <p class="os-card__tagline">{foundation.tagline}</p>
+      <p class="os-card__body">{foundation.body}</p>
+      <div class="os-card__links">
+        <a class="os-icon" href={foundation.repo} target="_blank" rel="noopener noreferrer" aria-label={`${foundation.name} on GitHub`} title="Repo on GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={ICON_GITHUB} /></svg>
+        </a>
+        {foundation.live && (
+          <a class="os-icon" href={foundation.live} target="_blank" rel="noopener noreferrer" aria-label={`${foundation.name} website`} title="Go to the site">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={ICON_SITE} /></svg>
+          </a>
+        )}
+      </div>
+    </article>
+
+    <div class="os-connector" aria-hidden="true">
+      <span class="os-connector__label">and all of it can run on</span>
+    </div>
+
+    <!-- Substrate — the base layer everything above can sit on -->
+    <article class="os-card os-card--substrate" style={`--accent:${selfHost.accent}`}>
+      <span class="os-card__rule" aria-hidden="true"></span>
+      <h3 class="os-card__name">{selfHost.name}</h3>
+      <p class="os-card__tagline">{selfHost.tagline}</p>
+      <p class="os-card__body">{selfHost.body}</p>
+      <div class="os-card__links">
+        <a class="os-icon" href={selfHost.repo} target="_blank" rel="noopener noreferrer" aria-label={`${selfHost.name} on GitHub`} title="Repo on GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={ICON_GITHUB} /></svg>
+        </a>
+        <a class="os-icon" href={selfHost.live} target="_blank" rel="noopener noreferrer" aria-label={`${selfHost.name} website (${selfHost.liveLabel})`} title={selfHost.liveLabel}>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={ICON_SITE} /></svg>
+        </a>
+      </div>
+    </article>
+  </div>
+
+  <!-- ── Collaboration ────────────────────────────────────────────── -->
+  <p class="os-invite">
+    All of it is open source, and we build it in the open. We welcome other VCs as
+    collaborators — as developers on the repos, or as firms running it.
+  </p>
+</section>
+
+<style>
+  .agent-os {
+    --os-gap: 1.25rem;
+    /* How wide Augment-It sits relative to the peer row above it. 100% made it
+       the largest card on the page, which read as "more important" rather than
+       "underneath". Turn this knob to retune. */
+    --os-foundation-width: 72%;
+  }
+
+  /* ── Identity cap ── */
+  .os-cap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .os-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    background: color-mix(in srgb, var(--accent) 8%, var(--card));
+    border-radius: 999px;
+  }
+  .os-chip__dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: var(--accent);
+    flex: none;
+  }
+  .os-chip__name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--foreground);
+  }
+  .os-chip__tagline {
+    font-size: 0.8rem;
+    color: var(--muted-foreground);
+  }
+  .os-cap__body {
+    margin-top: 0.75rem;
+    max-width: 34rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--muted-foreground);
+  }
+
+  /* ── Connectors ── */
+  .os-connector {
+    position: relative;
+    height: 3.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .os-connector::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      color-mix(in srgb, var(--foreground) 22%, transparent),
+      transparent
+    );
+  }
+  .os-connector__label {
+    position: relative;
+    padding: 0.15rem 0.6rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    background: var(--background);
+  }
+
+  /* ── Peer row ── */
+  .os-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--os-gap);
+  }
+  @media (min-width: 48rem) {
+    .os-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* ── Cards ── */
+  .os-card {
+    position: relative;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: var(--card);
+    overflow: hidden;
+    transition: border-color 150ms ease;
+  }
+  .os-card:hover {
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  }
+  .os-card__rule {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--accent), transparent);
+  }
+  /* The two peers converge into this one, so it is inset rather than spanning.
+     Full width only below the breakpoint, where everything is a single column
+     and insetting would just look like a mistake. */
+  .os-card--foundation {
+    padding: 1.35rem;
+  }
+  @media (min-width: 48rem) {
+    .os-card--foundation {
+      width: var(--os-foundation-width);
+      margin-inline: auto;
+    }
+    .os-card--foundation .os-card__name {
+      font-size: 1.25rem;
+    }
+  }
+  .os-card__name {
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--foreground);
+  }
+  .os-card__tagline {
+    margin-top: 0.25rem;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: color-mix(in srgb, var(--foreground) 70%, transparent);
+  }
+  .os-card__body {
+    margin-top: 0.85rem;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--muted-foreground);
+  }
+  .os-card__links {
+    margin-top: 1.15rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .os-card__links--center {
+    margin-top: 0.85rem;
+    justify-content: center;
+  }
+
+  /* Icon-only links. 2.25rem keeps the hit target comfortable on touch even
+     though the glyph is 1.05rem, and the accessible name lives on aria-label. */
+  .os-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
+    background: transparent;
+    transition: color 150ms ease, border-color 150ms ease, background-color 150ms ease;
+  }
+  .os-icon svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+  .os-icon:hover,
+  .os-icon:focus-visible {
+    color: var(--foreground);
+    border-color: color-mix(in srgb, var(--accent) 60%, var(--border));
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  .os-icon:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Substrate reads as the ground the rest sits on: same card weight, but a
+     tinted field so it is legible as a layer rather than a fourth product. */
+  .os-card--substrate {
+    background: color-mix(in srgb, var(--accent) 5%, var(--card));
+  }
+
+  .os-invite {
+    margin-top: 2.5rem;
+    max-width: 42rem;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--muted-foreground);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .os-card,
+    .os-icon {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,321 @@
+---
+import { humanizeTerm } from '../../utils/humanize-term';
+/**
+ * Section__ContentFarm-PublishedPlugins
+ *
+ * Cards for the Content Farm plugins that have actually shipped to Obsidian's
+ * Community Plugins directory, mirroring the card pattern on
+ * https://lossless-group.github.io/content-farm/
+ *
+ * "Published" is not an editorial judgement here — it is the presence of a
+ * `community_url` in the plugin's frontmatter, which is the same flag the
+ * splash uses to distinguish shipped plugins from dev-only ones. Nine plugins
+ * exist; four are published.
+ *
+ * SOURCE OF TRUTH: content-farm/splash/src/content/plugin-highlights/*.md
+ * Copied rather than imported, because this site must build without the
+ * content-farm repo present. When a fifth plugin ships, add it here.
+ */
+
+type Plugin = {
+  title: string;
+  icon: string;
+  lede: string;
+  body: string;
+  status: string;
+  tags: string[];
+  repo: string;
+  communityUrl: string;
+  image: string;
+};
+
+// All four images are served from ImageKit rather than from the content-farm
+// repo. This is not a preference — content-farm/.gitattributes puts *.jpg in
+// Git LFS, and GitHub Pages does not resolve LFS pointers: it answers 200 with
+// `content-type: image/jpeg` and a 131-byte text pointer as the body, which no
+// browser can render. Any repo-hosted .jpg from that project is unusable on the
+// web until it goes to a CDN.
+
+const plugins: Plugin[] = [
+  {
+    title: 'image-gin',
+    icon: '🖼️',
+    lede: 'Generate, search, and place AI images without leaving Obsidian.',
+    body:
+      'One wide modal across Recraft, Ideogram, and Magnific. Pick the model, dial the temperature, write the prompt, and drop the result straight into the note.',
+    status: 'Beta',
+    tags: ['Imagery', 'AI', 'Modals'],
+    repo: 'https://github.com/lossless-group/image-gin',
+    communityUrl: 'https://community.obsidian.md/plugins/image-gin',
+    image:
+      'https://ik.imagekit.io/xvpgfijuw/Image-Gin/2026-05/Content-Farm-_Obsidian-Community-Plugin__banner_image_1777969354950_8hVle1ahT.webp',
+  },
+  {
+    title: 'cite-wide',
+    icon: '📚',
+    lede: 'Citations as a first-class concern, not an afterthought.',
+    body:
+      'Capture sources, link them to passages, render footnotes, and keep references aligned as a draft evolves. For writing that has to hold up under scrutiny.',
+    status: 'Beta',
+    tags: ['Citation-Management', 'Research-Tools'],
+    repo: 'https://github.com/lossless-group/cite-wide',
+    communityUrl: 'https://community.obsidian.md/plugins/cite-wide',
+    image:
+      'https://ik.imagekit.io/xvpgfijuw/Image-Gin/2026-05/Content-Farm-_Obsidian-Community-Plugin__square_image_1777970079346_ZW6vvATTB.webp',
+  },
+  {
+    title: 'metafetch',
+    icon: '🔗',
+    lede:
+      'Turn any URL into structured frontmatter — title, image, description, publisher.',
+    body:
+      'Pulls OpenGraph metadata into a note’s YAML via OpenGraph.io or Microlink. Downstream tooling then treats every saved URL as structured data rather than opaque link text.',
+    status: 'Beta',
+    tags: ['Open-Graph-Metadata', 'Article-Metadata'],
+    repo: 'https://github.com/lossless-group/metafetch',
+    communityUrl: 'https://community.obsidian.md/plugins/metafetch',
+    image:
+      'https://ik.imagekit.io/xvpgfijuw/Image-Gin/2026-05/Content-Farm-_Obsidian-Community-Plugin__banner_image_1777970078096_0PUd1Fgyu.webp',
+  },
+  {
+    title: 'perplexed',
+    icon: '🔍',
+    lede: 'Search-augmented text enhancement powered by Perplexica.',
+    body:
+      'Select a passage, hit a key, get a streaming enhancement that blends the selection with live web context — citations included.',
+    status: 'Beta',
+    tags: ['Search', 'AI', 'Enhancement'],
+    repo: 'https://github.com/lossless-group/perplexed-plugin',
+    communityUrl: 'https://community.obsidian.md/plugins/perplexed',
+    image:
+      'https://ik.imagekit.io/xvpgfijuw/content-farm/perplexed-og/Perplexed__Obsidian-Community-Plugin--Banner_20260817T221604Z.jpg',
+  },
+];
+
+const ICON_GITHUB =
+  'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12';
+// Puzzle piece rather than Obsidian's own mark — it reads unambiguously as
+// "plugin" and avoids reproducing someone else's logo.
+const ICON_PLUGIN =
+  'M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4a2 2 0 0 0-2 2v3.8h1.5a2.2 2.2 0 1 1 0 4.4H2V19a2 2 0 0 0 2 2h3.8v-1.5a2.2 2.2 0 1 1 4.4 0V21H17a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z';
+---
+
+<section class="cf-published" aria-labelledby="cf-published-heading">
+  <header class="cf-published__header">
+    <h3 id="cf-published-heading">Shipped to the Obsidian directory</h3>
+    <p>
+      Four of the nine are live in Obsidian&rsquo;s Community Plugins directory — installable from
+      inside the app, no sideloading.
+    </p>
+  </header>
+
+  <ul class="cf-grid" role="list">
+    {plugins.map((p) => (
+      <li class="cf-card">
+        <img class="cf-card__image" src={p.image} alt="" loading="lazy" decoding="async" width="640" height="336" />
+        <div class="cf-card__inner">
+          <div class="cf-card__titlerow">
+            <span class="cf-card__icon" aria-hidden="true">{p.icon}</span>
+            <h4 class="cf-card__title">{p.title}</h4>
+          </div>
+          <div class="cf-card__pills">
+            <span class="cf-pill">{p.status}</span>
+            <span class="cf-pill cf-pill--community">Community Plugin</span>
+          </div>
+          <p class="cf-card__lede">{p.lede}</p>
+          <p class="cf-card__body">{p.body}</p>
+          <ul class="cf-card__tags" role="list">
+            {p.tags.map((t) => <li>{humanizeTerm(t)}</li>)}
+          </ul>
+          <div class="cf-card__links">
+            <a class="cf-icon" href={p.repo} target="_blank" rel="noopener noreferrer" aria-label={`${p.title} on GitHub`} title="Repo on GitHub">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={ICON_GITHUB} /></svg>
+            </a>
+            <a class="cf-icon cf-icon--community" href={p.communityUrl} target="_blank" rel="noopener noreferrer" aria-label={`${p.title} in the Obsidian Community Plugins directory`} title="Obsidian Community Plugins">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={ICON_PLUGIN} /></svg>
+            </a>
+          </div>
+        </div>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .cf-published {
+    margin-top: 2.5rem;
+  }
+  .cf-published__header h3 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-weight: 600;
+    color: var(--muted-foreground);
+  }
+  .cf-published__header p {
+    margin-top: 0.5rem;
+    max-width: 40rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--muted-foreground);
+  }
+
+  .cf-grid {
+    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding: 0;
+    list-style: none;
+  }
+  @media (min-width: 40rem) {
+    .cf-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .cf-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    /* The purple top edge is the published marker, same signal the splash uses. */
+    border-top: 2px solid var(--brand-purple);
+    border-radius: 0.75rem;
+    background: var(--card);
+    overflow: hidden;
+    transition: border-color 150ms ease, transform 150ms ease;
+  }
+  .cf-card:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--brand-purple) 45%, var(--border));
+    border-top-color: var(--brand-purple);
+  }
+
+  .cf-card__image {
+    width: 100%;
+    aspect-ratio: 40 / 21;
+    object-fit: cover;
+    display: block;
+    background: var(--muted);
+  }
+
+  .cf-card__inner {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1.15rem;
+  }
+  .cf-card__titlerow {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+  .cf-card__icon {
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+  .cf-card__title {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  .cf-card__pills {
+    margin-top: 0.6rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .cf-pill {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
+  }
+  .cf-pill--community {
+    color: var(--brand-purple);
+    border-color: color-mix(in srgb, var(--brand-purple) 40%, transparent);
+    background: color-mix(in srgb, var(--brand-purple) 10%, transparent);
+  }
+
+  .cf-card__lede {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    font-style: italic;
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--foreground) 72%, transparent);
+  }
+  .cf-card__body {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--muted-foreground);
+  }
+
+  .cf-card__tags {
+    margin-top: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding: 0;
+    list-style: none;
+  }
+  .cf-card__tags li {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 0.3rem;
+    background: var(--muted);
+    color: var(--muted-foreground);
+  }
+
+  .cf-card__links {
+    margin-top: auto;
+    padding-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+  .cf-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
+    transition: color 150ms ease, border-color 150ms ease, background-color 150ms ease;
+  }
+  .cf-icon svg {
+    width: 1rem;
+    height: 1rem;
+  }
+  .cf-icon:hover,
+  .cf-icon:focus-visible {
+    color: var(--foreground);
+    border-color: color-mix(in srgb, var(--brand-purple) 55%, var(--border));
+    background: color-mix(in srgb, var(--brand-purple) 10%, transparent);
+  }
+  .cf-icon--community:hover,
+  .cf-icon--community:focus-visible {
+    color: var(--brand-purple);
+  }
+  .cf-icon:focus-visible {
+    outline: 2px solid var(--brand-purple);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cf-card,
+    .cf-icon {
+      transition: none;
+    }
+    .cf-card:hover {
+      transform: none;
+    }
+  }
+</style>

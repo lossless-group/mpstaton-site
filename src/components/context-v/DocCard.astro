@@ -1,4 +1,6 @@
 ---
+import { humanizeTerm } from '../../utils/humanize-term';
+
 interface Props {
   title: string;
   lede?: string;
@@ -33,7 +35,7 @@ const categoryStyle = category ? categoryColors[category] || 'bg-muted text-mute
       </h3>
       {category && (
         <span class={`text-xs font-medium px-2 py-0.5 rounded-full border shrink-0 ${categoryStyle}`}>
-          {category}
+          {humanizeTerm(category)}
         </span>
       )}
     </div>
@@ -53,7 +55,7 @@ const categoryStyle = category ? categoryColors[category] || 'bg-muted text-mute
         <div class="flex gap-1.5 flex-wrap">
           {tags.slice(0, 5).map(tag => (
             <span class="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
-              {tag}
+              {humanizeTerm(tag)}
             </span>
           ))}
           {tags.length > 5 && (

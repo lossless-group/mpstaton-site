@@ -11,9 +11,11 @@ interface Props {
   title?: string;
   description?: string;
   meta?: ShareMetaInput;
+  /** Internal reference pages (design system, brand kit) opt out of search indexing. */
+  noindex?: boolean;
 }
 
-const { title = SITE_SEO.defaultTitle, description = SITE_SEO.defaultDescription, meta = {} } = Astro.props;
+const { title = SITE_SEO.defaultTitle, description = SITE_SEO.defaultDescription, meta = {}, noindex = false } = Astro.props;
 const SITE_MODE = import.meta.env.SITE_MODE ?? 'dark';
 
 const ogMeta = buildOgMeta(
@@ -28,6 +30,7 @@ const ogMeta = buildOgMeta(
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
     <link rel="alternate" type="text/markdown" href="/llms.txt" title="llms.txt for this site" />
     <meta name="viewport" content="width=device-width" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="generator" content={Astro.generator} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

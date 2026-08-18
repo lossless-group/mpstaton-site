@@ -36,3 +36,6 @@ public/promote/*/
 # Production reads the same payload from the TRACK_RECORD_MARKUPS_JSON env var,
 # because a gitignored file does not exist on the Vercel builder.
 src/data/track-record/private/
+
+# context-v scratch — out-of-band material, never committed
+context-v/extra/

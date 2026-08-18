@@ -6,6 +6,30 @@
   color: var(--foreground);
 }
 
+/* Anchor landings. A ToC jump must not drop the heading under the sticky ToC
+   bar / burger that sits at the top of the viewport below 1280px. Measured in
+   rem rather than from --lfm-toc-header-bottom because scroll-margin has to
+   hold even on pages that render no ToC at all. */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  scroll-margin-top: 2rem;
+}
+
+@media (max-width: 1279.98px) {
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    scroll-margin-top: 4.5rem;
+  }
+}
+
 /* Headings */
 .prose h1 {
   margin-top: 2.5rem;

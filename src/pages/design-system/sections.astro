@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionVentureCapitalAgentOS from '../../components/sections/Section__VentureCapital-AgentOS.astro';
+---
+<BaseLayout title="Design System · Sections — MP Staton" noindex>
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <a href="/design-system" class="text-sm text-muted-foreground hover:text-foreground">&larr; Design System</a>
+    <h1 class="text-foreground mt-4 mb-2">Sections</h1>
+    <p class="text-lg text-muted-foreground mb-12 max-w-2xl">
+      Page-level composites. Unlike the components in <code>ui/</code>, a section owns its own
+      layout and content model and is dropped into a page whole.
+    </p>
+
+    <article class="mb-16">
+      <header class="mb-6 border-b border-border pb-4">
+        <h2 class="text-foreground text-2xl font-semibold">Section__VentureCapital-AgentOS</h2>
+        <p class="text-sm text-muted-foreground mt-2 max-w-3xl">
+          A diagram-shaped section for a product family whose <em>relationships</em> are the point.
+          Renders as a vertical stack — a small identity cap, two equal peers side by side, a
+          full-weight foundation beneath both, and the substrate they run on — with labelled
+          connectors carrying the relationship between layers.
+        </p>
+        <dl class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl">
+          <div>
+            <dt class="text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground/70 font-medium">Props</dt>
+            <dd class="mt-1 text-sm text-foreground">None — content is authored in the component</dd>
+          </div>
+          <div>
+            <dt class="text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground/70 font-medium">Accents</dt>
+            <dd class="mt-1 text-sm text-foreground">--brand-* semantic tier</dd>
+          </div>
+          <div>
+            <dt class="text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground/70 font-medium">Breakpoint</dt>
+            <dd class="mt-1 text-sm text-foreground">Peers stack below 48rem</dd>
+          </div>
+          <div>
+            <dt class="text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground/70 font-medium">Used on</dt>
+            <dd class="mt-1 text-sm text-foreground"><a class="underline underline-offset-2" href="/projects">/projects</a></dd>
+          </div>
+        </dl>
+        <p class="text-sm text-muted-foreground mt-4 max-w-3xl">
+          <strong class="text-foreground">When to reach for it:</strong> a set of products where a
+          flat list would lose the architecture. When the items are genuinely peers with no
+          relationship, use the numbered field-guide entries on <code>/projects</code> instead.
+        </p>
+      </header>
+
+      <div class="rounded-lg border border-border p-6 md:p-10 bg-background">
+        <SectionVentureCapitalAgentOS />
+      </div>
+    </article>
+  </section>
+</BaseLayout>

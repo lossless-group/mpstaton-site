@@ -1,6 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { formatDate, toIsoDate } from '../../../utils/format-date';
+import { humanizeTerm } from '../../../utils/humanize-term';
 
 const allNotes = await getCollection('notes');
 
@@ -38,13 +40,13 @@ allNotes.sort((a, b) => {
 
             <div class="flex items-center gap-3 flex-wrap">
               {note.data.date_modified && (
-                <span class="text-xs text-muted-foreground">{note.data.date_modified}</span>
+                <time class="text-xs text-muted-foreground" datetime={toIsoDate(note.data.date_modified)}>{formatDate(note.data.date_modified)}</time>
               )}
               {note.data.tags && note.data.tags.length > 0 && (
                 <div class="flex gap-1.5 flex-wrap">
                   {note.data.tags.slice(0, 5).map((tag: string) => (
                     <span class="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
-                      {tag}
+                      {humanizeTerm(tag)}
                     </span>
                   ))}
                   {note.data.tags.length > 5 && (

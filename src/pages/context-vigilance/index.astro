@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { humanizeTerm } from '../../utils/humanize-term';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import DocCard from '../../components/context-v/DocCard.astro';
 
@@ -23,8 +24,8 @@ for (const doc of allDocs) {
 // Sort each category by date_modified or date_created descending
 for (const [, docs] of byCategory) {
   docs.sort((a, b) => {
-    const dateA = a.data.date_modified || a.data.date_created || '';
-    const dateB = b.data.date_modified || b.data.date_created || '';
+    const dateA = a.data.date_modified || a.data.date_created || a.data.date_authored_current_draft || a.data.date_authored_initial_draft || a.data.date_authored_current_draft || a.data.date_authored_initial_draft || a.data.date_authored_current_draft || a.data.date_authored_initial_draft || '';
+    const dateB = b.data.date_modified || b.data.date_created || b.data.date_authored_current_draft || b.data.date_authored_initial_draft || b.data.date_authored_current_draft || b.data.date_authored_initial_draft || b.data.date_authored_current_draft || b.data.date_authored_initial_draft || '';
     return dateB.localeCompare(dateA);
   });
 }
@@ -64,7 +65,7 @@ const repoCount = new Set(allDocs.map(d => d.data._context_v?.repo_label).filter
             data-filter={cat}
             class="category-tab px-4 py-2 rounded-full text-sm font-medium border border-border transition-colors"
           >
-            {cat} ({count})
+            {humanizeTerm(cat)} ({count})
           </button>
         );
       })}
@@ -74,8 +75,8 @@ const repoCount = new Set(allDocs.map(d => d.data._context_v?.repo_label).filter
     <div class="grid gap-3" id="doc-list">
       {allDocs
         .sort((a, b) => {
-          const dateA = a.data.date_modified || a.data.date_created || '';
-          const dateB = b.data.date_modified || b.data.date_created || '';
+          const dateA = a.data.date_modified || a.data.date_created || a.data.date_authored_current_draft || a.data.date_authored_initial_draft || a.data.date_authored_current_draft || a.data.date_authored_initial_draft || a.data.date_authored_current_draft || a.data.date_authored_initial_draft || '';
+          const dateB = b.data.date_modified || b.data.date_created || b.data.date_authored_current_draft || b.data.date_authored_initial_draft || b.data.date_authored_current_draft || b.data.date_authored_initial_draft || b.data.date_authored_current_draft || b.data.date_authored_initial_draft || '';
           return dateB.localeCompare(dateA);
         })
         .map(doc => (

@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionVentureCapitalAgentOS from '../../components/sections/Section__VentureCapital-AgentOS.astro';
+import ContentFarmPublishedPlugins from '../../components/sections/Section__ContentFarm-PublishedPlugins.astro';
 
 const meta = {
   title: 'Projects · Michael P. Staton',
@@ -30,29 +32,23 @@ type Project = {
 const projects: Project[] = [
   {
     index: '01',
-    kind: 'Workflow · Open Source',
-    name: 'MemoPop AI',
-    tagline: 'A multi-agent investment memo orchestrator. Bring your own keys.',
+    kind: 'Community · Practice',
+    name: 'FullStack VC',
+    tagline: 'An Agentic VC Dojo. We come together to practice.',
     body: [
-      'Real investment memos take days. Most of that time is research most VCs do the same way every time — pulling Crunchbase data, sizing TAM, cross-referencing team backgrounds, sourcing expert commentary. So I built a coordinated pipeline of 33 specialized agents that turns a company name into an institutional-quality memo with full citation trails and firm-branded exports.',
-      'It is not a chatbot. Each agent produces a research-analyst artifact — a deck deconstruction, a Perplexity Sonar Pro source bundle, a section draft, a fact-check report — that lives as a file you can re-run, override, or audit. The orchestrator (LangGraph) coordinates them, manages state, and handles retries.',
-      'Bring your own Claude and Perplexity keys; deal data stays on your machine. Used by nine VC firms so far. The "draft a memo" → "polished firm-branded memo" loop is now ten to fifteen minutes for a first pass; one to two hours with an analyst on top.',
+      'Most VCs I know are either "AI is a toy" or "AI is going to eat our jobs," and neither is a useful working stance. The middle path — actually practicing with the tools, in the open, with people doing the same thing — does not have many natural homes. So we made one.',
+      'FullStack VC is a learning community where venture capitalists deliberately practice using AI to give their firms superpowers. Monthly working sessions, recordings, working groups around specific use cases (sourcing, memo writing, portfolio support, LP reporting), and a coalition of people willing to share what is working and what is not.',
+      'It is not a course. There are no certificates. Show up, bring a real problem, leave with three things you can use Monday morning.',
     ],
     facts: [
-      { label: 'Specialized agents', value: '33' },
-      { label: 'Firms using it', value: '9' },
-      { label: 'Time per draft', value: '10–15 min' },
-      { label: 'License', value: 'MIT · Open source' },
+      { label: 'Cadence', value: 'Monthly working sessions' },
+      { label: 'Format', value: 'Live + recorded' },
+      { label: 'Structure', value: 'Coalition · working groups' },
     ],
     links: [
       {
-        label: 'View on GitHub',
-        href: 'https://github.com/lossless-group/investment-memo-orchestrator',
-        external: true,
-      },
-      {
-        label: 'Project page on lossless.group',
-        href: 'https://www.lossless.group/projects/gallery/memopop-ai',
+        label: 'Visit fullstack-vc.com',
+        href: 'https://fullstack-vc.com/',
         external: true,
       },
     ],
@@ -70,8 +66,8 @@ const projects: Project[] = [
     ],
     facts: [
       { label: 'Directory roles', value: '4 + 2' },
-      { label: 'context-v files cataloged', value: '583' },
-      { label: 'Projects using it', value: '28+' },
+      { label: 'context-v files cataloged', value: '1,001' },
+      { label: 'Projects using it', value: '41' },
     ],
     links: [
       {
@@ -95,7 +91,7 @@ const projects: Project[] = [
     body: [
       'Twelve Astro sites in one workspace. Not a true monorepo — every site is its own git repository, independently deployable. Not a loose pile of repos either — co-located so patterns, brand conventions, and AI context can travel between them without coupling deployments.',
       'The honest reckoning is part of the project. We tried the "one shared component package, all sites import it" approach. It collapsed under abstraction overhead the moment two sites needed different colors. So <code>@knots/*</code> packages stayed as workspace-local pattern references — code you copy and adapt, not import. Where sharing genuinely earned its keep was the markdown processing pipeline, which became the only published package: <code>@lossless-group/lfm</code>.',
-      'This site (mpstaton.com) lives in the workspace. So does <a href="https://fullstack-vc.com" target="_blank" rel="noopener noreferrer">FullStack VC</a>, the Hypernova site, the Water Foundation, Cilantro, Dark Matter, and a handful of in-progress sites.',
+      'This site (mpstaton.com) lives in the workspace. So does <a href="https://fullstack-vc.com" target="_blank" rel="noopener noreferrer">FullStack VC</a>, the Hypernova site, the Water Foundation, Cilantro, Dark Matter, Banner, Arthouse, LearnStart, Cogs, Coglet Shuffle, and the Lossless changelog roll-up.',
     ],
     facts: [
       { label: 'Astro sites', value: '12' },
@@ -128,7 +124,7 @@ const projects: Project[] = [
     ],
     facts: [
       { label: 'Plugins', value: '8+' },
-      { label: 'Latest', value: 'v0.3.0' },
+      { label: 'Latest', value: 'v0.5.1' },
       { label: 'Registries', value: 'JSR · GitHub Packages' },
       { label: 'License', value: 'MIT' },
     ],
@@ -180,30 +176,6 @@ const projects: Project[] = [
     ],
     accent: 'secondary',
   },
-  {
-    index: '06',
-    kind: 'Community · Practice',
-    name: 'FullStack VC',
-    tagline: 'An Agentic VC Dojo. We come together to practice.',
-    body: [
-      'Most VCs I know are either "AI is a toy" or "AI is going to eat our jobs," and neither is a useful working stance. The middle path — actually practicing with the tools, in the open, with people doing the same thing — does not have many natural homes. So we made one.',
-      'FullStack VC is a learning community where venture capitalists deliberately practice using AI to give their firms superpowers. Monthly working sessions, recordings, working groups around specific use cases (sourcing, memo writing, portfolio support, LP reporting), and a coalition of people willing to share what is working and what is not.',
-      'It is not a course. There are no certificates. Show up, bring a real problem, leave with three things you can use Monday morning.',
-    ],
-    facts: [
-      { label: 'Cadence', value: 'Monthly working sessions' },
-      { label: 'Format', value: 'Live + recorded' },
-      { label: 'Structure', value: 'Coalition · working groups' },
-    ],
-    links: [
-      {
-        label: 'Visit fullstack-vc.com',
-        href: 'https://fullstack-vc.com/',
-        external: true,
-      },
-    ],
-    accent: 'accent',
-  },
 ];
 
 const accentClassMap: Record<Project['accent'], { dot: string; rule: string; eyebrow: string; index: string; link: string }> = {
@@ -248,6 +220,11 @@ const accentClassMap: Record<Project['accent'], { dot: string; rule: string; eye
         Most are made through <a class="underline underline-offset-4 decoration-muted-foreground/40 hover:decoration-foreground" href="https://lossless.group" target="_blank" rel="noopener noreferrer">The Lossless Group</a>, which I cofounded. The longer write-ups live there.
       </p>
     </header>
+
+    <!-- The product family, shown as a stack rather than a list -->
+    <div class="mb-24 md:mb-32 border-b border-border/60 pb-24 md:pb-32">
+      <SectionVentureCapitalAgentOS />
+    </div>
 
     <!-- Field guide entries -->
     <div class="space-y-24 md:space-y-32">
@@ -313,6 +290,10 @@ const accentClassMap: Record<Project['accent'], { dot: string; rule: string; eye
                 </li>
               ))}
             </ul>
+
+            {/* Content Farm is the one entry whose artifacts are individually
+                installable, so it gets cards for the four that shipped. */}
+            {p.name === 'Content Farm' && <ContentFarmPublishedPlugins />}
           </article>
         );
       })}

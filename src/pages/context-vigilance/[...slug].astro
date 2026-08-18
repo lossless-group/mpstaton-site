@@ -4,6 +4,8 @@ import { createLfmProcessor } from '@lossless-group/lfm';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AstroMarkdown from '../../components/markdown/AstroMarkdown.astro';
 import { remarkLosslessWikilinksLocal } from '../../lib/remark-lossless-wikilinks-local';
+import { formatDate, toIsoDate } from '../../utils/format-date';
+import { humanizeTerm } from '../../utils/humanize-term';
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect('/context-vigilance');
@@ -60,7 +62,7 @@ const statusStyle = data.status ? statusColors[data.status] || 'bg-muted text-mu
       <div class="flex items-center gap-2 mb-4 flex-wrap">
         {data.category && (
           <span class={`text-xs font-medium px-2.5 py-1 rounded-full border ${categoryStyle}`}>
-            {data.category}
+            {humanizeTerm(data.category)}
           </span>
         )}
         {data.status && (
@@ -87,7 +89,7 @@ const statusStyle = data.status ? statusColors[data.status] || 'bg-muted text-mu
           <span>{data.authors.join(', ')}</span>
         )}
         {data.date_modified && (
-          <span>Updated {data.date_modified}</span>
+          <span>Updated <time datetime={toIsoDate(data.date_modified)}>{formatDate(data.date_modified)}</time></span>
         )}
         {data._context_v?.repo_label && (
           <span class="text-xs px-2 py-0.5 rounded bg-muted">{data._context_v.repo_label}</span>
@@ -110,7 +112,7 @@ const statusStyle = data.status ? statusColors[data.status] || 'bg-muted text-mu
         <div class="flex gap-1.5 flex-wrap mt-3">
           {data.tags.map((tag: string) => (
             <span class="text-xs px-2 py-0.5 rounded bg-muted text-muted-foreground">
-              {tag}
+              {humanizeTerm(tag)}
             </span>
           ))}
         </div>

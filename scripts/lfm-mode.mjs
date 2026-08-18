@@ -21,7 +21,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 
-const JSR_SPEC = 'npm:@jsr/lossless-group__lfm@0.3.0';
+const JSR_SPEC = 'npm:@jsr/lossless-group__lfm@0.5.1';
 const LOCAL_SPEC = 'link:../../../lfm';
 const LOCAL_BRANCHES = new Set(['development', 'develop', 'dev']);
 

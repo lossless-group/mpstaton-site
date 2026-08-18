@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TableOfContents from '../../components/markdown/TableOfContents.astro';
+import type { LfmHeading } from '@lossless-group/lfm';
+
+/**
+ * A hand-authored outline in exactly the shape `remarkHeadingIds` attaches at
+ * `tree.data.headings`, so the catalog exercises the real contract rather than
+ * a mock of it — including the two flags the component has to handle.
+ */
+const sampleHeadings: LfmHeading[] = [
+  { id: 'the-argument', text: 'The argument', depth: 2 },
+  { id: 'what-changed', text: 'What changed', depth: 3 },
+  { id: 'what-did-not', text: 'What did not', depth: 3 },
+  { id: 'evidence', text: 'Evidence', depth: 2 },
+  { id: 'a-caveat', text: 'A caveat', depth: 3, inContainer: 'callout' },
+  { id: 'counter-arguments', text: 'Counter-arguments', depth: 2 },
+  { id: 'so-what', text: 'So what', depth: 2 },
+];
+---
+<BaseLayout title="Design System · Markdown — MP Staton" noindex>
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <a href="/design-system" class="text-sm text-muted-foreground hover:text-foreground">&larr; Design System</a>
+    <h1 class="text-foreground mt-4 mb-2">Markdown</h1>
+    <p class="text-lg text-muted-foreground mb-12 max-w-2xl">
+      Components that render or navigate LFM-parsed content. These read the MDAST
+      that <code>@lossless-group/lfm</code> produces — never the raw markdown, and
+      never the DOM.
+    </p>
+
+    <article class="mb-16">
+      <header class="mb-6 border-b border-border pb-4">
+        <h2 class="text-foreground text-2xl font-semibold">TableOfContents</h2>
+        <p class="text-sm text-muted-foreground mt-2 max-w-3xl">
+          Reading-position table of contents for any page rendering markdown through
+          <code>AstroMarkdown</code>. One render, three viewport states: a persistent
+          rail at &ge;1280px, a hamburger between 768&ndash;1279px, and a top bar below
+          768px that names the heading currently being read. Selecting a heading
+          collapses the panel; <kbd>Esc</kbd> and click-outside dismiss it.
+        </p>
+        <dl class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl">
+          <div>
+            <dt class="text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground/70 font-medium">Props</dt>
+            <dd class="mt-1 text-sm text-foreground"><code>headings</code>, <code>minDepth</code>, <code>maxDepth</code>, <code>minEntries</code>, <code>excludeContainers</code>, <code>title</code></dd>
+          </div>
+          <div>
+            <dt class="text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground/70 font-medium">Source</dt>
+            <dd class="mt-1 text-sm text-foreground"><code>tree.data.headings</code> only</dd>
+          </div>
+          <div>
+            <dt class="text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground/70 font-medium">Defaults</dt>
+            <dd class="mt-1 text-sm text-foreground">h2&ndash;h3, hidden below 3 entries</dd>
+          </div>
+          <div>
+            <dt class="text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground/70 font-medium">Used on</dt>
+            <dd class="mt-1 text-sm text-foreground"><a class="underline underline-offset-2" href="/essays">/essays/*</a></dd>
+          </div>
+        </dl>
+        <p class="text-sm text-muted-foreground mt-4 max-w-3xl">
+          <strong class="text-foreground">Where the outline comes from, and why it matters:</strong>
+          LFM's <code>remarkHeadingIds</code> walks the MDAST. A <code>#</code> line inside a
+          fenced code block is a <code>code</code> node, not a <code>heading</code> node, so it
+          cannot reach the outline. A regex over raw markdown would see it; a
+          <code>querySelectorAll</code> over rendered HTML would run after paint and still
+          be blind to <code>synthetic</code> and <code>duplicateOf</code>. Never derive an
+          outline from text or from the DOM.
+        </p>
+        <p class="text-sm text-muted-foreground mt-3 max-w-3xl">
+          <strong class="text-foreground">Anchors are the package's, not ours.</strong>
+          <code>AstroMarkdown</code> reads <code>node.data.id</code>; the local slugify it used
+          to carry is gone. Across the 50 essays that swap moved 5 of 394 anchors, and all
+          five were collisions the old algorithm silently produced (four
+          <code>#traction-data</code> on one page).
+        </p>
+        <p class="text-sm text-muted-foreground mt-3 max-w-3xl">
+          <strong class="text-foreground">Positioning departs from the shared reference on purpose.</strong>
+          fullstack-vc pins its header, so its ToC is <code>position: fixed</code> under a
+          known obstruction. This site's header scrolls away, so a fixed bar would sit on
+          the logo at rest — here the ToC is <code>position: sticky</code> in normal flow.
+          The measured <code>--lfm-toc-header-bottom</code> is still honoured, so pinning the
+          header later needs no change to the component.
+        </p>
+      </header>
+
+      <div class="rounded-lg border border-border p-6 md:p-10 bg-background">
+        <p class="text-xs uppercase tracking-[0.15em] text-muted-foreground/70 mb-4">
+          Rail state &mdash; resize the window past 1280px and 768px to see the other two
+        </p>
+        <TableOfContents headings={sampleHeadings} />
+        <p class="text-sm text-muted-foreground mt-6 max-w-xl">
+          Seven sample headings, one of them inside a callout. The callout heading is
+          excluded by default: it deserves an anchor, but it is an aside, not a waypoint.
+          Five entries survive &mdash; above the three-entry floor, so the component renders.
+        </p>
+      </div>
+
+      <p class="text-xs text-muted-foreground mt-4">
+        Blueprint: <code>astro-knots/context-v/blueprints/Standard-Table-of-Contents-for-Every-Markdown-Collection.md</code>
+      </p>
+    </article>
+  </section>
+</BaseLayout>
