@@ -1,0 +1,105 @@
+---
+/**
+ * /channels — the channels behind the playlists, ranked by how much of each
+ * one I've actually kept.
+ *
+ * Derived from the playlist cache at build time rather than hand-listed, so
+ * it cannot drift from /playlists. See src/lib/youtube-channels.ts.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getTopChannels, getChannelStats, channelUrl, MIN_VIDEOS } from '../lib/youtube-channels';
+
+const channels = getTopChannels();
+const stats = getChannelStats();
+---
+
+<BaseLayout
+  title="Channels"
+  description="The YouTube channels behind the playlists — ranked by how many of their videos I've kept."
+>
+  <section class="px-6 pt-12 pb-8 md:pt-14 md:pb-10">
+    <div class="text-center max-w-2xl mx-auto">
+      <h1 class="gradient-text mb-3">Channels</h1>
+      <p class="text-lg text-muted-foreground">
+        {stats.shownChannels} channels with {MIN_VIDEOS} or more videos in
+        <a href="/playlists" class="underline underline-offset-4 hover:text-foreground transition-colors">the playlists</a>
+        — {stats.shownVideos.toLocaleString()} videos between them, out of {stats.totalChannels.toLocaleString()} channels in all.
+      </p>
+    </div>
+  </section>
+
+  <section class="max-w-4xl mx-auto px-6 pb-16">
+    <ol class="channel-grid">
+      {channels.map((c, i) => (
+        <li class="channel-card">
+          <span class="channel-rank">{i + 1}</span>
+          <a href={channelUrl(c)} target="_blank" rel="noopener noreferrer" class="channel-name">
+            {c.title}
+          </a>
+          <span class="channel-meta">
+            {c.videoCount.toLocaleString()} videos
+            <span class="channel-playlists">{c.playlists.join(' · ')}</span>
+          </span>
+        </li>
+      ))}
+    </ol>
+  </section>
+</BaseLayout>
+
+<style>
+  .channel-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .channel-card {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    grid-template-rows: auto auto;
+    align-items: baseline;
+    column-gap: 0.25rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  .channel-card:hover { border-color: var(--primary); }
+
+  .channel-rank {
+    grid-row: 1 / span 2;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted-foreground);
+    opacity: 0.6;
+  }
+
+  .channel-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--foreground);
+    text-decoration: none;
+    /* Long channel names are common; keep cards on a uniform height. */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .channel-name:hover { color: var(--primary); }
+
+  .channel-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    font-variant-numeric: tabular-nums;
+  }
+  .channel-playlists { opacity: 0.6; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .channel-card { transition: none; }
+  }
+</style>
