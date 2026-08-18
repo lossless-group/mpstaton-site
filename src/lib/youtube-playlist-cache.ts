@@ -3,34 +3,36 @@
  * scripts/fetch-youtube-playlists.ts. The cache is gitignored and rebuilt
  * by `pnpm fetch-playlists` (chained into pnpm dev / pnpm build).
  *
- * IMPORTANT: this module imports node:fs / node:url and must never be
- * pulled into a client bundle. Pure types and helpers live in
- * ./youtube-playlist-types so client-side Svelte components can share them.
+ * The cache is pulled in through `import.meta.glob` rather than read off disk
+ * at request time. This site is `output: 'server'`, so these pages render
+ * inside a Vercel serverless function whose bundle contains only JS — the
+ * gitignored JSON under src/data/ is never traced into it, and `import.meta.url`
+ * resolves to dist/server/chunks/, so a `../data/` read would point at the
+ * wrong place even if the file had been copied. Both failures are silent:
+ * existsSync returns false, every lookup returns null, and the page renders
+ * its "not cached yet" facade on a deploy whose fetcher actually succeeded.
+ * Globbing makes Rollup inline the JSON into the chunk, so the data travels
+ * with the code wherever the function runs.
+ *
+ * Glob rather than a plain `import` because the file is gitignored: on a clone
+ * that has not run the fetcher a static import is a hard build failure, while
+ * a glob matching nothing yields {} and degrades to facade mode as before.
  */
 
-import { readFileSync, existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import type { PlaylistCacheEntry } from './youtube-playlist-types';
 
 export type { PlaylistCacheEntry, PlaylistItem } from './youtube-playlist-types';
 export { formatDuration } from './youtube-playlist-types';
 
-const CACHE_PATH = fileURLToPath(
-  new URL('../data/youtube-playlist-cache.json', import.meta.url)
+type PlaylistCache = Record<string, PlaylistCacheEntry>;
+
+const modules = import.meta.glob<{ default: PlaylistCache }>(
+  '../data/youtube-playlist-cache.json',
+  { eager: true }
 );
 
-let cache: Record<string, PlaylistCacheEntry> | null = null;
-
-function loadCache(): Record<string, PlaylistCacheEntry> {
-  if (!existsSync(CACHE_PATH)) return {};
-  try {
-    return JSON.parse(readFileSync(CACHE_PATH, 'utf8'));
-  } catch {
-    return {};
-  }
-}
+const cache: PlaylistCache = Object.values(modules)[0]?.default ?? {};
 
 export function getPlaylist(id: string): PlaylistCacheEntry | null {
-  if (cache === null) cache = loadCache();
   return cache[id] ?? null;
 }
