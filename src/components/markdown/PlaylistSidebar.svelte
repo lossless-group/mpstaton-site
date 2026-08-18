@@ -19,6 +19,7 @@
   let scrollEl: HTMLElement | null = null;
   let isAtTop = true;
   let isAtBottom = false;
+  let panelObserver: MutationObserver | null = null;
   const SCROLL_BY_ITEMS = 5;
 
   // Loads the YouTube IFrame API script (idempotent across instances).
@@ -99,19 +100,55 @@
       scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 4;
   }
 
+  /**
+   * Point at the current scroll container, re-resolving if it has changed.
+   *
+   * Which element scrolls is not fixed for the life of the component. On
+   * mobile the panel body only becomes scrollable once the panel is open —
+   * `.mfp[data-mfp-open] .mfp__panel-body { overflow-y: auto }` — and before
+   * that it is display:none, so a single resolve at mount lands on the inline
+   * desktop scroller and the buttons then drive an element the reader cannot
+   * see. Re-resolving on open and on click keeps the target honest.
+   */
+  function resolveScrollEl() {
+    const next = findScrollContainer(sidebarEl);
+    if (next === scrollEl) return;
+    if (scrollEl) scrollEl.removeEventListener('scroll', updateEdges);
+    scrollEl = next;
+    if (scrollEl) scrollEl.addEventListener('scroll', updateEdges, { passive: true });
+    updateEdges();
+  }
+
   function scrollByN(n: number) {
+    resolveScrollEl();
     if (!scrollEl || !listEl) return;
     const firstItem = listEl.querySelector('li');
     const itemHeight = firstItem?.getBoundingClientRect().height ?? 64;
     scrollEl.scrollBy({ top: n * itemHeight, behavior: 'smooth' });
+    // scrollBy is smooth, so the scroll event that would refresh the edge
+    // flags arrives later; without this the button that was just used can
+    // stay disabled until the reader scrolls by hand.
+    setTimeout(updateEdges, 400);
   }
 
   onMount(async () => {
-    scrollEl = findScrollContainer(sidebarEl);
-    if (scrollEl) {
-      scrollEl.addEventListener('scroll', updateEdges, { passive: true });
-      // Defer initial measurement until layout settles
-      requestAnimationFrame(() => requestAnimationFrame(updateEdges));
+    resolveScrollEl();
+    // Defer initial measurement until layout settles
+    requestAnimationFrame(() => requestAnimationFrame(updateEdges));
+
+    // The mobile panel toggles via a data attribute on the .mfp wrapper, which
+    // is what flips the panel body to overflow-y:auto. Watching it is how the
+    // sidebar learns that the element it should be scrolling has changed.
+    const mfp = sidebarEl?.closest('.mfp') as HTMLElement | null;
+    if (mfp) {
+      panelObserver = new MutationObserver(() => {
+        // Let the open/close style land before measuring against it.
+        requestAnimationFrame(() => {
+          resolveScrollEl();
+          updateEdges();
+        });
+      });
+      panelObserver.observe(mfp, { attributes: true, attributeFilter: ['data-mfp-open'] });
     }
     await ensureYouTubeApi();
     attachPlayer();
@@ -120,6 +157,7 @@
 
   onDestroy(() => {
     if (scrollEl) scrollEl.removeEventListener('scroll', updateEdges);
+    panelObserver?.disconnect();
     if (pollHandle != null) clearInterval(pollHandle);
     if (player?.destroy) try { player.destroy(); } catch {}
   });
