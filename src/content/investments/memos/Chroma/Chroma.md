@@ -24,6 +24,31 @@ augmented_with:
   - Claude Code on Claude Opus 5
 site_uuid: ff18037c-f8bf-4c70-a438-ac7c3fe58af3
 hex_code: hdw16a
+company_url: https://www.trychroma.com
+company_name: Chroma
+slug: chroma
+hype: true
+hype_rank: 1
+stage: Series B
+verdict: Consider
+score: 3.1 / 5.0
+zinger: >-
+  The retrieval layer repositioning itself as agent memory — evaluated the week it said so out loud.
+hype_note: >-
+  Chroma is the thing people actually reach for. Fifteen million downloads a
+  month, 27,000 stars, and a place in 90,000+ codebases — not because anyone
+  sold it to them, but because it is the shortest path from "I have documents"
+  to "my model can find them." Now it is aiming at something bigger than
+  retrieval: the memory layer agents run on. Jeff Huber and Anton Troynikov
+  have built the rare piece of infrastructure developers describe with
+  affection.
+my_take: >-
+  Chroma is the default install for anyone prototyping RAG, and that
+  distribution is real. The open question is whether "search infrastructure
+  for AI" converts developer affection into enterprise contracts before
+  Pinecone, Weaviate, and the hyperscalers' bundled vector offerings make
+  the category a feature. I score it CONSIDER at 3.1 — the wedge is genuine,
+  the monetization is unproven.
 ---
 
 # ChromaDB
@@ -128,10 +153,10 @@ For developers building retrieval-augmented generation (RAG) systems, the curren
 
 ### The Core Problem
 
-![Problem — system-and-data-problems (Slide 6)](io/lossless/deals/ChromaDB/outputs/ChromaDB-v0.0.1/deck-screenshots/page-06-problem-system-and-data-problems.png)
+![Problem — system-and-data-problems (Slide 6)](/investments/chroma/deck-screenshots/page-06-problem-system-and-data-problems.png)
 
 
-![Problem — context-memory-bottleneck (Slide 5)](io/lossless/deals/ChromaDB/outputs/ChromaDB-v0.0.1/deck-screenshots/page-05-problem-context-memory-bottleneck.png)
+![Problem — context-memory-bottleneck (Slide 5)](/investments/chroma/deck-screenshots/page-05-problem-context-memory-bottleneck.png)
 
 
 The fundamental problem is **persistent memory for AI applications**. Most chat interfaces "forget everything between sessions", [^5] creating a gap between AI capabilities and workflow requirements. This manifests in three ways:
@@ -166,18 +191,18 @@ The opportunity here is clear: Chroma has positioned itself at a critical infras
 
 ## 3. Opening
 
-![Unit Economics — capital-efficiency-comparison (Slide 13)](io/lossless/deals/ChromaDB/outputs/ChromaDB-v0.0.1/deck-screenshots/page-13-unit-economics-capital-efficiency-comparison.png)
+![Unit Economics — capital-efficiency-comparison (Slide 13)](/investments/chroma/deck-screenshots/page-13-unit-economics-capital-efficiency-comparison.png)
 
 
-![Business Model — open-core-usage-enterprise (Slide 12)](io/lossless/deals/ChromaDB/outputs/ChromaDB-v0.0.1/deck-screenshots/page-12-business-model-open-core-usage-enterprise.png)
+![Business Model — open-core-usage-enterprise (Slide 12)](/investments/chroma/deck-screenshots/page-12-business-model-open-core-usage-enterprise.png)
 
 
-![Partnerships — xai-deployment (Slide 8)](io/lossless/deals/ChromaDB/outputs/ChromaDB-v0.0.1/deck-screenshots/page-08-partnerships-xai-deployment.png)
+![Partnerships — xai-deployment (Slide 8)](/investments/chroma/deck-screenshots/page-08-partnerships-xai-deployment.png)
 
 
 ### Market Size and Customer Base
 
-![Ideal Customer Profile — two-segments (Slide 7)](io/lossless/deals/ChromaDB/outputs/ChromaDB-v0.0.1/deck-screenshots/page-07-ideal-customer-profile-two-segments.png)
+![Ideal Customer Profile — two-segments (Slide 7)](/investments/chroma/deck-screenshots/page-07-ideal-customer-profile-two-segments.png)
 
 
 Chroma has achieved significant market penetration with over 15 million monthly downloads, [^7] surpassing 27,000 GitHub stars, and over 20 million open-source downloads. [^2] The database is used in over 90,000 other open-source codebases on GitHub and serves millions of developers. [^3] These figures demonstrate substantial adoption across the AI development community, though precise counts of paying enterprise customers are not disclosed in the available sources.
@@ -269,7 +294,7 @@ The competitive landscape bifurcates between pure-play vector databases (Chroma,
 
 ### Founders and Team
 
-![Team — founding-team-builders (Slide 10)](io/lossless/deals/ChromaDB/outputs/ChromaDB-v0.0.1/deck-screenshots/page-10-team-founding-team-builders.png)
+![Team — founding-team-builders (Slide 10)](/investments/chroma/deck-screenshots/page-10-team-founding-team-builders.png)
 
 
 Chroma emerged from the open-source AI infrastructure community with a founding team that embraced a developer-first philosophy from inception. While specific founder biographies remain undisclosed in public sources, the team's technical credentials are evident in their execution: they open-sourced the core database under the permissive Apache 2.0 license [^3] [^1] and designed the product explicitly for rapid prototyping workflows. [^6] The decision to build in public and prioritize accessibility over proprietary control signals founders who understand bottoms-up developer adoption—a critical advantage in infrastructure plays where community becomes moat.
@@ -384,12 +409,12 @@ Introducing Foundation: Chroma's solution to memory"](https://x.com/trychroma/st
 
 ## 6. Opportunity
 
-![Ideal Customer Profile — two-segments (Slide 7)](io/lossless/deals/ChromaDB/outputs/ChromaDB-v0.0.1/deck-screenshots/page-07-ideal-customer-profile-two-segments.png)
+![Ideal Customer Profile — two-segments (Slide 7)](/investments/chroma/deck-screenshots/page-07-ideal-customer-profile-two-segments.png)
 
 
 ### Market Position and Developer Adoption
 
-![Market Size — tam-trajectory (Slide 4)](io/lossless/deals/ChromaDB/outputs/ChromaDB-v0.0.1/deck-screenshots/page-04-market-size-tam-trajectory.png)
+![Market Size — tam-trajectory (Slide 4)](/investments/chroma/deck-screenshots/page-04-market-size-tam-trajectory.png)
 
 
 Chroma has achieved exceptional open-source traction as a vector database, with **15M+ monthly downloads**, **27,000 GitHub stars**, [^7] and deployment across **over 90,000 open-source codebases**. The platform serves a **10,000-person Discord community**, [^11] establishing it as infrastructure-level tooling for AI application builders. This organic developer pull—not paid distribution—positions Chroma at the critical juncture where open-source adoption translates into commercial revenue growth.
@@ -416,7 +441,7 @@ The multi-product strategy (Database, Inference, Assistant) positions Chroma to 
 
 ### Competitive Landscape and Technical Positioning
 
-![Competitive Positioning — competitive-quadrant (Slide 9)](io/lossless/deals/ChromaDB/outputs/ChromaDB-v0.0.1/deck-screenshots/page-09-competitive-positioning-competitive-quadrant.png)
+![Competitive Positioning — competitive-quadrant (Slide 9)](/investments/chroma/deck-screenshots/page-09-competitive-positioning-competitive-quadrant.png)
 
 
 Chroma competes directly with Pinecone, [Weaviate](https://weaviate.io), [Qdrant](https://qdrant.tech), and [Zilliz](https://zilliz.com) in the specialized vector database category, [^1] as well as with embedded vector capabilities in established databases. Weaviate positions itself as "the AI database developers love", emphasizing **production-ready deployment, billion-scale architecture, and AI-first features under one roof** with **SOC 2 and HIPAA compliance, RBAC, and multi-tenancy**. [^11] Pinecone and Weaviate already operate fully commercialized cloud platforms with established pricing and SLAs, creating benchmarks for Chroma's Cloud launch.
@@ -435,7 +460,7 @@ The Foundation agent memory product and multi-product strategy represent bets th
 
 ## 7. Risks & What Could Go Wrong
 
-![Competitive Positioning — competitive-quadrant (Slide 9)](io/lossless/deals/ChromaDB/outputs/ChromaDB-v0.0.1/deck-screenshots/page-09-competitive-positioning-competitive-quadrant.png)
+![Competitive Positioning — competitive-quadrant (Slide 9)](/investments/chroma/deck-screenshots/page-09-competitive-positioning-competitive-quadrant.png)
 
 
 ### Origins & Opening Risks
@@ -520,10 +545,10 @@ ChromaDB presents a **compelling infrastructure play** in AI-native search with 
 
 ## 9. Funding & Terms
 
-![Unit Economics — capital-efficiency-comparison (Slide 13)](io/lossless/deals/ChromaDB/outputs/ChromaDB-v0.0.1/deck-screenshots/page-13-unit-economics-capital-efficiency-comparison.png)
+![Unit Economics — capital-efficiency-comparison (Slide 13)](/investments/chroma/deck-screenshots/page-13-unit-economics-capital-efficiency-comparison.png)
 
 
-![Fundraising — quiet-capital-backing (Slide 11)](io/lossless/deals/ChromaDB/outputs/ChromaDB-v0.0.1/deck-screenshots/page-11-fundraising-quiet-capital-backing.png)
+![Fundraising — quiet-capital-backing (Slide 11)](/investments/chroma/deck-screenshots/page-11-fundraising-quiet-capital-backing.png)
 
 
 ### Current Round
@@ -542,7 +567,7 @@ The funding timeline shows measured capital deployment—operating ~2 years on s
 
 ### Use of Funds
 
-![Fundraising — series-a-use-of-funds (Slide 14)](io/lossless/deals/ChromaDB/outputs/ChromaDB-v0.0.1/deck-screenshots/page-14-fundraising-series-a-use-of-funds.png)
+![Fundraising — series-a-use-of-funds (Slide 14)](/investments/chroma/deck-screenshots/page-14-fundraising-series-a-use-of-funds.png)
 
 
 Series A capital allocated across three priorities:

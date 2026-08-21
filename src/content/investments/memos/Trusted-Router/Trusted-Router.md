@@ -24,6 +24,30 @@ augmented_with:
   - Claude Code on Claude Opus 5
 site_uuid: 078c5026-a550-47d6-a163-b1d579009962
 hex_code: tp2d9g
+company_url: https://trustedrouter.com
+company_name: TrustedRouter
+slug: trusted-router
+hype: true
+hype_rank: 2
+stage: Seed
+verdict: Consider
+score: 3.0 / 5.0
+zinger: >-
+  One API to every model, with cryptographic proof nobody logged the prompt.
+hype_note: >-
+  One base URL, hundreds of models, and cryptographic proof that nobody logged
+  your prompt. TrustedRouter is a drop-in swap for the router Stripe just paid
+  north of $7B for — except it is fully open source, publicly attested against
+  its own source commits, and fail-closed by design. That combination unlocks
+  the workloads everyone else has to route around: medicine, finance,
+  corporate R&D. Joseph Perla is building it on effectively zero burn.
+my_take: >-
+  Stripe paying north of $7B for OpenRouter three months after its Series B
+  is the whole thesis in one datapoint: routing is infrastructure, not
+  middleware. TrustedRouter's bet is that verifiable privacy — open source,
+  public attestation against source commits, fail-closed — is the axis the
+  next buyer picks on. Single founder, effectively zero burn, which is both
+  the efficiency story and the key-person risk.
 ---
 
 # TrustedRouter
@@ -97,10 +121,10 @@ As Peter Theil is quoted in his "Last Mover Advantage" idiom: "You want to be th
 
 ## 2. Origins
 
-![Technology — encryption-architecture (Slide 8)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-08-technology-encryption-architecture.png)
+![Technology — encryption-architecture (Slide 8)](/investments/trusted-router/deck-screenshots/page-08-technology-encryption-architecture.png)
 
 
-![Technology — fusion-models-performance (Slide 6)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-06-technology-fusion-models-performance.png)
+![Technology — fusion-models-performance (Slide 6)](/investments/trusted-router/deck-screenshots/page-06-technology-fusion-models-performance.png)
 
 
 ### Target Customer and Market Position
@@ -118,7 +142,7 @@ The ecosystem extends beyond direct users to include engineering leaders and CTO
 
 ### The Pre-Solution State
 
-![Solution — privacy-model-overview (Slide 4)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-04-solution-privacy-model-overview.png)
+![Solution — privacy-model-overview (Slide 4)](/investments/trusted-router/deck-screenshots/page-04-solution-privacy-model-overview.png)
 
 
 Before TrustedRouter, developers faced substantial friction when working with AI models. Teams had to "integrate separately against [OpenAI](https://openai.com)'s API, [Anthropic](https://www.anthropic.com)'s API, [Google](https://www.google.com)'s API, and every open-weight provider" they wanted to use. Without abstraction, switching from one model to another required substantial re-implementation work, creating vendor lock-in risk. [^6]
@@ -151,21 +175,21 @@ The scale evidence validates execution: 8-10 million developers and tens of tril
 
 ## 3. Opening
 
-![Business Model — software-margin-model (Slide 10)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-10-business-model-software-margin-model.png)
+![Business Model — software-margin-model (Slide 10)](/investments/trusted-router/deck-screenshots/page-10-business-model-software-margin-model.png)
 
 
-![Value Proposition — core-value-props (Slide 3)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-03-value-proposition-core-value-props.png)
+![Value Proposition — core-value-props (Slide 3)](/investments/trusted-router/deck-screenshots/page-03-value-proposition-core-value-props.png)
 
 
 ### Market Overview and Problem Statement
 
-![Business Model — market-positioning (Slide 5)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-05-business-model-market-positioning.png)
+![Business Model — market-positioning (Slide 5)](/investments/trusted-router/deck-screenshots/page-05-business-model-market-positioning.png)
 
 
-![Solution — privacy-model-overview (Slide 4)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-04-solution-privacy-model-overview.png)
+![Solution — privacy-model-overview (Slide 4)](/investments/trusted-router/deck-screenshots/page-04-solution-privacy-model-overview.png)
 
 
-![Overview — company-overview (Slide 1)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-01-overview-company-overview.png)
+![Overview — company-overview (Slide 1)](/investments/trusted-router/deck-screenshots/page-01-overview-company-overview.png)
 
 
 Enterprise adoption of large language models has created a new infrastructure challenge: how to route AI workloads across dozens of model providers while maintaining compliance with data protection regulations. Organizations deploying AI in regulated industries—healthcare, legal, financial services—face a fundamental architectural tension. They need the flexibility to access best-in-class models from multiple vendors, but their compliance frameworks were built for controlled, auditable data flows within defined security perimeters.
@@ -214,7 +238,7 @@ The migration strategy leverages [OpenRouter](https://openrouter.ai) compatibili
 
 ## 4. Organization
 
-![Team — founding-team (Slide 12)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-12-team-founding-team.png)
+![Team — founding-team (Slide 12)](/investments/trusted-router/deck-screenshots/page-12-team-founding-team.png)
 
 
 ### Founders and Leadership
@@ -275,17 +299,17 @@ The acquisition by Stripe—a company renowned for disciplined capital allocatio
 
 ## 5. Offering
 
-![Technology — fusion-models-performance (Slide 6)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-06-technology-fusion-models-performance.png)
+![Technology — fusion-models-performance (Slide 6)](/investments/trusted-router/deck-screenshots/page-06-technology-fusion-models-performance.png)
 
 
 TrustedRouter's offering demonstrates exceptional proposition-positioning-product coherence around a precise market insight: enterprises handling sensitive data need cryptographic proof of privacy controls, not policy promises. The product architecture delivers on this insight through three interlocking mechanisms that create a defensible technical moat while maintaining zero-friction adoption.
 
 ### Core Value Architecture
 
-![Technology — encryption-architecture (Slide 8)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-08-technology-encryption-architecture.png)
+![Technology — encryption-architecture (Slide 8)](/investments/trusted-router/deck-screenshots/page-08-technology-encryption-architecture.png)
 
 
-![Value Proposition — core-value-props (Slide 3)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-03-value-proposition-core-value-props.png)
+![Value Proposition — core-value-props (Slide 3)](/investments/trusted-router/deck-screenshots/page-03-value-proposition-core-value-props.png)
 
 
 The offering centers on verifiable privacy through attestation, unified API access to 550+ models, and provider-agnostic routing. This addresses a specific gap where organizations processing legal documents, proprietary data, or regulated information cannot accept conventional "trust us" assurances. The customer story featuring Robot, Robot & Human—routing 170,974 legal documents and billions of tokens while requiring verifiable non-inspection guarantees—illustrates the precision of product-market fit. The positioning statement "'Trust us, we won't peek' was never an acceptable answer to give a client" crystallizes the core market friction. [^1]
@@ -338,7 +362,7 @@ TrustedRouter enters the AI infrastructure market at an inflection point where m
 
 ### Market Validation Through Competitive Exit
 
-![Competitive Positioning — feature-comparison-matrix (Slide 7)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-07-competitive-positioning-feature-comparison-matrix.png)
+![Competitive Positioning — feature-comparison-matrix (Slide 7)](/investments/trusted-router/deck-screenshots/page-07-competitive-positioning-feature-comparison-matrix.png)
 
 
 OpenRouter's pre-acquisition scale provides a clear roadmap for TrustedRouter's opportunity. The platform had reached 8-10 million developers, routed tens of trillions of tokens weekly, and captured approximately 5% of inference spend flowing through its infrastructure. [^3] With 400+ models across 80+ providers, OpenRouter served customers including [NVIDIA](https://www.nvidia.com), [Zoom](https://zoom.us), and Lovable. [^2] This traction profile—achieved before the market consolidation that Stripe's acquisition will accelerate—establishes that unified routing infrastructure addresses genuine enterprise pain points at scale.
@@ -373,7 +397,7 @@ The three-week deployment timeline and use of the OpenAI-compatible API for extr
 
 ## 7. Risks & What Could Go Wrong
 
-![Competitive Positioning — feature-comparison-matrix (Slide 7)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-07-competitive-positioning-feature-comparison-matrix.png)
+![Competitive Positioning — feature-comparison-matrix (Slide 7)](/investments/trusted-router/deck-screenshots/page-07-competitive-positioning-feature-comparison-matrix.png)
 
 
 ### Origins & Offering Risks
@@ -431,10 +455,10 @@ The three-week deployment timeline and use of the OpenAI-compatible API for extr
 
 ## 9. Funding & Terms
 
-![Financials — near-term-projections (Slide 15)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-15-financials-near-term-projections.png)
+![Financials — near-term-projections (Slide 15)](/investments/trusted-router/deck-screenshots/page-15-financials-near-term-projections.png)
 
 
-![Financials — revenue-projections (Slide 9)](io/lossless/deals/TrustedRouter/outputs/TrustedRouter-v0.0.2/deck-screenshots/page-09-financials-revenue-projections.png)
+![Financials — revenue-projections (Slide 9)](/investments/trusted-router/deck-screenshots/page-09-financials-revenue-projections.png)
 
 
 TrustedRouter is raising a **$500K seed round** on a **SAFE with $6M post-money valuation cap and 20% discount** (no valuation floor). The round is **currently open** as of August 2026, with terms disclosed in the pitch deck.

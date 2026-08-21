@@ -1,0 +1,64 @@
+---
+/**
+ * /investments — every investment memo.
+ *
+ * The document-forward twin of /hype-machine. Same collection, same card, but
+ * unfiltered: memos that ended in a pass belong here and not on the hype list.
+ * Cards lead with the memo's title and metadata rather than the company's
+ * branding.
+ *
+ * These memos are VC-facing documents and will move behind a passcode. When
+ * that lands, this page and the detail route flip to `prerender = false` and
+ * gate through src/lib/promote/gate.ts, the way /promote already does. Public
+ * for now so the rendering can be reviewed.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CompanyCard from '../../components/investments/CompanyCard.astro';
+import { getAllInvestments } from '../../lib/investments/companies';
+
+export const prerender = true;
+
+const memos = await getAllInvestments();
+
+const meta = {
+  title: 'Investment Memos · Michael P. Staton',
+  description:
+    'Full-length investment memos — research, 12Ps scorecards, risks, and where I landed.',
+  type: 'website' as const,
+};
+---
+
+<BaseLayout title={meta.title} description={meta.description} meta={meta}>
+  <div class="mx-auto max-w-6xl px-6 py-12">
+    <header class="mb-10 max-w-2xl">
+      <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Investments</p>
+      <h1 class="gradient-text mt-2 mb-4">Investment memos</h1>
+      <p class="text-lg leading-relaxed text-muted-foreground">
+        Long-form write-ups on companies I've evaluated — origins, market, team, offering,
+        risks, and a 12Ps scorecard. Every memo here, whether it ended in conviction or a pass.
+      </p>
+    </header>
+
+    {memos.length === 0 ? (
+      <div class="rounded-lg border border-dashed border-border p-12 text-center">
+        <p class="text-muted-foreground">No memos published yet.</p>
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {memos.map((m) => (
+          <CompanyCard investment={m} href={`/investments/${m.slug}`} variant="memo" />
+        ))}
+      </div>
+    )}
+
+    <footer class="mt-14 border-t border-border pt-6">
+      <a
+        href="/hype-machine"
+        class="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-primary"
+      >
+        Just want the short list? See the Hype Machine
+        <span aria-hidden="true">→</span>
+      </a>
+    </footer>
+  </div>
+</BaseLayout>

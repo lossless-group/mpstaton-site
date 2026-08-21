@@ -1,0 +1,176 @@
+---
+/**
+ * /investments/[investment] — the full memo.
+ *
+ * Document-forward: compact company header, then the whole memo body through
+ * the LFM pipeline with a reading-position ToC and the Sources list. The
+ * layout mirrors essays/[...slug].astro rather than inventing a second
+ * long-form reading surface — memos are 500+ lines with a dozen H2s and want
+ * exactly the rail the essays already have.
+ *
+ * Public for now. When the passcode lands, this route flips to
+ * `prerender = false` and gates before parsing the body.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { createLfmProcessor } from '@lossless-group/lfm';
+import AstroMarkdown from '../../components/markdown/AstroMarkdown.astro';
+import TableOfContents from '../../components/markdown/TableOfContents.astro';
+import Sources from '../../components/markdown/Sources.astro';
+import { hasTableOfContents } from '../../lib/markdown/toc';
+import { getAllInvestments, getInvestment } from '../../lib/investments/companies';
+import { stripAuthoredToc } from '../../lib/investments/strip-toc';
+import { formatDate, toIsoDate } from '../../utils/format-date';
+import { humanizeTerm } from '../../utils/humanize-term';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const all = await getAllInvestments();
+  return all.map((investment) => ({ params: { investment: investment.slug } }));
+}
+
+const { investment: slug } = Astro.params;
+const memo = await getInvestment(slug!);
+
+if (!memo) {
+  return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+
+const processor = createLfmProcessor();
+const parsed = await processor.run(processor.parse(memo.entry.body));
+const citations = (parsed as any).data?.citations?.ordered ?? [];
+// Outline comes from LFM's remarkHeadingIds, not a DOM scrape — a `#` inside
+// a code fence is a `code` node and can never leak into the ToC.
+const rawHeadings = (parsed as any).data?.headings ?? [];
+
+// The memo authors its own inline ToC because the same file is exported to PDF,
+// where there is no rail to navigate from. On the web that list duplicates the
+// rail and drifts from it, so it comes out of both the body and the outline.
+// See src/lib/investments/strip-toc.ts.
+const { tree, headings, removed } = stripAuthoredToc(parsed as any, rawHeadings);
+const showToc = hasTableOfContents(headings);
+
+if (import.meta.env.DEV && !removed) {
+  console.log(`[investments] ${memo.slug}: no authored ToC section found to strip`);
+}
+
+const meta = {
+  title: `${memo.title} — Investment Memo · Michael P. Staton`,
+  description: memo.lede,
+  type: 'article' as const,
+};
+---
+
+<BaseLayout title={meta.title} description={meta.description} meta={meta}>
+  <div class="memo-shell px-6 py-8" data-has-toc={showToc || undefined}>
+    <a
+      href="/investments"
+      class="mb-8 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      Back to Investment Memos
+    </a>
+
+    <div class="memo-layout" data-has-toc={showToc || undefined}>
+      <TableOfContents headings={headings} />
+
+      <div class="memo-article">
+        <header class="mb-10">
+          <div class="mb-4 flex flex-wrap items-center gap-2">
+            {memo.status && (
+              <span class="rounded-full border border-border bg-muted px-2.5 py-1 text-xs text-muted-foreground">
+                {memo.status}
+              </span>
+            )}
+            {memo.stage && (
+              <span class="rounded-full border border-border bg-muted px-2.5 py-1 text-xs text-muted-foreground">
+                {memo.stage}
+              </span>
+            )}
+            {memo.verdict && (
+              <span class="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+                {memo.verdict}{memo.score ? ` · ${memo.score}` : ''}
+              </span>
+            )}
+          </div>
+
+          <h1 class="gradient-text mb-4">{memo.title}</h1>
+
+          {memo.lede && (
+            <p class="mb-6 text-lg leading-relaxed text-muted-foreground">{memo.lede}</p>
+          )}
+
+          <div class="flex flex-wrap items-center gap-4 border-y border-border py-3 text-sm text-muted-foreground">
+            {memo.companyUrl && (
+              <a
+                href={memo.companyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 text-primary hover:underline"
+              >
+                {memo.faviconUrl && <img src={memo.faviconUrl} alt="" width="16" height="16" class="rounded-sm" />}
+                {memo.host}
+              </a>
+            )}
+            {memo.dateAuthored && (
+              <span>
+                Written <time datetime={toIsoDate(memo.dateAuthored)}>{formatDate(memo.dateAuthored)}</time>
+              </span>
+            )}
+            <a href={`/hype-machine/${memo.slug}`} class="hover:text-primary transition-colors">
+              Company profile →
+            </a>
+          </div>
+
+          {memo.tags.length > 0 && (
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              {memo.tags.map((tag) => (
+                <span class="rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                  {humanizeTerm(tag)}
+                </span>
+              ))}
+            </div>
+          )}
+        </header>
+
+        <article class="prose">
+          <AstroMarkdown node={tree} />
+        </article>
+
+        <Sources citations={citations} />
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Mirrors the essay shell: the rail only exists where there is room for it,
+     and the article keeps its reading measure either way. */
+  .memo-shell {
+    max-width: 56rem;
+    margin-inline: auto;
+  }
+
+  /* `main` is a flex item, and flex descendants refuse to shrink below their
+     content unless told to — without this chain a wide table inside the memo
+     propagates its width up and the page bleeds sideways. `clip` rather than
+     `hidden` so it does not create a scroll container and break the sticky ToC. */
+  .memo-layout {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+  .memo-article { min-width: 0; max-width: 100%; }
+
+  @media (min-width: 1280px) {
+    .memo-shell[data-has-toc] { max-width: 74rem; }
+    .memo-layout[data-has-toc] {
+      display: grid;
+      grid-template-columns: 15rem minmax(0, 1fr);
+      gap: 3rem;
+      align-items: start;
+    }
+    .memo-layout[data-has-toc] .memo-article { max-width: 56rem; }
+  }
+</style>

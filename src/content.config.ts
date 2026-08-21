@@ -137,6 +137,60 @@ const investmentMemos = defineCollection({
     tags: z.array(z.string()).optional(),
     site_uuid: z.string().optional(),
     hex_code: z.string().optional(),
+
+    // --- Company layer -------------------------------------------------
+    // Hand-authored keys the orchestrator does not write. They describe the
+    // COMPANY rather than the document, and they are what /hype-machine
+    // renders. Every one is optional: a memo that arrives with none of them
+    // still lists on /investments, it just gets no OG card and no take.
+    //
+    // `company_url` is the OG source of truth — src/lib/investments/og.ts
+    // fetches it at build time through LFM's dispatcher and caches the
+    // result. Without it there is nothing to fetch and the card falls back
+    // to title + lede.
+    company_url: z.string().optional(),
+    // Display name when it differs from `title` (title is the memo's name,
+    // which for Chroma is "Chroma" but for others may carry a suffix).
+    company_name: z.string().optional(),
+    // Route segment. Defaults to the memo's directory name, slugified.
+    slug: z.string().optional(),
+
+    // Listing control. `hype: true` puts the company on /hype-machine;
+    // /investments lists every memo regardless.
+    hype: z.boolean().optional(),
+    // Ordering within /hype-machine — lower sorts first, absent sorts last.
+    hype_rank: z.number().optional(),
+
+    // Michael's comments, split by voice because the two surfaces want
+    // opposite registers of the same opinion.
+    //
+    // `hype_note` is the enthusiastic read — why this company is worth
+    // someone's attention. It is the only long-form comment /hype-machine
+    // shows, and it should never carry a hedge or a score.
+    //
+    // `my_take` is the investor read — the reservation, the open question,
+    // the verdict. It belongs on /investments beside the scorecard, and is
+    // deliberately absent from the hype surface.
+    //
+    // `zinger` is the one-line hook both surfaces lead with (falls back to
+    // `lede`, then the company's own OG description).
+    hype_note: z.string().optional(),
+    my_take: z.string().optional(),
+    zinger: z.string().optional(),
+
+    // Deal shape — rendered as facts on the card and the profile.
+    stage: z.string().optional(),
+    verdict: z.string().optional(),
+    score: z.coerce.string().optional(),
+
+    // Manual OG overrides. Set any of these when the fetched metadata is
+    // wrong, thin, or the company site blocks crawlers — they win over
+    // whatever the dispatcher returns, so a bad fetch is always correctable
+    // without disabling the fetch.
+    og_title: z.string().optional(),
+    og_description: z.string().optional(),
+    og_image: z.string().optional(),
+    accent_color: z.string().optional(),
   }).passthrough(),
 });
 

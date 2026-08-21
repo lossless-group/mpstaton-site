@@ -1,0 +1,153 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CompanyCard from '../../components/investments/CompanyCard.astro';
+import type { Investment } from '../../lib/investments/types';
+
+export const prerender = true;
+
+/**
+ * Fixtures, not live data. The catalog has to show the degraded states —
+ * no OG image, no take, no facts — and those states are exactly the ones
+ * the real collection does not currently contain.
+ */
+function fixture(over: Partial<Investment>): Investment {
+  return {
+    slug: 'example',
+    companyName: 'Example Co',
+    title: 'Example Co',
+    tags: [],
+    og: { status: 'none' },
+    hype: true,
+    hypeRank: 1,
+    entry: null as any,
+    ...over,
+  } as Investment;
+}
+
+const full = fixture({
+  slug: 'chroma',
+  companyName: 'Chroma',
+  title: 'Chroma',
+  zinger: 'The retrieval layer repositioning itself as agent memory — evaluated the week it said so out loud.',
+  hypeNote:
+    'The thing people actually reach for. Fifteen million downloads a month and a place in 90,000+ codebases — not because anyone sold it to them, but because it is the shortest path from "I have documents" to "my model can find them."',
+  myTake:
+    'The default install for anyone prototyping RAG, and that distribution is real. The open question is whether developer affection converts into enterprise contracts before the hyperscalers make the category a feature.',
+  stage: 'Series B',
+  verdict: 'Consider',
+  score: '3.1 / 5.0',
+  status: 'Draft',
+  tags: ['Vector-Database', 'AI-Infrastructure', 'Retrieval', 'Agent-Memory', 'Investment-Memo'],
+  companyUrl: 'https://www.trychroma.com',
+  host: 'trychroma.com',
+  faviconUrl: 'https://www.google.com/s2/favicons?domain=trychroma.com&sz=64',
+  og: {
+    image: 'https://www.trychroma.com/card.png',
+    description: 'Open-source search infrastructure for AI',
+    source: 'trychroma.com',
+    status: 'hit',
+  },
+});
+
+const noImage = fixture({
+  slug: 'no-og',
+  companyName: 'Stealth Co',
+  title: 'Stealth Co',
+  zinger: 'A company whose site ships no OpenGraph tags at all.',
+  hypeNote: 'The card still has to hold its place in the grid, so the image band becomes a tinted panel with the favicon centred rather than collapsing.',
+  stage: 'Seed',
+  companyUrl: 'https://example.com',
+  host: 'example.com',
+  faviconUrl: 'https://www.google.com/s2/favicons?domain=example.com&sz=64',
+  tags: ['Stealth'],
+  og: { status: 'failed', source: 'example.com' },
+});
+
+const bare = fixture({
+  slug: 'bare',
+  companyName: 'Bare Minimum Inc',
+  title: 'Bare Minimum Inc',
+  zinger: 'Title and lede only — no take, no facts, no tags, no company URL.',
+  og: { status: 'none' },
+});
+
+const accented = fixture({
+  ...full,
+  slug: 'accented',
+  companyName: 'Accented Co',
+  accentColor: '#327EFF',
+  hypeNote: 'Same card with accent_color set in frontmatter. The rule beside the note and the image band tint both follow it.',
+});
+---
+
+<BaseLayout title="Design System · Cards — MP Staton" noindex>
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <a href="/design-system" class="text-sm text-muted-foreground hover:text-foreground">&larr; Design System</a>
+    <h1 class="text-foreground mt-4 mb-2">Cards</h1>
+    <p class="text-lg text-muted-foreground mb-12 max-w-2xl">
+      Index cards for collection surfaces. A card is a <em>summary with a link</em> — it never
+      owns page layout and never fetches anything itself.
+    </p>
+
+    <article class="mb-16">
+      <header class="mb-6 border-b border-border pb-4">
+        <h2 class="text-foreground text-2xl font-semibold">CompanyCard</h2>
+        <p class="text-sm text-muted-foreground mt-2 max-w-3xl">
+          The index card for <a class="underline underline-offset-2" href="/hype-machine">/hype-machine</a>
+          and <a class="underline underline-offset-2" href="/investments">/investments</a>. Adapted from
+          lossless.group's <code>ToolCard</code> — same anatomy, rebuilt on this site's Tailwind
+          tokens — plus one section ToolCard has no equivalent for: <code>my_take</code>.
+        </p>
+        <dl class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl">
+          <div>
+            <dt class="text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground/70 font-medium">Props</dt>
+            <dd class="mt-1 text-sm text-foreground"><code>investment</code>, <code>href</code>, <code>variant</code></dd>
+          </div>
+          <div>
+            <dt class="text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground/70 font-medium">Variants</dt>
+            <dd class="mt-1 text-sm text-foreground"><code>hype</code> &rarr; <code>hype_note</code>, no scorecard · <code>memo</code> &rarr; <code>my_take</code> + facts</dd>
+          </div>
+          <div>
+            <dt class="text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground/70 font-medium">Accent</dt>
+            <dd class="mt-1 text-sm text-foreground"><code>--card-accent</code>, from <code>accent_color</code></dd>
+          </div>
+          <div>
+            <dt class="text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground/70 font-medium">Imagery</dt>
+            <dd class="mt-1 text-sm text-foreground">Build-time OG fetch, 1200&times;630 frame</dd>
+          </div>
+        </dl>
+        <p class="text-sm text-muted-foreground mt-4 max-w-3xl">
+          <strong class="text-foreground">The comment is the point.</strong> On a tool card the
+          description is the product's own pitch. Here the company's OG description is the least
+          valuable text — anyone can read the homepage. The comment is why the page exists, so it
+          gets the accent rule and sits above the facts, not under the pitch.
+        </p>
+        <p class="text-sm text-muted-foreground mt-3 max-w-3xl">
+          <strong class="text-foreground">The variants differ by what they withhold.</strong>
+          <code>hype</code> renders <code>hype_note</code> and shows no verdict, score, or draft
+          status — a &ldquo;CONSIDER &middot; 3.1/5.0&rdquo; chip is the opposite of hype.
+          <code>memo</code> renders <code>my_take</code>, the reservations, and the numbers.
+          Same component, same data, opposite register.
+        </p>
+      </header>
+
+      <h3 class="text-foreground font-semibold mb-3">States</h3>
+      <div class="rounded-lg border border-border p-6 md:p-8 bg-background">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <CompanyCard investment={full} href="#" variant="hype" />
+          <CompanyCard investment={accented} href="#" variant="hype" />
+          <CompanyCard investment={noImage} href="#" variant="hype" />
+          <CompanyCard investment={bare} href="#" variant="hype" />
+          <CompanyCard investment={full} href="#" variant="memo" />
+        </div>
+      </div>
+
+      <p class="text-sm text-muted-foreground mt-4 max-w-3xl">
+        Left to right: full data · <code>accent_color</code> set · no OG image (tinted band, favicon
+        centred) · frontmatter-only fallback · the <code>memo</code> variant. Compare the first and
+        last cards — same fixture, but only the <code>memo</code> one carries Stage / Verdict /
+        Score and the draft-status pill.
+      </p>
+    </article>
+  </section>
+</BaseLayout>

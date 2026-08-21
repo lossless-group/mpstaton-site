@@ -1,0 +1,245 @@
+---
+/**
+ * CompanyCard — the index card for both /hype-machine and /investments.
+ *
+ * Adapted from lossless.group's ToolCard (site/src/components/tool-components/
+ * ToolCard.astro): same anatomy — OG image on top, site name linking out,
+ * a one-line title, a description, tags, and a CTA into "our thoughts" — but
+ * rebuilt on this site's Tailwind tokens rather than the --clr-lossless-*
+ * variables, and with one section ToolCard has no equivalent for: `my_take`.
+ *
+ * THE TAKE IS THE POINT. On a tool card the description is the product's own
+ * pitch. Here the company's OG description is the least valuable text on the
+ * card — anyone can read trychroma.com. Michael's comment is why the page
+ * exists, so it gets the accent rule and sits above the fold of the card,
+ * not buried under the pitch.
+ *
+ * Both surfaces share this component and differ only in `href` and `variant`.
+ * That is the redundancy working as intended: one card, two entrances.
+ */
+import type { Investment } from '../../lib/investments/types';
+import { humanizeTerm } from '../../utils/humanize-term';
+
+interface Props {
+  investment: Investment;
+  /** Where the card points. The two surfaces route to their own detail pages. */
+  href: string;
+  /**
+   * `hype` leads with the company and its imagery; `memo` leads with the
+   * document and its metadata. Same data, different emphasis.
+   */
+  variant?: 'hype' | 'memo';
+}
+
+const { investment: i, href, variant = 'hype' } = Astro.props;
+
+const isHype = variant === 'hype';
+
+const image = i.og.image;
+const heading = isHype ? i.companyName : i.title;
+const cta = isHype ? "Why I'm into it" : 'Read the memo';
+
+/**
+ * THE VARIANTS DIFFER BY WHAT THEY WITHHOLD, not by styling.
+ *
+ * `hype` is the enthusiastic register: the company, the hook, and the reason
+ * it is worth attention. No scorecard, no verdict, no draft status — a
+ * "CONSIDER · 3.1/5.0" chip is the precise opposite of hype, and a hedge
+ * belongs next to the analysis that earned it, not on a card meant to make
+ * someone curious.
+ *
+ * `memo` is the analytical register: the document title, the reservations,
+ * and the numbers. Everything the hype card refuses to show.
+ */
+const note = isHype ? i.hypeNote : i.myTake;
+const noteLabel = isHype ? 'Why it matters' : 'My take';
+
+// Facts are memo-only. Each is independently optional, so a memo with no stage
+// and no score renders no row at all rather than empty labels.
+const facts = isHype
+  ? []
+  : ([
+      i.stage && { label: 'Stage', value: i.stage },
+      i.verdict && { label: 'Verdict', value: i.verdict },
+      i.score && { label: 'Score', value: i.score },
+    ].filter(Boolean) as { label: string; value: string }[]);
+
+// The accent tints the image frame and the take's rule. Falls back to the
+// theme primary so an un-branded company still looks deliberate.
+const accent = i.accentColor;
+---
+
+<article
+  class="company-card group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/50"
+  style={accent ? `--card-accent: ${accent};` : undefined}
+  data-tags={JSON.stringify(i.tags)}
+>
+  {image ? (
+    <div class="company-card__image">
+      <img
+        src={image}
+        alt={`${i.companyName} — OpenGraph preview`}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  ) : (
+    /* No OG image: a tinted band keeps every card the same height and the grid
+       from going ragged, rather than collapsing this one card. Note this is a
+       JS comment, not an HTML one — the branches of a template expression are
+       parsed as expressions, where `<!-- -->` is a syntax error. */
+    <div class="company-card__image company-card__image--empty" aria-hidden="true">
+      {i.faviconUrl && <img src={i.faviconUrl} alt="" width="32" height="32" loading="lazy" />}
+    </div>
+  )}
+
+  <div class="flex flex-1 flex-col gap-3 p-5">
+    <div class="flex items-start justify-between gap-3">
+      <div class="min-w-0">
+        <h3 class="truncate text-lg font-semibold leading-tight text-foreground group-hover:text-primary transition-colors">
+          <a href={href}>{heading}</a>
+        </h3>
+        {i.host && (
+          <a
+            href={i.companyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-0.5 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors"
+          >
+            {i.faviconUrl && <img src={i.faviconUrl} alt="" width="14" height="14" class="rounded-sm" loading="lazy" />}
+            {i.host}
+          </a>
+        )}
+      </div>
+      {!isHype && i.status && (
+        <span class="shrink-0 rounded-full border border-border bg-muted px-2 py-0.5 text-[0.7rem] text-muted-foreground">
+          {i.status}
+        </span>
+      )}
+    </div>
+
+    {i.zinger && (
+      <p class="line-clamp-2 text-sm leading-relaxed text-muted-foreground">{i.zinger}</p>
+    )}
+
+    {note && (
+      <div class="company-card__take">
+        <span class="company-card__take-label">{noteLabel}</span>
+        <p class="line-clamp-3 text-sm leading-relaxed text-foreground/90">{note}</p>
+      </div>
+    )}
+
+    {facts.length > 0 && (
+      <dl class="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+        {facts.map((f) => (
+          <div class="flex items-baseline gap-1.5">
+            <dt class="text-muted-foreground">{f.label}</dt>
+            <dd class="font-medium text-foreground">{f.value}</dd>
+          </div>
+        ))}
+      </dl>
+    )}
+
+    {i.tags.length > 0 && (
+      <div class="flex flex-wrap gap-1.5">
+        {i.tags.slice(0, 4).map((tag) => (
+          <span class="rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
+            {humanizeTerm(tag)}
+          </span>
+        ))}
+        {i.tags.length > 4 && (
+          <span class="text-xs text-muted-foreground">+{i.tags.length - 4}</span>
+        )}
+      </div>
+    )}
+
+    <a
+      href={href}
+      class="mt-auto inline-flex items-center gap-1 pt-1 text-sm font-medium text-primary hover:gap-2 transition-all"
+    >
+      {cta}
+      <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</article>
+
+<script>
+  /**
+   * OG images are third-party URLs on someone else's CDN and they rot. When one
+   * 404s, drop the frame entirely rather than leaving a broken-image glyph —
+   * the card reads fine without it.
+   */
+  document.querySelectorAll<HTMLImageElement>('.company-card__image img').forEach((img) => {
+    img.addEventListener(
+      'error',
+      () => {
+        const frame = img.closest('.company-card__image');
+        if (frame) frame.remove();
+      },
+      { once: true }
+    );
+  });
+</script>
+
+<style>
+  .company-card {
+    /* Per-card accent, set inline from frontmatter; theme primary otherwise. */
+    --card-accent: var(--color-primary, var(--primary));
+  }
+
+  .company-card__image {
+    aspect-ratio: 1200 / 630;
+    overflow: hidden;
+    background: color-mix(in oklab, var(--card-accent) 12%, transparent);
+    border-bottom: 1px solid var(--color-border, var(--border));
+  }
+
+  .company-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 400ms ease;
+  }
+
+  .company-card:hover .company-card__image img {
+    transform: scale(1.04);
+  }
+
+  /* Placeholder band: centers the favicon instead of stretching it. */
+  .company-card__image--empty {
+    display: grid;
+    place-items: center;
+  }
+  .company-card__image--empty img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    opacity: 0.6;
+  }
+
+  /* The take gets the only accent rule on the card — it is the one thing here
+     that exists nowhere else on the internet. */
+  .company-card__take {
+    border-left: 2px solid var(--card-accent);
+    padding-left: 0.75rem;
+  }
+
+  .company-card__take-label {
+    display: block;
+    margin-bottom: 0.15rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--card-accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .company-card__image img,
+    .company-card:hover .company-card__image img {
+      transition: none;
+      transform: none;
+    }
+  }
+</style>

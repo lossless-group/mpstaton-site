@@ -1,0 +1,67 @@
+---
+/**
+ * /hype-machine — companies Michael is actively sharing and hyping.
+ *
+ * A deliberate near-duplicate of /investments. The two surfaces render the
+ * same collection through the same card; they differ in WHO is being shown.
+ * This page is company-forward and filtered to `hype: true` — the short list
+ * worth telling someone about. /investments is document-forward and shows
+ * every memo, including the ones that ended in a pass.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CompanyCard from '../../components/investments/CompanyCard.astro';
+import { getHypedInvestments } from '../../lib/investments/companies';
+
+// Prerendered: the site is `output: 'server'`, and the OG fetch underneath
+// this page writes a cache file. A serverless function's filesystem is
+// read-only and discarded per invocation (see changelog/2026-08-17_03.md), so
+// the fetch has to happen at build time or not at all.
+export const prerender = true;
+
+const companies = await getHypedInvestments();
+
+const meta = {
+  title: 'Hype Machine · Michael P. Staton',
+  description:
+    'Companies I am actively sharing and hyping — what they do, and what I actually think about them.',
+  type: 'website' as const,
+};
+---
+
+<BaseLayout title={meta.title} description={meta.description} meta={meta}>
+  <div class="mx-auto max-w-6xl px-6 py-12">
+    <header class="mb-10 max-w-2xl">
+      <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Hype Machine</p>
+      <h1 class="gradient-text mt-2 mb-4">Companies I'm talking about</h1>
+      <p class="text-lg leading-relaxed text-muted-foreground">
+        The short list. Companies I'm actively sharing with founders, operators, and other
+        investors — with the reason I'm sharing them, not just the pitch off their homepage.
+      </p>
+    </header>
+
+    {companies.length === 0 ? (
+      <div class="rounded-lg border border-dashed border-border p-12 text-center">
+        <p class="text-muted-foreground">
+          Nothing on the hype machine right now. Add <code class="rounded bg-muted px-1.5 py-0.5 text-sm">hype: true</code>
+          to a memo's frontmatter to list it here.
+        </p>
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {companies.map((c) => (
+          <CompanyCard investment={c} href={`/hype-machine/${c.slug}`} variant="hype" />
+        ))}
+      </div>
+    )}
+
+    <footer class="mt-14 border-t border-border pt-6">
+      <a
+        href="/investments"
+        class="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-primary"
+      >
+        Looking for the full memos? See all investment write-ups
+        <span aria-hidden="true">→</span>
+      </a>
+    </footer>
+  </div>
+</BaseLayout>
