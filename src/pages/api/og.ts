@@ -8,6 +8,7 @@
 import type { APIRoute } from 'astro';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
+import { unpackBands } from '../../lib/diary/schedule';
 
 // Fetch and cache the Inter Bold font from Google Fonts
 let fontDataCache: ArrayBuffer | null = null;
@@ -38,6 +39,17 @@ const CARD_BG = '#16162a';
 const TEXT_PRIMARY = '#f1f5f9';
 const TEXT_MUTED = '#94a3b8';
 
+// Availability palette for diary cards. Same three brand-gradient stops the
+// /diary page uses, and deliberately the same meaning: a card and the page it
+// links to must not disagree about which colour means "don't schedule".
+const CRIMSON = '#D9233B';
+const BAND_FILL: Record<string, string> = {
+  locked: CRIMSON,
+  open: TEAL,
+  free: PURPLE,
+  transit: '#3f3f5a',
+};
+
 export const GET: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url);
@@ -45,6 +57,10 @@ export const GET: APIRoute = async ({ request }) => {
     const title = url.searchParams.get('title') ?? 'Michael P. Staton';
     const description = url.searchParams.get('description') ?? '';
     const subtitle = url.searchParams.get('subtitle') ?? '';
+    // Optional: packed availability bands (see packBands in lib/diary/schedule).
+    // Present only on diary cards; every other caller renders exactly as before.
+    const bands = url.searchParams.get('bands');
+    const bandDays = bands ? unpackBands(bands) : [];
 
     const truncatedTitle = title.length > 70 ? title.slice(0, 67) + '...' : title;
     const truncatedDesc = description.length > 120 ? description.slice(0, 117) + '...' : description;
@@ -182,6 +198,47 @@ export const GET: APIRoute = async ({ request }) => {
                             },
                           ]
                         : []),
+                      // Availability strip — one mini bar per day, in the same
+                      // proportions and colours the itinerary page draws. The
+                      // word "Availability" on a card that shows no availability
+                      // is a label; this makes it a preview.
+                      ...(bandDays.length
+                        ? [
+                            {
+                              type: 'div',
+                              props: {
+                                style: {
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  gap: '10px',
+                                  marginTop: '30px',
+                                },
+                                children: bandDays.slice(0, 4).map((day) => ({
+                                  type: 'div',
+                                  props: {
+                                    style: {
+                                      display: 'flex',
+                                      width: '100%',
+                                      height: '18px',
+                                      borderRadius: '4px',
+                                      overflow: 'hidden',
+                                    },
+                                    children: day.map((seg) => ({
+                                      type: 'div',
+                                      props: {
+                                        style: {
+                                          width: `${seg.percent}%`,
+                                          height: '100%',
+                                          backgroundColor: BAND_FILL[seg.state] ?? TEXT_MUTED,
+                                        },
+                                      },
+                                    })),
+                                  },
+                                })),
+                              },
+                            },
+                          ]
+                        : []),
                     ],
                   },
                 },
@@ -196,16 +253,56 @@ export const GET: APIRoute = async ({ request }) => {
                       marginTop: '30px',
                     },
                     children: [
-                      {
-                        type: 'div',
-                        props: {
-                          style: {
-                            fontSize: '16px',
-                            color: '#475569',
+                      bandDays.length
+                        ? {
+                            // A colour key beats the site tagline here: the card's
+                            // whole claim is the strip above it, and a strip with
+                            // no legend is decoration.
+                            type: 'div',
+                            props: {
+                              style: { display: 'flex', gap: '18px', alignItems: 'center' },
+                              children: [
+                                ['In session', CRIMSON],
+                                ['At the venue', TEAL],
+                                ['Off-site', PURPLE],
+                              ].map(([label, color]) => ({
+                                type: 'div',
+                                props: {
+                                  style: { display: 'flex', alignItems: 'center', gap: '7px' },
+                                  children: [
+                                    {
+                                      type: 'div',
+                                      props: {
+                                        style: {
+                                          width: '11px',
+                                          height: '11px',
+                                          borderRadius: '3px',
+                                          backgroundColor: color as string,
+                                        },
+                                      },
+                                    },
+                                    {
+                                      type: 'div',
+                                      props: {
+                                        style: { fontSize: '15px', color: TEXT_MUTED },
+                                        children: label as string,
+                                      },
+                                    },
+                                  ],
+                                },
+                              })),
+                            },
+                          }
+                        : {
+                            type: 'div',
+                            props: {
+                              style: {
+                                fontSize: '16px',
+                                color: '#475569',
+                              },
+                              children: 'VC · Investor · Angel · Cofounder · Catalyst',
+                            },
                           },
-                          children: 'VC · Investor · Angel · Cofounder · Catalyst',
-                        },
-                      },
                       // Three brand dots
                       {
                         type: 'div',

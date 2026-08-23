@@ -29,6 +29,8 @@ export interface DynamicOgImageParams {
   title: string;
   description?: string;
   subtitle?: string;
+  /** Packed availability bands — diary cards only. See lib/diary/schedule. */
+  bands?: string;
 }
 
 export function buildDynamicOgImageUrl(params: DynamicOgImageParams, siteUrl?: string): string {
@@ -37,6 +39,7 @@ export function buildDynamicOgImageUrl(params: DynamicOgImageParams, siteUrl?: s
   url.searchParams.set('title', params.title);
   if (params.description) url.searchParams.set('description', params.description);
   if (params.subtitle) url.searchParams.set('subtitle', params.subtitle);
+  if (params.bands) url.searchParams.set('bands', params.bands);
   return url.toString();
 }
 
@@ -53,7 +56,10 @@ export function buildOgMeta(input: ShareMetaInput = {}, siteUrl?: string): MetaT
     image = ensureAbsoluteUrl(input.image, baseUrl);
     imageAlt = `${title} - ${SITE_SEO.siteName}`;
   } else if (input.title) {
-    image = buildDynamicOgImageUrl({ title: input.title, description: input.description, subtitle: input.subtitle }, baseUrl);
+    image = buildDynamicOgImageUrl(
+      { title: input.title, description: input.description, subtitle: input.subtitle, bands: input.bands },
+      baseUrl
+    );
     imageAlt = `${title} - ${SITE_SEO.siteName}`;
   } else {
     image = ensureAbsoluteUrl(SITE_SEO.defaultImage, baseUrl);

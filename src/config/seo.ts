@@ -23,4 +23,10 @@ export type ShareMetaInput = {
   image?: string;
   url?: string;
   type?: 'website' | 'article';
+  /**
+   * Packed availability bands, rendered as a strip on the generated card.
+   * Diary events only — see packBands() in src/lib/diary/schedule.ts. Ignored
+   * when `image` is set, since an explicit image wins over generation.
+   */
+  bands?: string;
 };

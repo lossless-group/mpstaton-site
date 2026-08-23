@@ -46,6 +46,14 @@ function dayCount(start: Date | null, end: Date): number {
 <BaseLayout
   title="Diary"
   description="Where Michael Staton is, and when — upcoming events with itineraries and meeting windows."
+  meta={{
+    title: 'Diary',
+    description: upcoming.length
+      ? `Next up: ${upcoming[0].entry.data.title ?? upcoming[0].entry.id}, ${dateRange(upcoming[0].start, upcoming[0].end)}`
+      : 'Where I am and when.',
+    subtitle: 'Where I am',
+    url: '/diary',
+  }}
 >
   <section class="px-6 pt-12 pb-8 md:pt-14 md:pb-10">
     <div class="text-center max-w-2xl mx-auto">

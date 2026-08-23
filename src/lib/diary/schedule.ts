@@ -129,3 +129,43 @@ export function isUpcoming(dateEnd: Date | string, now = new Date()): boolean {
   endOfDay.setHours(23, 59, 59, 999);
   return endOfDay.getTime() >= now.getTime();
 }
+
+/**
+ * Pack a set of day-bands into a query-string-safe string for the OG endpoint.
+ *
+ * Format: one letter per state (l/o/f/t) followed by that segment's percentage;
+ * days separated by "|". The letters are their own delimiters, so no separator
+ * is needed between segments and three days fit in ~80 characters — short
+ * enough to live in an og:image URL that Slack, iMessage and WhatsApp all have
+ * to fetch. Round to one decimal: the card is 1200px wide, so 0.1% is a tenth
+ * of a pixel and anything finer is bytes spent on nothing.
+ */
+const STATE_CODE: Record<BandState, string> = { locked: 'l', open: 'o', free: 'f', transit: 't' };
+
+export function packBands(win: Window, days: { bands?: Band[] }[]): string {
+  return days
+    .filter((day) => day.bands?.length)
+    .map((day) =>
+      day.bands!
+        .map((b) => `${STATE_CODE[b.state]}${spanPercent(win, b.from, b.to).toFixed(1)}`)
+        .join('')
+    )
+    .join('|');
+}
+
+/** Inverse of packBands, for the OG renderer. Unknown letters are dropped. */
+export function unpackBands(packed: string): { state: BandState; percent: number }[][] {
+  const byCode: Record<string, BandState> = { l: 'locked', o: 'open', f: 'free', t: 'transit' };
+  return packed
+    .split('|')
+    .map((day) => {
+      const out: { state: BandState; percent: number }[] = [];
+      for (const [, code, pct] of day.matchAll(/([loft])(\d+(?:\.\d+)?)/g)) {
+        const state = byCode[code];
+        const percent = Number(pct);
+        if (state && Number.isFinite(percent) && percent > 0) out.push({ state, percent });
+      }
+      return out;
+    })
+    .filter((day) => day.length > 0);
+}

@@ -3,7 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AvailabilityBar from '../../components/diary/AvailabilityBar.astro';
 import SessionTimeline from '../../components/diary/SessionTimeline.astro';
-import { BAND_COPY } from '../../lib/diary/schedule';
+import { BAND_COPY, packBands } from '../../lib/diary/schedule';
 
 // Static: an itinerary doesn't change between requests, so it belongs on the CDN.
 // (The /diary index is deliberately left server-rendered — it splits upcoming from
@@ -39,11 +39,39 @@ function emphasize(text: string): string {
 
 const days = d.days ?? [];
 const anchorFor = (i: number) => `day-${i + 1}`;
+
+// Share card: event name, the date range, and the availability strip itself.
+// The card's subtitle is the pill in the corner — "Availability" rather than
+// "Diary", because the strip below it is what the reader is being offered.
+function shareRange(start?: Date, end?: Date): string {
+  if (!start) return '';
+  const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', timeZone: 'UTC' };
+  const s = start.toLocaleDateString('en-US', opts);
+  if (!end || start.getTime() === end.getTime()) return `${s}, ${start.getUTCFullYear()}`;
+  const sameMonth = start.getUTCMonth() === end.getUTCMonth() && start.getUTCFullYear() === end.getUTCFullYear();
+  const e = sameMonth ? end.getUTCDate() : end.toLocaleDateString('en-US', opts);
+  return `${s}–${e}, ${end.getUTCFullYear()}`;
+}
+
+const shareDates = shareRange(
+  d.date_start ? new Date(d.date_start) : undefined,
+  d.date_end ? new Date(d.date_end) : undefined
+);
+const shareDescription = [shareDates, d.location].filter(Boolean).join(' · ');
+const packedBands = packBands(win, days);
 ---
 
 <BaseLayout
   title={`${d.title ?? entry.id} — Diary`}
   description={d.summary ?? d.lede ?? `Itinerary for ${d.title ?? entry.id}.`}
+  meta={{
+    title: d.title ?? entry.id,
+    description: shareDescription,
+    subtitle: packedBands ? 'Availability' : 'Diary',
+    bands: packedBands || undefined,
+    type: 'article',
+    url: Astro.url.pathname,
+  }}
 >
   <article class="max-w-3xl mx-auto px-6 pt-12 pb-16">
 
