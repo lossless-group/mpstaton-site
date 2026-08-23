@@ -39,3 +39,10 @@ src/data/track-record/private/
 
 # context-v scratch — out-of-band material, never committed
 context-v/extra/
+
+# context-v/narratives — real proposal/deck narratives are local-only
+# (this is a public repo). Same convention as /promote:
+#   • directories prefixed with `_` ARE committed (templates, scaffolding)
+#   • directories with real slugs (e.g. lossless-palmer-ai) are NOT committed
+context-v/narratives/*/
+!context-v/narratives/_*/
