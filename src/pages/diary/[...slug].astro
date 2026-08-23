@@ -1,0 +1,235 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AvailabilityBar from '../../components/diary/AvailabilityBar.astro';
+import SessionTimeline from '../../components/diary/SessionTimeline.astro';
+import { BAND_COPY } from '../../lib/diary/schedule';
+
+// Static: an itinerary doesn't change between requests, so it belongs on the CDN.
+// (The /diary index is deliberately left server-rendered — it splits upcoming from
+// past against `new Date()`, which would freeze at build time if prerendered.)
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const entries = await getCollection('diary', ({ data }) => data.publish !== false);
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+
+const win = d.day_window ?? { start: '07:00', end: '21:00' };
+
+function dayHeading(date: Date | undefined): { weekday: string; short: string } {
+  if (!date) return { weekday: '', short: '' };
+  return {
+    weekday: date.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' }),
+    short: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }),
+  };
+}
+
+/** Minimal inline emphasis so verdicts can bold the decision without a markdown pass. */
+function emphasize(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
+
+const days = d.days ?? [];
+const anchorFor = (i: number) => `day-${i + 1}`;
+---
+
+<BaseLayout
+  title={`${d.title ?? entry.id} — Diary`}
+  description={d.summary ?? d.lede ?? `Itinerary for ${d.title ?? entry.id}.`}
+>
+  <article class="max-w-3xl mx-auto px-6 pt-12 pb-16">
+
+    <a href="/diary" class="text-sm text-muted-foreground hover:text-primary transition-colors">← Diary</a>
+
+    <header class="mt-4 mb-8">
+      {d.host && <p class="text-xs uppercase tracking-[0.16em] text-muted-foreground mb-2">{d.host}</p>}
+      <h1 class="gradient-text mb-3">{d.title ?? entry.id}</h1>
+      {d.lede && <p class="text-lg text-muted-foreground mb-4">{d.lede}</p>}
+
+      <div class="flex flex-wrap gap-2">
+        {d.location && (
+          <span class="text-sm border border-border rounded-full px-3 py-1 text-muted-foreground">
+            📍 {d.location}
+          </span>
+        )}
+        {(d.links ?? []).map((link) => (
+          <a
+            href={link.url}
+            class="text-sm border border-border rounded-full px-3 py-1 text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors"
+          >{link.label}</a>
+        ))}
+      </div>
+    </header>
+
+    {days.length > 0 && (
+      <nav class="flex gap-2 flex-wrap mb-10 pb-6 border-b border-border">
+        {days.map((day, i) => (
+          <a
+            href={`#${anchorFor(i)}`}
+            class="text-sm border border-border rounded-full px-3 py-1 text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
+          >
+            {dayHeading(day.date).weekday.slice(0, 3)} · {day.label}
+          </a>
+        ))}
+      </nav>
+    )}
+
+    {/* ---- meeting windows ---- */}
+    {days.some((day) => day.bands?.length) && (
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold mb-2">Meeting windows</h2>
+        {d.travel?.note && <p class="text-muted-foreground mb-5 leading-relaxed">{d.travel.note}</p>}
+
+        <ul class="diary-legend">
+          <li><span class="sw sw--locked"></span>{BAND_COPY.locked}</li>
+          <li><span class="sw sw--open"></span>{BAND_COPY.open}</li>
+          <li><span class="sw sw--free"></span>{BAND_COPY.free}</li>
+          <li><span class="sw sw--transit"></span>{BAND_COPY.transit}</li>
+        </ul>
+
+        {days.map((day) => day.bands?.length ? (
+          <div class="mb-7">
+            <h3 class="text-sm font-semibold mb-2">
+              {dayHeading(day.date).weekday}, {dayHeading(day.date).short}
+              <span class="text-muted-foreground font-normal"> · {day.label}</span>
+            </h3>
+            <AvailabilityBar window={win} bands={day.bands} dayLabel={`${day.label ?? ''} ${dayHeading(day.date).short}`} />
+            {day.verdict && (
+              <p class="text-sm text-muted-foreground mt-3 leading-relaxed" set:html={emphasize(day.verdict)} />
+            )}
+          </div>
+        ) : null)}
+
+        {d.share_summary && (
+          <p class="diary-share">
+            <strong>The short version to send out.</strong> {d.share_summary}
+          </p>
+        )}
+      </section>
+    )}
+
+    {/* ---- per-day itinerary ---- */}
+    {days.map((day, i) => (
+      <section id={anchorFor(i)} class="mb-10 scroll-mt-6 border border-border rounded-lg bg-card p-6">
+        <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 mb-2">
+          <span class="text-xs uppercase tracking-[0.12em] text-secondary font-semibold">
+            {dayHeading(day.date).weekday} · {dayHeading(day.date).short}
+          </span>
+          <h2 class="text-xl font-bold">{day.label}</h2>
+          {day.hours && (
+            <span class="text-xs border border-secondary/40 bg-secondary/10 text-secondary rounded-full px-2.5 py-0.5 uppercase tracking-wider">
+              {day.hours}
+            </span>
+          )}
+        </div>
+
+        {day.blurb && <p class="text-muted-foreground mb-6 leading-relaxed">{day.blurb}</p>}
+
+        {day.sessions?.length ? <SessionTimeline sessions={day.sessions} /> : null}
+
+        {day.panels?.length ? (
+          <div class="grid gap-4 mt-6 sm:grid-cols-2 items-start">
+            {day.panels.map((panel) => (
+              <div class="border border-border rounded-md p-4 bg-background/40">
+                <h4 class="text-[0.7rem] uppercase tracking-[0.12em] text-muted-foreground font-semibold mb-2">
+                  {panel.heading}
+                </h4>
+                {panel.body && <p class="text-sm text-muted-foreground leading-relaxed">{panel.body}</p>}
+                {panel.items?.length ? (
+                  <ul class="text-sm text-muted-foreground list-disc pl-4 space-y-1">
+                    {panel.items.map((item) => <li>{item}</li>)}
+                  </ul>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </section>
+    ))}
+
+    {/* ---- logistics ---- */}
+    {d.logistics?.length ? (
+      <section class="mb-10">
+        <h2 class="text-2xl font-bold mb-4">Know before you go</h2>
+        <div class="grid gap-4 sm:grid-cols-2 items-start">
+          {d.logistics.map((block) => (
+            <div class="border border-border rounded-md p-4 bg-card">
+              <h4 class="text-[0.7rem] uppercase tracking-[0.12em] text-muted-foreground font-semibold mb-2">
+                {block.heading}
+              </h4>
+              {block.body && <p class="text-sm text-muted-foreground leading-relaxed">{block.body}</p>}
+              {block.pairs?.length ? (
+                <dl class="text-sm grid grid-cols-[max-content_1fr] gap-x-3 gap-y-1 mt-1">
+                  {block.pairs.map((pair) => (
+                    <>
+                      <dt class="text-muted-foreground">{pair.key}</dt>
+                      <dd class="font-mono text-xs self-center">{pair.value}</dd>
+                    </>
+                  ))}
+                </dl>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      </section>
+    ) : null}
+
+    {/* ---- author's notes from the markdown body ---- */}
+    <div class="prose border-t border-border pt-8">
+      <Content />
+    </div>
+
+    {d.source_note && (
+      <p class="text-xs text-muted-foreground/70 mt-8 pt-4 border-t border-border leading-relaxed">
+        {d.source_note}
+      </p>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  /* Availability semantics, fixed across light and dark. These are the brand
+     gradient's own stops, so they stay in family, but they are deliberately NOT
+     wired to --primary/--accent: those swap value between modes, and "locked"
+     has to mean the same thing on both. */
+  article {
+    --diary-locked: #D9233B;
+    --diary-open: #22A6B5;
+    --diary-free: #9138E0;
+  }
+
+  .diary-legend {
+    display: flex; flex-wrap: wrap;
+    gap: 0.4rem 1.1rem;
+    margin: 0 0 1.5rem; padding: 0;
+    list-style: none;
+    font-size: 0.86rem;
+    color: var(--muted-foreground);
+  }
+  .diary-legend li { display: inline-flex; align-items: center; gap: 0.45rem; }
+  .sw { width: 0.85rem; height: 0.85rem; border-radius: 3px; flex: none; }
+  .sw--locked { background: var(--diary-locked); }
+  .sw--open { background: var(--diary-open); }
+  .sw--free { background: var(--diary-free); }
+  .sw--transit { background: color-mix(in srgb, var(--muted-foreground) 35%, transparent); }
+
+  .diary-share {
+    border-left: 2px solid var(--diary-free);
+    background: color-mix(in srgb, var(--diary-free) 8%, transparent);
+    border-radius: 0 var(--radius-md, 0.5rem) var(--radius-md, 0.5rem) 0;
+    padding: 0.85rem 1rem;
+    margin: 1.5rem 0 0;
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: var(--muted-foreground);
+  }
+  .diary-share strong { color: var(--foreground); }
+</style>

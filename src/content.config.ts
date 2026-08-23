@@ -194,10 +194,118 @@ const investmentMemos = defineCollection({
   }).passthrough(),
 });
 
+
+// Diary — events with an itinerary, in the British sense of the word: the book
+// you keep your engagements in. Each entry is one multi-day event; the body is
+// free-form notes, and the schedule lives in frontmatter because it is
+// structured data (times, rooms, speakers, availability) rather than prose.
+//
+// Permissive like `contextV` and `investmentMemos`: an itinerary is typically
+// transcribed from a conference export under time pressure, and a missing room
+// name should degrade the card, not fail the build. The one place this schema
+// IS strict is time strings — those are validated at render by
+// src/lib/diary/schedule.ts, which throws on a malformed or non-tiling
+// schedule, because a silently wrong availability bar is worse than no bar.
+const diary = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/diary' }),
+  schema: z.object({
+    title: z.string().optional(),
+    host: z.string().optional(),
+    lede: z.string().optional(),
+    summary: z.string().optional(),
+
+    date_start: z.coerce.date().optional(),
+    date_end: z.coerce.date().optional(),
+
+    location: z.string().optional(),
+    locality: z.string().optional(),
+
+    // Why a round trip to the nearest city costs what it costs. Every
+    // "can I escape?" verdict on the page is downstream of this number, so it
+    // is stated rather than assumed.
+    travel: z.object({
+      hub: z.string().optional(),
+      round_trip_minutes: z.number().optional(),
+      note: z.string().optional(),
+    }).passthrough().optional(),
+
+    links: z.array(z.object({
+      label: z.string(),
+      url: z.string(),
+      icon: z.string().optional(),
+    }).passthrough()).optional(),
+
+    // The clock range every availability bar is drawn against. Shared by all
+    // days so the three bars are directly comparable.
+    day_window: z.object({ start: z.string(), end: z.string() }).optional(),
+
+    days: z.array(z.object({
+      date: z.coerce.date().optional(),
+      label: z.string().optional(),
+      hours: z.string().optional(),
+      blurb: z.string().optional(),
+      verdict: z.string().optional(),
+      bands: z.array(z.object({
+        from: z.string(),
+        to: z.string(),
+        state: z.enum(['locked', 'open', 'free', 'transit']),
+        label: z.string().optional(),
+      }).passthrough()).optional(),
+      sessions: z.array(z.object({
+        from: z.string().optional(),
+        to: z.string().optional(),
+        title: z.string().optional(),
+        state: z.enum(['locked', 'open']).optional(),
+        room: z.string().optional(),
+        kind: z.string().optional(),
+        desc: z.string().optional(),
+        note: z.string().optional(),
+        speakers: z.array(z.object({
+          name: z.string(),
+          org: z.string().optional(),
+        }).passthrough()).optional(),
+        // Concurrent options inside one slot — breakouts, workshops, two
+        // dinners at the same hour. Rendered as a "pick one" cluster.
+        tracks: z.array(z.object({
+          title: z.string(),
+          room: z.string().optional(),
+          kind: z.string().optional(),
+          desc: z.string().optional(),
+          speakers: z.array(z.object({
+            name: z.string(),
+            org: z.string().optional(),
+          }).passthrough()).optional(),
+          more: z.string().optional(),
+        }).passthrough()).optional(),
+        tracks_label: z.string().optional(),
+      }).passthrough()).optional(),
+      panels: z.array(z.object({
+        heading: z.string(),
+        body: z.string().optional(),
+        items: z.array(z.string()).optional(),
+      }).passthrough()).optional(),
+    }).passthrough()).optional(),
+
+    // The paragraph to paste into an email when someone asks to meet.
+    share_summary: z.string().optional(),
+
+    logistics: z.array(z.object({
+      heading: z.string(),
+      body: z.string().optional(),
+      pairs: z.array(z.object({ key: z.string(), value: z.string() }).passthrough()).optional(),
+    }).passthrough()).optional(),
+
+    source_note: z.string().optional(),
+    publish: z.boolean().optional(),
+    tags: z.array(z.string()).optional(),
+  }).passthrough(),
+});
+
 export const collections = {
   changelog,
   'context-v': contextV,
   'notes': notes,
   essays,
   'investment-memos': investmentMemos,
+  diary,
 };

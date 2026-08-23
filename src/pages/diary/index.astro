@@ -1,0 +1,136 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { isUpcoming } from '../../lib/diary/schedule';
+
+const all = await getCollection('diary', ({ data }) => data.publish !== false);
+
+// Diary in the British sense — the book of engagements. Upcoming first and
+// ascending (the next thing you walk into is the thing you need), past
+// descending (the most recent is the one you still remember).
+const dated = all.map((entry) => ({
+  entry,
+  start: entry.data.date_start ? new Date(entry.data.date_start) : null,
+  end: new Date(entry.data.date_end ?? entry.data.date_start ?? 0),
+}));
+
+const upcoming = dated
+  .filter((d) => d.start && isUpcoming(d.end))
+  .sort((a, b) => a.start!.getTime() - b.start!.getTime());
+
+const past = dated
+  .filter((d) => d.start && !isUpcoming(d.end))
+  .sort((a, b) => b.start!.getTime() - a.start!.getTime());
+
+/** "Aug 25–27, 2026" / "Aug 25, 2026" — one month name when it doesn't cross one. */
+function dateRange(start: Date | null, end: Date): string {
+  if (!start) return '';
+  const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', timeZone: 'UTC' };
+  const s = start.toLocaleDateString('en-US', opts);
+  if (start.getTime() === end.getTime()) {
+    return `${s}, ${start.getUTCFullYear()}`;
+  }
+  const sameMonth = start.getUTCMonth() === end.getUTCMonth() && start.getUTCFullYear() === end.getUTCFullYear();
+  const e = sameMonth
+    ? end.getUTCDate()
+    : end.toLocaleDateString('en-US', opts);
+  return `${s}–${e}, ${end.getUTCFullYear()}`;
+}
+
+function dayCount(start: Date | null, end: Date): number {
+  if (!start) return 0;
+  return Math.round((end.getTime() - start.getTime()) / 86_400_000) + 1;
+}
+---
+
+<BaseLayout
+  title="Diary"
+  description="Where Michael Staton is, and when — upcoming events with itineraries and meeting windows."
+>
+  <section class="px-6 pt-12 pb-8 md:pt-14 md:pb-10">
+    <div class="text-center max-w-2xl mx-auto">
+      <h1 class="gradient-text mb-3">Diary</h1>
+      <p class="text-lg text-muted-foreground">
+        Where I am and when. Open an event for the full itinerary and the windows
+        I&rsquo;m actually free to meet.
+      </p>
+    </div>
+  </section>
+
+  <section class="max-w-3xl mx-auto px-6 pb-16">
+    {upcoming.length > 0 && (
+      <>
+        <h2 class="text-sm uppercase tracking-[0.15em] text-muted-foreground/70 mb-4 font-semibold">
+          Coming up
+        </h2>
+        <div class="grid gap-3 mb-12">
+          {upcoming.map(({ entry, start, end }) => (
+            <a href={`/diary/${entry.id}`} class="block group">
+              <article class="border border-border rounded-lg p-5 hover:border-primary/50 transition-colors bg-card">
+                <div class="flex items-baseline justify-between gap-4 flex-wrap mb-1">
+                  <h3 class="text-lg font-semibold text-foreground group-hover:text-primary transition-colors leading-tight">
+                    {entry.data.host && <span class="text-muted-foreground font-normal">{entry.data.host} · </span>}
+                    {entry.data.title || entry.id}
+                  </h3>
+                  <time class="text-sm text-secondary font-medium whitespace-nowrap">
+                    {dateRange(start, end)}
+                  </time>
+                </div>
+
+                {entry.data.lede && (
+                  <p class="text-sm text-muted-foreground mb-3">{entry.data.lede}</p>
+                )}
+
+                <div class="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
+                  {entry.data.location && <span>📍 {entry.data.location}</span>}
+                  {dayCount(start, end) > 1 && (
+                    <span class="px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
+                      {dayCount(start, end)} days
+                    </span>
+                  )}
+                  {/* Only worth saying when the itinerary is thinner than the
+                      event — "3 days / 3 days mapped" is noise, "3 days /
+                      1 day mapped" tells you the rest is still unwritten. */}
+                  {entry.data.days && entry.data.days.length < dayCount(start, end) && (
+                    <span class="text-muted-foreground/70">
+                      {entry.data.days.length === 1 ? '1 day mapped' : `${entry.data.days.length} days mapped`}
+                    </span>
+                  )}
+                </div>
+              </article>
+            </a>
+          ))}
+        </div>
+      </>
+    )}
+
+    {upcoming.length === 0 && (
+      <p class="text-center text-muted-foreground py-8">
+        Nothing on the books right now.
+      </p>
+    )}
+
+    {past.length > 0 && (
+      <>
+        <h2 class="text-sm uppercase tracking-[0.15em] text-muted-foreground/70 mb-4 font-semibold">
+          Been and gone
+        </h2>
+        <div class="grid gap-2">
+          {past.map(({ entry, start, end }) => (
+            <a href={`/diary/${entry.id}`} class="block group">
+              <article class="border border-border rounded-lg px-5 py-3 hover:border-primary/50 transition-colors opacity-70 hover:opacity-100">
+                <div class="flex items-baseline justify-between gap-4 flex-wrap">
+                  <h3 class="text-base font-medium text-foreground group-hover:text-primary transition-colors">
+                    {entry.data.host && <span class="text-muted-foreground font-normal">{entry.data.host} · </span>}
+                    {entry.data.title || entry.id}
+                  </h3>
+                  <time class="text-xs text-muted-foreground whitespace-nowrap">{dateRange(start, end)}</time>
+                </div>
+              </article>
+            </a>
+          ))}
+        </div>
+      </>
+    )}
+  </section>
+</BaseLayout>
