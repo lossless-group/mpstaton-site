@@ -57,7 +57,9 @@ const shareDates = shareRange(
   d.date_start ? new Date(d.date_start) : undefined,
   d.date_end ? new Date(d.date_end) : undefined
 );
-const shareDescription = [shareDates, d.location].filter(Boolean).join(' · ');
+// The card leads with locality rather than the bare hotel brand — an unfurl is
+// often the only line someone reads before deciding where to drive.
+const shareDescription = [shareDates, d.location, d.locality].filter(Boolean).join(' · ');
 const packedBands = packBands(win, days);
 ---
 
@@ -84,9 +86,16 @@ const packedBands = packBands(win, days);
 
       <div class="flex flex-wrap gap-2">
         {d.location && (
-          <span class="text-sm border border-border rounded-full px-3 py-1 text-muted-foreground">
-            📍 {d.location}
-          </span>
+          d.map_url ? (
+            <a
+              href={d.map_url}
+              class="text-sm border border-border rounded-full px-3 py-1 text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors"
+            >📍 {d.location}{d.address && <span class="opacity-60"> · {d.address}</span>}</a>
+          ) : (
+            <span class="text-sm border border-border rounded-full px-3 py-1 text-muted-foreground">
+              📍 {d.location}{d.address && <span class="opacity-60"> · {d.address}</span>}
+            </span>
+          )
         )}
         {(d.links ?? []).map((link) => (
           <a

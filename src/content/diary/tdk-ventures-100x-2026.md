@@ -6,7 +6,9 @@ summary: "TDK Ventures' annual gathering of entrepreneurs, investors, TDK leader
 date_start: 2026-08-25
 date_end: 2026-08-27
 location: "Hyatt Regency San Francisco Airport"
+address: "1333 Old Bayshore Hwy, Burlingame, CA 94010"
 locality: "Burlingame, CA"
+map_url: "https://maps.google.com/?q=Hyatt+Regency+San+Francisco+Airport,+1333+Old+Bayshore+Hwy,+Burlingame,+CA+94010"
 publish: true
 tags:
   - "Venture-Capital"
@@ -15,7 +17,7 @@ tags:
 travel:
   hub: "downtown San Francisco"
   round_trip_minutes: 90
-  note: "The hotel sits in Burlingame — about five minutes from SFO, and roughly 25–35 minutes from downtown San Francisco depending on traffic. A round trip to the city costs about 90 minutes of overhead, which is the number that decides every window below."
+  note: "The hotel is the Hyatt Regency San Francisco Airport at 1333 Old Bayshore Hwy in Burlingame — two miles south of SFO, and roughly 25–35 minutes from downtown San Francisco depending on traffic. A round trip to the city costs about 90 minutes of overhead, which is the number that decides every window below."
 links:
   - label: "Live agenda"
     url: "https://events.tdk-ventures.com/2026-events/100x/"
@@ -370,12 +372,12 @@ days:
         body: "Business casual; company swag welcome. Breakfast, lunch, refreshments, and the networking reception are provided."
 logistics:
   - heading: "Venue"
-    body: "Hyatt Regency San Francisco Airport — all three days. Sessions run in Grand Peninsula (A–G, Foyer), Sandpebble A–B, and The Grove for meals."
+    body: "Hyatt Regency San Francisco Airport, 1333 Old Bayshore Hwy, Burlingame, CA 94010 — all three days. Not the Grand Hyatt at SFO, which is a different hotel on the airport itself. Sessions run in Grand Peninsula (A–G, Foyer), Sandpebble A–B, and The Grove for meals."
   - heading: "The 100X app"
     body: "Sign in with the email you registered with and enable notifications for schedule and location updates. It carries the attendee directory and the full speaker rosters that the export truncates."
   - heading: "Questions"
     body: "TDK Ventures Events Team — events@tdk-ventures.com"
-source_note: "Compiled from the three TDK Ventures invitations dated Aug 10, 2026, and the Swapcard agenda export. Breakout speaker lists are truncated in the export — the live agenda and the app carry the full rosters."
+source_note: "Compiled from the three TDK Ventures invitations dated Aug 10, 2026, and the Swapcard agenda export. The venue is named in all three invitation subject lines and corroborated by the export's room names — Grand Peninsula Ballroom, Sandpebble, and the Foyer are this property's rooms, not the Grand Hyatt's. Breakout speaker lists are truncated in the export; the live agenda and the app carry the full rosters."
 ---
 
 Three sets of people want time this week, so this itinerary is built to answer one

@@ -218,7 +218,12 @@ const diary = defineCollection({
     date_end: z.coerce.date().optional(),
 
     location: z.string().optional(),
+    // Street address is separate from `location` on purpose: hotel brand names
+    // collide (Hyatt Regency SFO in Burlingame vs the Grand Hyatt on the airport
+    // itself), and a card that names only the brand sends people to the wrong one.
+    address: z.string().optional(),
     locality: z.string().optional(),
+    map_url: z.string().optional(),
 
     // Why a round trip to the nearest city costs what it costs. Every
     // "can I escape?" verdict on the page is downstream of this number, so it
