@@ -1,4 +1,20 @@
 /**
+ * SUPERSEDED — not imported by anything. Kept for one release so the migration
+ * can be reverted quickly if the packaged resolver misbehaves; delete once
+ * `src/config/wikilinks.ts` has been exercised in the browser.
+ *
+ * Its own header (below) always described it as a v0.5.x stopgap that "goes
+ * away" when `@lossless-group/lfm` ships the plugin. 0.6.0 shipped it, together
+ * with `createPathResolver` for the resolution mechanics this file delegated to
+ * `scripts/wikilink-rules.ts`. Destinations now live in
+ * `src/config/wikilinks.ts`, which is the file `wikilink-rules.ts` predicted.
+ *
+ * `scripts/wikilink-rules.ts` is still imported by `scripts/audit-wikilinks.ts`
+ * and stays for now — the audit is a separate consumer with its own reporting,
+ * and pointing it at the same config is its own change.
+ */
+
+/**
  * remark-lossless-wikilinks-local.ts — site-local MDAST plugin for v0.5.x.
  *
  * Walks every `text` node in the MDAST and replaces Obsidian wikilinks

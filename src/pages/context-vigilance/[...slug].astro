@@ -1,9 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
-import { createLfmProcessor } from '@lossless-group/lfm';
+import { createLfmProcessor, remarkLfmWikilinks } from '@lossless-group/lfm';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AstroMarkdown from '../../components/markdown/AstroMarkdown.astro';
-import { remarkLosslessWikilinksLocal } from '../../lib/remark-lossless-wikilinks-local';
+import { wikilinkPaths } from '../../config/wikilinks';
 import { formatDate, toIsoDate } from '../../utils/format-date';
 import { humanizeTerm } from '../../utils/humanize-term';
 
@@ -21,7 +21,9 @@ if (!entry) {
 const { data } = entry;
 
 // Parse markdown through the LFM pipeline + site-local wikilinks plugin.
-const processor = createLfmProcessor().use(remarkLosslessWikilinksLocal);
+// Destinations come from src/config/wikilinks.ts; the mechanics live in the
+// package. See that file for why there is no index.
+const processor = createLfmProcessor().use(remarkLfmWikilinks, { paths: wikilinkPaths });
 const tree = await processor.run(processor.parse(entry.body));
 
 // Category color mapping (matches DocCard.astro)
