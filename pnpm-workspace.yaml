@@ -1,5 +1,23 @@
 packages: []
 
+# esbuild and sharp ship native postinstall scripts. pnpm 11 refuses to run any
+# build script that has not been explicitly approved, and — unlike pnpm 10 —
+# treats an unapproved one as a HARD FAILURE: `pnpm install` exits 1, so
+# `pnpm build` never starts.
+#
+# When it prompts, pnpm writes an `allowBuilds:` block into this file with the
+# literal placeholder "set this to true or false" for each package. That
+# placeholder is not a valid answer, so the next install fails the same way.
+# It has to be resolved to a real boolean.
+#
+# Both are wanted: sharp is Astro's image pipeline (without it, image
+# generation errors at build time) and esbuild is part of the Vite toolchain.
+allowBuilds:
+  esbuild: true
+  sharp: true
+
+# Kept for pnpm 10 and for any CI still on it — harmless where allowBuilds is
+# understood, and the only approval mechanism where it is not.
 onlyBuiltDependencies:
   - esbuild
   - sharp
