@@ -32,6 +32,15 @@ function resolveRoots(section: string): string[] {
 const CONTENT_ROOTS: string[] = CONTENT_SECTIONS.flatMap(resolveRoots);
 const PROPOSAL_ROOTS: string[] = resolveRoots('proposals');
 
+/** First existing path for `parts` across the content roots. */
+function contentPath(...parts: string[]): string {
+  for (const root of CONTENT_ROOTS) {
+    const candidate = join(root, ...parts);
+    if (existsSync(candidate)) return candidate;
+  }
+  return join(CONTENT_ROOTS[0] ?? '', ...parts);
+}
+
 function readYaml<T>(path: string): T | null {
   if (!existsSync(path)) return null;
   return parseYaml(readFileSync(path, 'utf-8')) as T;
