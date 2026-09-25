@@ -6,19 +6,31 @@ import type { Opportunity, VariantsRegistry } from './types';
 // Two roots, one record shape. `promote/` is the investment-promotion surface
 // (decks, memos) that sits beside /hype-machine. `proposals/` is client work,
 // which has no business on that path — see src/pages/proposals/.
-const CONTENT_ROOTS = [
-  new URL('../../content/proposals/', import.meta.url),
-  new URL('../../content/promote/', import.meta.url),
-];
-const CONTENT_ROOT = CONTENT_ROOTS[1];
+/**
+ * Content roots, resolved against the filesystem rather than this module's URL.
+ *
+ * `import.meta.url` works in dev but not on Vercel: the adapter bundles the
+ * server into `_render.func/dist/server/` while `includeFiles` copies content
+ * to `_render.func/src/content/`, so a relative `../../content` walks into a
+ * directory that does not exist. The symptom is silent — every lookup returns
+ * null, the index renders empty and each slug 404s, with nothing in the logs.
+ *
+ * So: try each candidate and keep the ones that are actually there.
+ */
+const CONTENT_SECTIONS = ['proposals', 'promote'] as const;
 
-function contentPath(...parts: string[]): string {
-  for (const rootUrl of CONTENT_ROOTS) {
-    const candidate = join(new URL(rootUrl).pathname, ...parts);
-    if (existsSync(candidate)) return candidate;
-  }
-  return join(new URL(CONTENT_ROOTS[0]).pathname, ...parts);
+function resolveRoots(section: string): string[] {
+  const candidates = [
+    // Vercel: function root, where includeFiles puts them.
+    join(process.cwd(), 'src/content', section),
+    // Dev and `astro preview`: relative to this module.
+    join(new URL(`../../content/${section}/`, import.meta.url).pathname),
+  ];
+  return candidates.filter((c) => existsSync(c));
 }
+
+const CONTENT_ROOTS: string[] = CONTENT_SECTIONS.flatMap(resolveRoots);
+const PROPOSAL_ROOTS: string[] = resolveRoots('proposals');
 
 function readYaml<T>(path: string): T | null {
   if (!existsSync(path)) return null;
@@ -33,8 +45,7 @@ function load(): Map<string, Opportunity> {
   if (cache && !import.meta.env.DEV) return cache;
   cache = new Map();
 
-  for (const rootUrl of CONTENT_ROOTS) {
-  const root = new URL(rootUrl).pathname;
+  for (const root of CONTENT_ROOTS) {
   if (!existsSync(root)) continue;
 
   for (const entry of readdirSync(root)) {
@@ -95,5 +106,5 @@ export function opportunityDir(slug: string): string {
 
 /** True when the slug lives under content/proposals rather than content/promote. */
 export function isProposalContent(slug: string): boolean {
-  return existsSync(join(new URL(CONTENT_ROOTS[0]).pathname, slug));
+  return PROPOSAL_ROOTS.some((root) => existsSync(join(root, slug)));
 }
