@@ -38,7 +38,17 @@ export interface Opportunity {
   accent_color?: string;
   og_image?: string;
   materials: Material[];
-  gate?: { override_code?: string | null };
+  gate?: {
+    override_code?: string | null;
+    /**
+     * Name of the environment variable holding this proposal's access code,
+     * e.g. `PROPOSAL_LFG_SECRET`. One clearly-named variable per proposal
+     * beats a single opaque JSON map keyed by slug — you can see at a glance
+     * in the Vercel dashboard which proposal a value belongs to, and revoking
+     * one means deleting one variable.
+     */
+    env_key?: string;
+  };
 }
 
 export interface VariantsRegistry {

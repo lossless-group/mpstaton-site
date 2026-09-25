@@ -66,10 +66,25 @@ function constantTimeEquals(a: string, b: string): boolean {
   return timingSafeEqual(ab, bb);
 }
 
-export function checkCode(slug: string, plain: string): { ok: true; scope: 'master' | string } | { ok: false } {
+export function checkCode(
+  slug: string,
+  plain: string,
+  envKey?: string,
+): { ok: true; scope: 'master' | string } | { ok: false } {
   if (readEnv('PROMOTE_DEV_BYPASS') === '1') {
     return { ok: true, scope: 'master' };
   }
+  // Per-proposal variable, named by the opportunity itself. The value is the
+  // code as typed — these are shared link passcodes, not stored credentials,
+  // and anyone who can read the environment already has the server. Keeping
+  // them literal means what you paste into Vercel is what the reader types.
+  if (envKey) {
+    const expected = readEnv(envKey);
+    if (expected && constantTimeEquals(plain, expected)) {
+      return { ok: true, scope: slug };
+    }
+  }
+
   const provided = hashCode(plain);
 
   const overridesRaw = readEnv('PROMOTE_OVERRIDE_CODES_JSON');

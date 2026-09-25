@@ -1,0 +1,23 @@
+codename: link-freedom-group
+company_name: "Link Freedom Group"
+status: active
+listed_in_index: false
+short_description: "Proposal · a Value Added Reseller channel that puts LFG's namespace inside developer platforms at the moment a name is chosen"
+eyebrow: "Proposal · The Lossless Group × Link Freedom Group · September 2026"
+# LFG's own accent, read off https://lfg.link/brand-assets. Their palette is
+# a near-black navy ground (#031124 / #120C2A / #0C0A1F), cream type
+# (#F3E7CB / #F6DCA4), and four accents: orange #FF8C2E, mauve #B65A86,
+# green #3FB68E, purple #3A2A63. Orange reads as the primary accent.
+logo:
+  symbol: /proposals/link-freedom-group/brand/lfg-logomark-wte.svg
+  wordmark: /proposals/link-freedom-group/brand/lfg-wordmark-wte.svg
+accent_color: "#FF8C2E"
+materials:
+  - type: proposal
+    title: "Partnerships as Value Added Resellers"
+    description: "The channel thesis, the target platforms, the scope, and the terms — read in ~8 minutes"
+    primary: true
+    default_version: 1
+gate:
+  override_code: null
+  env_key: PROPOSAL_LFG_SECRET

@@ -25,11 +25,15 @@ src/data/youtube-playlist-cache.json
 src/content/promote/*/
 src/content/proposals/*/
 !src/content/proposals/_*/
+# Shipped so the gated proposal renders on Vercel — a gitignored file does not
+# exist on the builder. Same reasoning as TRACK_RECORD_MARKUPS_JSON above.
+!src/content/proposals/link-freedom-group/
 !src/content/promote/_*/
 src/layouts/sections/promote/*/
 !src/layouts/sections/promote/_*/
 public/promote/*/
 public/proposals/*/
+!public/proposals/link-freedom-group/
 !public/promote/_*/
 
 # Track-record markups — local-only (this is a public repo).

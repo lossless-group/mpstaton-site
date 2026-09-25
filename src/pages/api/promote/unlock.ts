@@ -20,7 +20,7 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response('Unknown opportunity', { status: 404 });
   }
 
-  const result = checkCode(slug, code);
+  const result = checkCode(slug, code, opportunity.gate?.env_key);
   if (!result.ok) {
     // Send them back where they came from. Bouncing a client proposal to the
     // /promote hub on a typo shows them the wrong surface entirely.

@@ -1,0 +1,1582 @@
+[
+ {
+  "tld": "acc",
+  "category": "ai-tech",
+  "tagline": "Move faster, leave limits behind."
+ },
+ {
+  "tld": "act",
+  "category": "lifestyle",
+  "tagline": "Make your move, take action."
+ },
+ {
+  "tld": "add",
+  "category": "lifestyle",
+  "tagline": "Your spot in the digital world."
+ },
+ {
+  "tld": "agentic",
+  "category": "ai-tech",
+  "tagline": "You call the shots here."
+ },
+ {
+  "tld": "agi",
+  "category": "ai-tech",
+  "tagline": "Intelligence that keeps evolving."
+ },
+ {
+  "tld": "air",
+  "category": "lifestyle",
+  "tagline": "Where ideas have room to grow."
+ },
+ {
+  "tld": "ais",
+  "category": "infra",
+  "tagline": "Know what’s where, instantly."
+ },
+ {
+  "tld": "algo",
+  "category": "ai-tech",
+  "tagline": "Logic that leads the way."
+ },
+ {
+  "tld": "all",
+  "category": "lifestyle",
+  "tagline": "Everything included, nothing missing."
+ },
+ {
+  "tld": "alpha",
+  "category": "culture",
+  "tagline": "The start of something great."
+ },
+ {
+  "tld": "anon",
+  "category": "culture",
+  "tagline": "Privacy is your superpower."
+ },
+ {
+  "tld": "any",
+  "category": "lifestyle",
+  "tagline": "No boundaries, just possibilities."
+ },
+ {
+  "tld": "api",
+  "category": "ai-tech",
+  "tagline": "Build, connect, and create more."
+ },
+ {
+  "tld": "artist",
+  "category": "culture",
+  "tagline": "Where creators belong."
+ },
+ {
+  "tld": "asap",
+  "category": "culture",
+  "tagline": "Why wait? Start now."
+ },
+ {
+  "tld": "asi",
+  "category": "ai-tech",
+  "tagline": "Smarter than you thought possible."
+ },
+ {
+  "tld": "atom",
+  "category": "ai-tech",
+  "tagline": "Small but mighty."
+ },
+ {
+  "tld": "auth",
+  "category": "ai-tech",
+  "tagline": "Protected by design."
+ },
+ {
+  "tld": "bad",
+  "category": "lifestyle",
+  "tagline": "Sometimes things fall short, try again."
+ },
+ {
+  "tld": "bag",
+  "category": "crypto-web3",
+  "tagline": "Take what you need, wherever you go."
+ },
+ {
+  "tld": "base",
+  "category": "crypto-web3",
+  "tagline": "Where it all begins."
+ },
+ {
+  "tld": "big",
+  "category": "lifestyle",
+  "tagline": "Make your presence impossible to ignore."
+ },
+ {
+  "tld": "bill",
+  "category": "commerce",
+  "tagline": "Settle up, move on."
+ },
+ {
+  "tld": "bit",
+  "category": "infra",
+  "tagline": "Even the tiniest details matter."
+ },
+ {
+  "tld": "block",
+  "category": "crypto-web3",
+  "tagline": "Trust, built in."
+ },
+ {
+  "tld": "bnb",
+  "category": "lifestyle",
+  "tagline": "Wake up somewhere new, every time."
+ },
+ {
+  "tld": "boom",
+  "category": "culture",
+  "tagline": "Make your message impossible to miss."
+ },
+ {
+  "tld": "borg",
+  "category": "ai-tech",
+  "tagline": "Human meets machine."
+ },
+ {
+  "tld": "brain",
+  "category": "lifestyle",
+  "tagline": "Where everything comes together."
+ },
+ {
+  "tld": "brand",
+  "category": "commerce",
+  "tagline": "Stand out, be recognized."
+ },
+ {
+  "tld": "btc",
+  "category": "crypto-web3",
+  "tagline": "Digital value, global reach."
+ },
+ {
+  "tld": "cap",
+  "category": "culture",
+  "tagline": "Championing capitalism’s future."
+ },
+ {
+  "tld": "cart",
+  "category": "commerce",
+  "tagline": "Ready when you are to check out."
+ },
+ {
+  "tld": "cast",
+  "category": "lifestyle",
+  "tagline": "Share your story with the world."
+ },
+ {
+  "tld": "ccc",
+  "category": "infra",
+  "tagline": "Make it whatever you want."
+ },
+ {
+  "tld": "cell",
+  "category": "ai-tech",
+  "tagline": "Build from the basics."
+ },
+ {
+  "tld": "chain",
+  "category": "crypto-web3",
+  "tagline": "Trust built into every block."
+ },
+ {
+  "tld": "change",
+  "category": "commerce",
+  "tagline": "Change is always possible."
+ },
+ {
+  "tld": "coaching",
+  "category": "lifestyle",
+  "tagline": "Evolving by design."
+ },
+ {
+  "tld": "coin",
+  "category": "crypto-web3",
+  "tagline": "Spend, save, and swap your way."
+ },
+ {
+  "tld": "collective",
+  "category": "lifestyle",
+  "tagline": "Strength in numbers."
+ },
+ {
+  "tld": "commerce",
+  "category": "commerce",
+  "tagline": "Where deals and ideas meet."
+ },
+ {
+  "tld": "commercial",
+  "category": "commerce",
+  "tagline": "For every venture, big or small."
+ },
+ {
+  "tld": "con",
+  "category": "lifestyle",
+  "tagline": "The hub for big thinkers."
+ },
+ {
+  "tld": "connect",
+  "category": "lifestyle",
+  "tagline": "Start the conversation."
+ },
+ {
+  "tld": "core",
+  "category": "infra",
+  "tagline": "The heartbeat of your project."
+ },
+ {
+  "tld": "craft",
+  "category": "culture",
+  "tagline": "Where expertise becomes identity."
+ },
+ {
+  "tld": "create",
+  "category": "lifestyle",
+  "tagline": "Create what’s next."
+ },
+ {
+  "tld": "creative",
+  "category": "lifestyle",
+  "tagline": "Imagine, invent, inspire."
+ },
+ {
+  "tld": "cyber",
+  "category": "ai-tech",
+  "tagline": "The backbone of the digital world."
+ },
+ {
+  "tld": "dao",
+  "category": "crypto-web3",
+  "tagline": "Run by code, powered by community."
+ },
+ {
+  "tld": "dapp",
+  "category": "crypto-web3",
+  "tagline": "Apps without borders."
+ },
+ {
+  "tld": "ddd",
+  "category": "infra",
+  "tagline": "Yours to invent, no limits."
+ },
+ {
+  "tld": "demo",
+  "category": "ai-tech",
+  "tagline": "See it in action."
+ },
+ {
+  "tld": "dian",
+  "category": "commerce",
+  "tagline": "Where commerce meets culture."
+ },
+ {
+  "tld": "dna",
+  "category": "lifestyle",
+  "tagline": "The foundation for everything you build."
+ },
+ {
+  "tld": "donate",
+  "category": "commerce",
+  "tagline": "No cost, just value."
+ },
+ {
+  "tld": "dream",
+  "category": "lifestyle",
+  "tagline": "Dream big, dream often."
+ },
+ {
+  "tld": "drone",
+  "category": "ai-tech",
+  "tagline": "Above it all, always moving."
+ },
+ {
+  "tld": "drop",
+  "category": "ai-tech",
+  "tagline": "Drop it, launch it, let go."
+ },
+ {
+  "tld": "earn",
+  "category": "commerce",
+  "tagline": "Earn what matters most to you."
+ },
+ {
+  "tld": "easy",
+  "category": "lifestyle",
+  "tagline": "Instantly clear, no confusion."
+ },
+ {
+  "tld": "electric",
+  "category": "infra",
+  "tagline": "Always on, always electric."
+ },
+ {
+  "tld": "end",
+  "category": "lifestyle",
+  "tagline": "Where journeys end and stories begin."
+ },
+ {
+  "tld": "enter",
+  "category": "lifestyle",
+  "tagline": "Step in, get involved."
+ },
+ {
+  "tld": "epic",
+  "category": "culture",
+  "tagline": "Impossible to overlook."
+ },
+ {
+  "tld": "era",
+  "category": "culture",
+  "tagline": "Mark the moment, define the era."
+ },
+ {
+  "tld": "etc",
+  "category": "crypto-web3",
+  "tagline": "And more, always evolving."
+ },
+ {
+  "tld": "ether",
+  "category": "crypto-web3",
+  "tagline": "Perfectly balanced, never too much."
+ },
+ {
+  "tld": "eye",
+  "category": "lifestyle",
+  "tagline": "Open your eyes to more."
+ },
+ {
+  "tld": "fab",
+  "category": "culture",
+  "tagline": "Where imagination becomes reality."
+ },
+ {
+  "tld": "factory",
+  "category": "commerce",
+  "tagline": "Where ideas become tangible."
+ },
+ {
+  "tld": "fart",
+  "category": "culture",
+  "tagline": "Sometimes you just have to let go."
+ },
+ {
+  "tld": "feed",
+  "category": "lifestyle",
+  "tagline": "Stay in the loop, always informed."
+ },
+ {
+  "tld": "fight",
+  "category": "lifestyle",
+  "tagline": "Push through, reach higher."
+ },
+ {
+  "tld": "file",
+  "category": "infra",
+  "tagline": "All your info, one place."
+ },
+ {
+  "tld": "find",
+  "category": "infra",
+  "tagline": "Find what you didn’t know you needed."
+ },
+ {
+  "tld": "firm",
+  "category": "commerce",
+  "tagline": "Make your mark, own your name."
+ },
+ {
+  "tld": "flow",
+  "category": "culture",
+  "tagline": "Keep it flowing."
+ },
+ {
+  "tld": "form",
+  "category": "ai-tech",
+  "tagline": "Form meets function."
+ },
+ {
+  "tld": "freedom",
+  "category": "culture",
+  "tagline": "Freedom to be, do, and create."
+ },
+ {
+  "tld": "ftw",
+  "category": "culture",
+  "tagline": "Always aiming for the win."
+ },
+ {
+  "tld": "future",
+  "category": "lifestyle",
+  "tagline": "The future starts here."
+ },
+ {
+  "tld": "gate",
+  "category": "lifestyle",
+  "tagline": "Your entry to new worlds."
+ },
+ {
+  "tld": "gear",
+  "category": "infra",
+  "tagline": "Ready for anything, anytime."
+ },
+ {
+  "tld": "gen",
+  "category": "lifestyle",
+  "tagline": "The next wave starts here."
+ },
+ {
+  "tld": "genius",
+  "category": "lifestyle",
+  "tagline": "Brilliance that stands apart."
+ },
+ {
+  "tld": "get",
+  "category": "lifestyle",
+  "tagline": "Cross it off, move ahead."
+ },
+ {
+  "tld": "gmi",
+  "category": "culture",
+  "tagline": "On the rise, making it happen."
+ },
+ {
+  "tld": "goat",
+  "category": "culture",
+  "tagline": "Legends live here."
+ },
+ {
+  "tld": "god",
+  "category": "lifestyle",
+  "tagline": "For those at the top of their game."
+ },
+ {
+  "tld": "good",
+  "category": "lifestyle",
+  "tagline": "Good things, all in one place."
+ },
+ {
+  "tld": "gpt",
+  "category": "ai-tech",
+  "tagline": "Tools for every challenge."
+ },
+ {
+  "tld": "gram",
+  "category": "lifestyle",
+  "tagline": "Small details, big impact."
+ },
+ {
+  "tld": "great",
+  "category": "lifestyle",
+  "tagline": "Think bigger, go further."
+ },
+ {
+  "tld": "grow",
+  "category": "lifestyle",
+  "tagline": "Grow beyond boundaries."
+ },
+ {
+  "tld": "gym",
+  "category": "lifestyle",
+  "tagline": "Where movement begins."
+ },
+ {
+  "tld": "hack",
+  "category": "culture",
+  "tagline": "Solutions that surprise."
+ },
+ {
+  "tld": "haha",
+  "category": "culture",
+  "tagline": "For every laugh, every moment."
+ },
+ {
+  "tld": "happy",
+  "category": "lifestyle",
+  "tagline": "Where happiness finds you."
+ },
+ {
+  "tld": "hard",
+  "category": "lifestyle",
+  "tagline": "Built to last, ready to work."
+ },
+ {
+  "tld": "heal",
+  "category": "lifestyle",
+  "tagline": "Heal, recover, thrive."
+ },
+ {
+  "tld": "hello",
+  "category": "culture",
+  "tagline": "Start every connection with a smile."
+ },
+ {
+  "tld": "hey",
+  "category": "culture",
+  "tagline": "Casual, approachable, always open."
+ },
+ {
+  "tld": "hire",
+  "category": "commerce",
+  "tagline": "Hire, rent, get it done."
+ },
+ {
+  "tld": "hit",
+  "category": "lifestyle",
+  "tagline": "Where everyone wants to be."
+ },
+ {
+  "tld": "hodl",
+  "category": "crypto-web3",
+  "tagline": "Hold tight, stay strong."
+ },
+ {
+  "tld": "hop",
+  "category": "lifestyle",
+  "tagline": "Take the leap, land softly."
+ },
+ {
+  "tld": "hope",
+  "category": "lifestyle",
+  "tagline": "Hope is always welcome."
+ },
+ {
+  "tld": "hub",
+  "category": "ai-tech",
+  "tagline": "The gathering spot for what matters."
+ },
+ {
+  "tld": "human",
+  "category": "lifestyle",
+  "tagline": "For every human story."
+ },
+ {
+  "tld": "hunt",
+  "category": "lifestyle",
+  "tagline": "Seek, find, achieve."
+ },
+ {
+  "tld": "hype",
+  "category": "crypto-web3",
+  "tagline": "All eyes on you."
+ },
+ {
+  "tld": "iam",
+  "category": "lifestyle",
+  "tagline": "All about you, your way."
+ },
+ {
+  "tld": "icon",
+  "category": "culture",
+  "tagline": "More than a mark, it’s meaning."
+ },
+ {
+  "tld": "idea",
+  "category": "lifestyle",
+  "tagline": "Ideas in motion, ready to grow."
+ },
+ {
+  "tld": "iii",
+  "category": "infra",
+  "tagline": "Quick to type, hard to forget."
+ },
+ {
+  "tld": "index",
+  "category": "infra",
+  "tagline": "Everything in its right place."
+ },
+ {
+  "tld": "industry",
+  "category": "infra",
+  "tagline": "Where work gets done."
+ },
+ {
+  "tld": "inf",
+  "category": "infra",
+  "tagline": "Built for what’s next."
+ },
+ {
+  "tld": "intelligence",
+  "category": "lifestyle",
+  "tagline": "Smarts that make a difference."
+ },
+ {
+  "tld": "inter",
+  "category": "lifestyle",
+  "tagline": "Always in the mix."
+ },
+ {
+  "tld": "internet",
+  "category": "ai-tech",
+  "tagline": "The world, connected in one click."
+ },
+ {
+  "tld": "invest",
+  "category": "crypto-web3",
+  "tagline": "Where hope meets opportunity."
+ },
+ {
+  "tld": "ion",
+  "category": "crypto-web3",
+  "tagline": "Building blocks for big dreams."
+ },
+ {
+  "tld": "itis",
+  "category": "culture",
+  "tagline": "A little extra, just because."
+ },
+ {
+  "tld": "itiswhatitis",
+  "category": "culture",
+  "tagline": "Take it as it comes."
+ },
+ {
+  "tld": "jet",
+  "category": "lifestyle",
+  "tagline": "Powering what moves you."
+ },
+ {
+  "tld": "jjj",
+  "category": "infra",
+  "tagline": "Quick to type, hard to forget."
+ },
+ {
+  "tld": "join",
+  "category": "lifestyle",
+  "tagline": "Bringing people and ideas together."
+ },
+ {
+  "tld": "kek",
+  "category": "culture",
+  "tagline": "Where fun finds a home."
+ },
+ {
+  "tld": "key",
+  "category": "ai-tech",
+  "tagline": "Open doors, new possibilities."
+ },
+ {
+  "tld": "king",
+  "category": "culture",
+  "tagline": "Leading the way, every day."
+ },
+ {
+  "tld": "kit",
+  "category": "lifestyle",
+  "tagline": "Tools for every task."
+ },
+ {
+  "tld": "know",
+  "category": "lifestyle",
+  "tagline": "Shine bright, stand out."
+ },
+ {
+  "tld": "labs",
+  "category": "ai-tech",
+  "tagline": "Where breakthroughs begin."
+ },
+ {
+  "tld": "learn",
+  "category": "lifestyle",
+  "tagline": "Level up, every day."
+ },
+ {
+  "tld": "lfg",
+  "category": "culture",
+  "tagline": "Freedom to connect, everywhere."
+ },
+ {
+  "tld": "light",
+  "category": "lifestyle",
+  "tagline": "Illuminating every idea."
+ },
+ {
+  "tld": "line",
+  "category": "lifestyle",
+  "tagline": "From start to finish."
+ },
+ {
+  "tld": "links",
+  "category": "ai-tech",
+  "tagline": "Ties that bind, connections that last."
+ },
+ {
+  "tld": "list",
+  "category": "ai-tech",
+  "tagline": "Where everything comes together."
+ },
+ {
+  "tld": "llm",
+  "category": "ai-tech",
+  "tagline": "Words that work for you."
+ },
+ {
+  "tld": "logistics",
+  "category": "commerce",
+  "tagline": "Managing the moving parts."
+ },
+ {
+  "tld": "long",
+  "category": "crypto-web3",
+  "tagline": "Built for the distance."
+ },
+ {
+  "tld": "look",
+  "category": "lifestyle",
+  "tagline": "Bringing vision into focus."
+ },
+ {
+  "tld": "loop",
+  "category": "lifestyle",
+  "tagline": "Round and round."
+ },
+ {
+  "tld": "luck",
+  "category": "lifestyle",
+  "tagline": "Good fortune, found here."
+ },
+ {
+  "tld": "machine",
+  "category": "ai-tech",
+  "tagline": "Make life simpler, work smarter."
+ },
+ {
+  "tld": "made",
+  "category": "lifestyle",
+  "tagline": "Born from the hustle."
+ },
+ {
+  "tld": "magic",
+  "category": "culture",
+  "tagline": "Where wonder becomes real."
+ },
+ {
+  "tld": "main",
+  "category": "culture",
+  "tagline": "The source, not the echo."
+ },
+ {
+  "tld": "make",
+  "category": "lifestyle",
+  "tagline": "Turn ideas into reality."
+ },
+ {
+  "tld": "mall",
+  "category": "commerce",
+  "tagline": "Shop till you drop."
+ },
+ {
+  "tld": "mark",
+  "category": "lifestyle",
+  "tagline": "Rate it your way."
+ },
+ {
+  "tld": "mars",
+  "category": "lifestyle",
+  "tagline": "Explore new worlds, boldly."
+ },
+ {
+  "tld": "mart",
+  "category": "commerce",
+  "tagline": "Where buyers and sellers meet."
+ },
+ {
+  "tld": "mate",
+  "category": "lifestyle",
+  "tagline": "Always by your side."
+ },
+ {
+  "tld": "math",
+  "category": "infra",
+  "tagline": "Everything counts."
+ },
+ {
+  "tld": "matrix",
+  "category": "ai-tech",
+  "tagline": "Welcome to the real world."
+ },
+ {
+  "tld": "max",
+  "category": "lifestyle",
+  "tagline": "Push the limits, go further."
+ },
+ {
+  "tld": "mech",
+  "category": "ai-tech",
+  "tagline": "Heavy metal."
+ },
+ {
+  "tld": "mega",
+  "category": "ai-tech",
+  "tagline": "When only huge will do."
+ },
+ {
+  "tld": "merch",
+  "category": "commerce",
+  "tagline": "What you want, when you want it."
+ },
+ {
+  "tld": "met",
+  "category": "lifestyle",
+  "tagline": "City energy, global reach."
+ },
+ {
+  "tld": "mind",
+  "category": "lifestyle",
+  "tagline": "Where your mind comes alive."
+ },
+ {
+  "tld": "mine",
+  "category": "lifestyle",
+  "tagline": "Dig deeper, find value."
+ },
+ {
+  "tld": "mmm",
+  "category": "infra",
+  "tagline": "Open to interpretation, yours to define."
+ },
+ {
+  "tld": "mode",
+  "category": "ai-tech",
+  "tagline": "Choose your mode, set your pace."
+ },
+ {
+  "tld": "model",
+  "category": "culture",
+  "tagline": "The reference point."
+ },
+ {
+  "tld": "moon",
+  "category": "culture",
+  "tagline": "Orbiting new possibilities."
+ },
+ {
+  "tld": "more",
+  "category": "lifestyle",
+  "tagline": "When enough isn't enough."
+ },
+ {
+  "tld": "mvp",
+  "category": "culture",
+  "tagline": "Start small, dream big."
+ },
+ {
+  "tld": "nano",
+  "category": "ai-tech",
+  "tagline": "One billionth at a time."
+ },
+ {
+  "tld": "near",
+  "category": "crypto-web3",
+  "tagline": "Closer than you think."
+ },
+ {
+  "tld": "need",
+  "category": "lifestyle",
+  "tagline": "Because some things are non-negotiable."
+ },
+ {
+  "tld": "neo",
+  "category": "ai-tech",
+  "tagline": "Modern by nature."
+ },
+ {
+  "tld": "nft",
+  "category": "crypto-web3",
+  "tagline": "Own what’s truly yours."
+ },
+ {
+  "tld": "nice",
+  "category": "lifestyle",
+  "tagline": "Where good vibes gather."
+ },
+ {
+  "tld": "nil",
+  "category": "lifestyle",
+  "tagline": "Nothing to lose, everything to gain."
+ },
+ {
+  "tld": "not",
+  "category": "culture",
+  "tagline": "Flip the script, change the story."
+ },
+ {
+  "tld": "npc",
+  "category": "ai-tech",
+  "tagline": "For the background heroes."
+ },
+ {
+  "tld": "nsfw",
+  "category": "infra",
+  "tagline": "Strictly after hours."
+ },
+ {
+  "tld": "nutrition",
+  "category": "lifestyle",
+  "tagline": "Fuel for life."
+ },
+ {
+  "tld": "official",
+  "category": "lifestyle",
+  "tagline": "All in, all the time."
+ },
+ {
+  "tld": "oid",
+  "category": "ai-tech",
+  "tagline": "For distinct objects."
+ },
+ {
+  "tld": "okay",
+  "category": "culture",
+  "tagline": "Good to go, always."
+ },
+ {
+  "tld": "omg",
+  "category": "culture",
+  "tagline": "For moments that surprise."
+ },
+ {
+  "tld": "only",
+  "category": "lifestyle",
+  "tagline": "One of a kind."
+ },
+ {
+  "tld": "orb",
+  "category": "lifestyle",
+  "tagline": "Always rolling, never still."
+ },
+ {
+  "tld": "order",
+  "category": "commerce",
+  "tagline": "Raise your hand, make your move."
+ },
+ {
+  "tld": "organization",
+  "category": "commerce",
+  "tagline": "Built for teams, made for unity."
+ },
+ {
+  "tld": "out",
+  "category": "commerce",
+  "tagline": "Into the open."
+ },
+ {
+  "tld": "outlet",
+  "category": "commerce",
+  "tagline": "Where shopping begins."
+ },
+ {
+  "tld": "pal",
+  "category": "culture",
+  "tagline": "For every companion, old or new."
+ },
+ {
+  "tld": "park",
+  "category": "lifestyle",
+  "tagline": "Touch grass."
+ },
+ {
+  "tld": "pass",
+  "category": "lifestyle",
+  "tagline": "Your entry to what’s next."
+ },
+ {
+  "tld": "pax",
+  "category": "culture",
+  "tagline": "Peace, but make it ancient."
+ },
+ {
+  "tld": "phi",
+  "category": "ai-tech",
+  "tagline": "For the golden ratio."
+ },
+ {
+  "tld": "planet",
+  "category": "lifestyle",
+  "tagline": "For explorers of new worlds."
+ },
+ {
+  "tld": "platform",
+  "category": "infra",
+  "tagline": "The ground floor innovation."
+ },
+ {
+  "tld": "pod",
+  "category": "ai-tech",
+  "tagline": "Pack it, keep it, carry on."
+ },
+ {
+  "tld": "podcast",
+  "category": "ai-tech",
+  "tagline": "Stories that stream, voices that carry."
+ },
+ {
+  "tld": "point",
+  "category": "lifestyle",
+  "tagline": "The sharp end."
+ },
+ {
+  "tld": "pop",
+  "category": "lifestyle",
+  "tagline": "Make an impact, get noticed."
+ },
+ {
+  "tld": "port",
+  "category": "ai-tech",
+  "tagline": "Step in, step out, move forward."
+ },
+ {
+  "tld": "portal",
+  "category": "ai-tech",
+  "tagline": "The start of something bigger."
+ },
+ {
+  "tld": "pos",
+  "category": "commerce",
+  "tagline": "Where the wallet gets lighter."
+ },
+ {
+  "tld": "pot",
+  "category": "lifestyle",
+  "tagline": "Storage for every shelf."
+ },
+ {
+  "tld": "pow",
+  "category": "culture",
+  "tagline": "Earned, never given."
+ },
+ {
+  "tld": "power",
+  "category": "lifestyle",
+  "tagline": "Power up, stay charged."
+ },
+ {
+  "tld": "ppp",
+  "category": "infra",
+  "tagline": "Quick to type, hard to forget."
+ },
+ {
+  "tld": "print",
+  "category": "commerce",
+  "tagline": "Create, share, repeat."
+ },
+ {
+  "tld": "private",
+  "category": "commerce",
+  "tagline": "Private by design."
+ },
+ {
+  "tld": "product",
+  "category": "commerce",
+  "tagline": "From maker to market."
+ },
+ {
+  "tld": "project",
+  "category": "ai-tech",
+  "tagline": "Every project, every step."
+ },
+ {
+  "tld": "protocol",
+  "category": "ai-tech",
+  "tagline": "Order in the chaos."
+ },
+ {
+  "tld": "pump",
+  "category": "crypto-web3",
+  "tagline": "Grow your gains."
+ },
+ {
+  "tld": "pure",
+  "category": "lifestyle",
+  "tagline": "Nothing sneaky inside."
+ },
+ {
+  "tld": "push",
+  "category": "commerce",
+  "tagline": "Spread the word, grow the buzz."
+ },
+ {
+  "tld": "qqq",
+  "category": "infra",
+  "tagline": "Quick to type, hard to forget."
+ },
+ {
+  "tld": "quant",
+  "category": "ai-tech",
+  "tagline": "Schr\\xf6dinger’s favorite domain."
+ },
+ {
+  "tld": "quantum",
+  "category": "ai-tech",
+  "tagline": "Where the impossible becomes possible."
+ },
+ {
+  "tld": "quick",
+  "category": "lifestyle",
+  "tagline": "For the impatient."
+ },
+ {
+  "tld": "qwe",
+  "category": "ai-tech",
+  "tagline": "Type your story, share your world."
+ },
+ {
+  "tld": "raw",
+  "category": "ai-tech",
+  "tagline": "Not done yet."
+ },
+ {
+  "tld": "real",
+  "category": "lifestyle",
+  "tagline": "The real thing, no imitations."
+ },
+ {
+  "tld": "research",
+  "category": "ai-tech",
+  "tagline": "Discover, learn, decide."
+ },
+ {
+  "tld": "resort",
+  "category": "commerce",
+  "tagline": "Your retreat from routine."
+ },
+ {
+  "tld": "retail",
+  "category": "commerce",
+  "tagline": "Source to shopper."
+ },
+ {
+  "tld": "rev",
+  "category": "commerce",
+  "tagline": "Profit goes where you take it."
+ },
+ {
+  "tld": "ride",
+  "category": "culture",
+  "tagline": "Every journey deserves a destination."
+ },
+ {
+  "tld": "robot",
+  "category": "ai-tech",
+  "tagline": "Let the bots do the heavy lifting."
+ },
+ {
+  "tld": "robotics",
+  "category": "ai-tech",
+  "tagline": "Where machines come alive."
+ },
+ {
+  "tld": "rrr",
+  "category": "infra",
+  "tagline": "Quick to type, hard to forget."
+ },
+ {
+  "tld": "sat",
+  "category": "culture",
+  "tagline": "Always in orbit, always connected."
+ },
+ {
+  "tld": "scale",
+  "category": "lifestyle",
+  "tagline": "Precision is always in style."
+ },
+ {
+  "tld": "scan",
+  "category": "ai-tech",
+  "tagline": "Instant look, instant record."
+ },
+ {
+  "tld": "sci",
+  "category": "ai-tech",
+  "tagline": "The lab for big ideas."
+ },
+ {
+  "tld": "sea",
+  "category": "lifestyle",
+  "tagline": "Not quite an ocean, still epic."
+ },
+ {
+  "tld": "see",
+  "category": "lifestyle",
+  "tagline": "See what others miss."
+ },
+ {
+  "tld": "sell",
+  "category": "commerce",
+  "tagline": "Make the deal, seal the moment."
+ },
+ {
+  "tld": "send",
+  "category": "ai-tech",
+  "tagline": "Shift gears, change direction."
+ },
+ {
+  "tld": "set",
+  "category": "lifestyle",
+  "tagline": "Grouped for greatness."
+ },
+ {
+  "tld": "share",
+  "category": "commerce",
+  "tagline": "Spread the word, share the news."
+ },
+ {
+  "tld": "ship",
+  "category": "ai-tech",
+  "tagline": "Ship it, send it, done."
+ },
+ {
+  "tld": "sign",
+  "category": "commerce",
+  "tagline": "Every signal matters."
+ },
+ {
+  "tld": "sim",
+  "category": "ai-tech",
+  "tagline": "Try it, test it, tweak it."
+ },
+ {
+  "tld": "slop",
+  "category": "culture",
+  "tagline": "Imperfection, celebrated daily."
+ },
+ {
+  "tld": "soft",
+  "category": "lifestyle",
+  "tagline": "Code that powers possibility."
+ },
+ {
+  "tld": "soul",
+  "category": "culture",
+  "tagline": "More than meets the eye."
+ },
+ {
+  "tld": "source",
+  "category": "ai-tech",
+  "tagline": "The root of it all."
+ },
+ {
+  "tld": "sov",
+  "category": "commerce",
+  "tagline": "Where worth waits for you."
+ },
+ {
+  "tld": "sss",
+  "category": "infra",
+  "tagline": "Three letters, endless possibilities."
+ },
+ {
+  "tld": "stack",
+  "category": "ai-tech",
+  "tagline": "Everything works better together."
+ },
+ {
+  "tld": "start",
+  "category": "lifestyle",
+  "tagline": "Get started, make it happen."
+ },
+ {
+  "tld": "state",
+  "category": "infra",
+  "tagline": "Draw your own borders."
+ },
+ {
+  "tld": "stay",
+  "category": "lifestyle",
+  "tagline": "Make yourself at home."
+ },
+ {
+  "tld": "stem",
+  "category": "infra",
+  "tagline": "Where ideas get engineered."
+ },
+ {
+  "tld": "stock",
+  "category": "commerce",
+  "tagline": "Always stocked, always ready."
+ },
+ {
+  "tld": "stuff",
+  "category": "culture",
+  "tagline": "If it exists, it belongs."
+ },
+ {
+  "tld": "sub",
+  "category": "infra",
+  "tagline": "Your all-access digital pass."
+ },
+ {
+  "tld": "super",
+  "category": "culture",
+  "tagline": "Go big, go bold."
+ },
+ {
+  "tld": "sure",
+  "category": "lifestyle",
+  "tagline": "Count on it, every time."
+ },
+ {
+  "tld": "swap",
+  "category": "crypto-web3",
+  "tagline": "Exchange made effortless."
+ },
+ {
+  "tld": "sys",
+  "category": "ai-tech",
+  "tagline": "Everything working together."
+ },
+ {
+  "tld": "tada",
+  "category": "culture",
+  "tagline": "And now, for the big reveal."
+ },
+ {
+  "tld": "tag",
+  "category": "ai-tech",
+  "tagline": "Tag it, track it, know it."
+ },
+ {
+  "tld": "tap",
+  "category": "lifestyle",
+  "tagline": "Just a tap away."
+ },
+ {
+  "tld": "tea",
+  "category": "culture",
+  "tagline": "Every cup tells a story."
+ },
+ {
+  "tld": "text",
+  "category": "infra",
+  "tagline": "Words on the wire."
+ },
+ {
+  "tld": "the",
+  "category": "lifestyle",
+  "tagline": "Pinpointed for precision."
+ },
+ {
+  "tld": "therapy",
+  "category": "lifestyle",
+  "tagline": "Feel better, live better."
+ },
+ {
+  "tld": "thing",
+  "category": "culture",
+  "tagline": "Anything you imagine, everything you need."
+ },
+ {
+  "tld": "think",
+  "category": "lifestyle",
+  "tagline": "Minds in motion."
+ },
+ {
+  "tld": "this",
+  "category": "lifestyle",
+  "tagline": "Anything goes, no limits."
+ },
+ {
+  "tld": "time",
+  "category": "lifestyle",
+  "tagline": "Yesterday fades, tomorrow calls."
+ },
+ {
+  "tld": "tldr",
+  "category": "culture",
+  "tagline": "Shortcuts for busy lives."
+ },
+ {
+  "tld": "token",
+  "category": "crypto-web3",
+  "tagline": "Worth more than the sum."
+ },
+ {
+  "tld": "toy",
+  "category": "lifestyle",
+  "tagline": "For the joy of it."
+ },
+ {
+  "tld": "train",
+  "category": "ai-tech",
+  "tagline": "Skills built daily."
+ },
+ {
+  "tld": "tree",
+  "category": "lifestyle",
+  "tagline": "From seedling to system."
+ },
+ {
+  "tld": "true",
+  "category": "culture",
+  "tagline": "No spin, just truth."
+ },
+ {
+  "tld": "truth",
+  "category": "culture",
+  "tagline": "What you see is what you get."
+ },
+ {
+  "tld": "ttt",
+  "category": "infra",
+  "tagline": "Quick to type, hard to forget."
+ },
+ {
+  "tld": "uni",
+  "category": "commerce",
+  "tagline": "Your cosmos, condensed."
+ },
+ {
+  "tld": "url",
+  "category": "ai-tech",
+  "tagline": "Find it, click it, go."
+ },
+ {
+  "tld": "use",
+  "category": "infra",
+  "tagline": "Put it to work."
+ },
+ {
+  "tld": "uuu",
+  "category": "infra",
+  "tagline": "Quick to type, hard to forget."
+ },
+ {
+  "tld": "verse",
+  "category": "lifestyle",
+  "tagline": "For worlds you invent."
+ },
+ {
+  "tld": "vibe",
+  "category": "culture",
+  "tagline": "Set the tone, change the mood."
+ },
+ {
+  "tld": "view",
+  "category": "infra",
+  "tagline": "See it your way."
+ },
+ {
+  "tld": "viral",
+  "category": "culture",
+  "tagline": "Catch on quick, go viral."
+ },
+ {
+  "tld": "virtual",
+  "category": "ai-tech",
+  "tagline": "Born online, made for now."
+ },
+ {
+  "tld": "visit",
+  "category": "lifestyle",
+  "tagline": "Arrive where you belong."
+ },
+ {
+  "tld": "vvv",
+  "category": "infra",
+  "tagline": "Quick to type, hard to forget."
+ },
+ {
+  "tld": "want",
+  "category": "lifestyle",
+  "tagline": "Want it, chase it, get it."
+ },
+ {
+  "tld": "water",
+  "category": "lifestyle",
+  "tagline": "Flow with essentials."
+ },
+ {
+  "tld": "way",
+  "category": "lifestyle",
+  "tagline": "Choose your way forward."
+ },
+ {
+  "tld": "wear",
+  "category": "lifestyle",
+  "tagline": "Dress your domain."
+ },
+ {
+  "tld": "well",
+  "category": "lifestyle",
+  "tagline": "Done right, every time."
+ },
+ {
+  "tld": "wellness",
+  "category": "lifestyle",
+  "tagline": "Wellness, always in reach."
+ },
+ {
+  "tld": "what",
+  "category": "culture",
+  "tagline": "The answer's just ahead."
+ },
+ {
+  "tld": "wild",
+  "category": "culture",
+  "tagline": "For moments indescribable."
+ },
+ {
+  "tld": "will",
+  "category": "lifestyle",
+  "tagline": "Determined to move forward."
+ },
+ {
+  "tld": "wise",
+  "category": "ai-tech",
+  "tagline": "Smart moves, wise choices."
+ },
+ {
+  "tld": "wiz",
+  "category": "culture",
+  "tagline": "A little magic goes a long way."
+ },
+ {
+  "tld": "xbt",
+  "category": "crypto-web3",
+  "tagline": "Trade global, think digital."
+ },
+ {
+  "tld": "yea",
+  "category": "culture",
+  "tagline": "Classic approval, modern approach."
+ },
+ {
+  "tld": "yes",
+  "category": "culture",
+  "tagline": "Say yes, open doors."
+ },
+ {
+  "tld": "yyy",
+  "category": "infra",
+  "tagline": "Three letters, limitless meaning."
+ },
+ {
+  "tld": "zap",
+  "category": "lifestyle",
+  "tagline": "Delivered in a flash."
+ },
+ {
+  "tld": "zec",
+  "category": "crypto-web3",
+  "tagline": "Privacy, always in your corner."
+ },
+ {
+  "tld": "zen",
+  "category": "lifestyle",
+  "tagline": "The digital Savasana."
+ },
+ {
+  "tld": "zoom",
+  "category": "lifestyle",
+  "tagline": "See more, move further, faster."
+ },
+ {
+  "tld": "zzz",
+  "category": "infra",
+  "tagline": "Quick to type, hard to forget."
+ }
+]
