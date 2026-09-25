@@ -1,0 +1,37 @@
+---
+/**
+ * The chapter cards — the table of contents that reads like a deck.
+ *
+ * This is the piece carried over from /hype-machine, which worked: a grid of
+ * cards, each a way in. The difference is that these are anchors into one
+ * document rather than links to separate pages, so the reader never loses the
+ * thread and a skimmer can still jump straight to terms.
+ */
+import type { ProposalSectionData } from '../../../lib/promote/proposals';
+
+interface Props {
+  sections: ProposalSectionData[];
+}
+
+const { sections } = Astro.props;
+
+// Titles may carry inline markdown for the section heading; nav chrome shows
+// the plain text, so the markers are stripped rather than rendered.
+const stripInline = (t: string) => t.replace(/[*_`]/g, '');
+// The cover is the page's own header; it gets no card.
+const chapters = sections.filter((s) => s.layout !== 'cover');
+---
+
+{chapters.length > 0 && (
+  <nav class="proposal-cards" aria-label="Chapters">
+    {chapters.map((section) => (
+      <a class="proposal-card" href={`#${section.id}`}>
+        <span class="proposal-card__num">{section.chapter}</span>
+        <span class="proposal-card__title">{stripInline(section.title)}</span>
+        {section.cardSummary && (
+          <span class="proposal-card__summary">{section.cardSummary}</span>
+        )}
+      </a>
+    ))}
+  </nav>
+)}

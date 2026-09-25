@@ -1,0 +1,120 @@
+/*
+ * Print stylesheet for the proposal PDF export.
+ *
+ * Light ground on purpose. The memopop-orchestrator export guide makes the
+ * same call — dark mode is for screens, light mode is what survives being
+ * printed and what a reader expects from a document attached to an email.
+ *
+ * Everything here is driven by the same section primitives the screen version
+ * uses; only the palette, the page geometry and the break rules change.
+ */
+
+@page {
+  size: A4;
+  margin: 18mm 16mm 20mm;
+}
+@page :first { margin-top: 0; }
+
+:root,
+[data-theme='light'] {
+  --background: #ffffff;
+  --foreground: #14181f;
+  --muted: #eef1f5;
+  --muted-foreground: #5b6675;
+  --card: #f7f9fb;
+  --border: #d7dee7;
+  --primary: #0b6b73;
+  --radius: 6px;
+}
+
+html, body {
+  background: #fff;
+  color: var(--foreground);
+  font-size: 10.5pt;
+  line-height: 1.5;
+}
+
+.proposal {
+  /* Print gets a wider measure than screen — the page is narrower than a
+   * viewport, so 68ch would leave a river of white down one side. */
+  --proposal-measure: none;
+  --proposal-accent: #b4560f;
+  --proposal-link: #0b5d8a;
+  max-width: none;
+  padding: 0;
+}
+
+/* Screen-only chrome. */
+.proposal-rail,
+.proposal-cards,
+.proposal-totop,
+.lfm-toc,
+.proposal-print-cta { display: none !important; }
+
+/* --- page geometry ------------------------------------------------------ */
+
+.proposal-section {
+  break-before: page;
+  border-top: 0;
+  padding-block: 0 0.5rem;
+}
+.proposal-section:first-of-type { break-before: auto; }
+.proposal-h2, .proposal-headline, .proposal-eyebrow { break-after: avoid; }
+h3, h4 { break-after: avoid; }
+table, figure, .proposal-stats, .proposal-columns, .lfm-vega { break-inside: avoid; }
+tr, li, .proposal-stat, .proposal-column, .proposal-card { break-inside: avoid; }
+p { orphans: 3; widows: 3; }
+
+.proposal-h2 { font-size: 20pt; line-height: 1.15; margin-bottom: 0.25rem; }
+.proposal-headline { font-size: 13pt; }
+.proposal-subhead { font-size: 11pt; color: var(--muted-foreground); }
+.proposal-eyebrow { color: var(--muted-foreground); }
+
+/* --- primitives, re-toned for paper ------------------------------------- */
+
+.proposal-stats { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+.proposal-stat { background: var(--card); border-color: var(--border); padding: 0.75rem; }
+.proposal-stat__value { font-size: 17pt; color: var(--proposal-accent); }
+.proposal-stat__label { font-size: 9pt; }
+.proposal-stat__note { font-size: 8pt; }
+
+.proposal-columns { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+.proposal-column { background: var(--card); padding: 0.875rem; }
+.proposal-column--accent { background: #fff7ef; border-color: #e8c9a8; box-shadow: none; }
+.proposal-column--muted { background: #f2f4f7; }
+
+.proposal-band { background: #fbf7f2; border-color: #e6d9c8; padding: 1rem; }
+
+.proposal-body .ak-table-wrap { border: 1px solid var(--border); border-radius: 4px; overflow: visible; }
+.proposal-body .ak-table-wrap table { font-size: 8.5pt; }
+.proposal-body .ak-table-wrap th,
+.proposal-body .ak-table-wrap td { padding: 0.4rem 0.5rem; }
+.proposal-body .ak-table-wrap th { background: var(--muted); color: #33404f; }
+
+/* A horizontal scroller prints as one clipped row; lay the cards out instead. */
+.lfm-rollup-carousel .lfm-link-rollup--carousel {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+  overflow: visible;
+}
+.lfm-link-rollup--carousel .lfm-link-preview { flex: none; }
+.lfm-link-preview--card { break-inside: avoid; font-size: 8pt; }
+.lfm-card-description { display: none; }
+.lfm-rollup-nav { display: none !important; }
+
+.lfm-vega { border-color: var(--border); background: #fff; }
+
+/* Callouts keep their meaning on paper but lose the glow. */
+.callout, [class*='callout--'] { background: var(--card) !important; box-shadow: none !important; }
+
+a { color: var(--proposal-link); text-decoration: none; }
+
+/* Sources are the one place a reader needs the literal URL on paper. */
+.sources-section { break-before: page; }
+.sources-section a::after {
+  content: ' (' attr(href) ')';
+  font-size: 7.5pt;
+  color: var(--muted-foreground);
+  word-break: break-all;
+}

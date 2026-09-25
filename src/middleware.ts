@@ -2,7 +2,7 @@ import { defineMiddleware } from 'astro:middleware';
 import { readSessionFromRequest } from './lib/promote/gate';
 import { readMarkupsSession } from './lib/track-record/gate';
 
-const GATED_PATTERN = /^\/promote\/[^/]+\/.+$/;
+const GATED_PATTERN = /^\/(?:promote|proposals)\/[^/]+\/.+$/;
 const HUB_PATTERN = /^\/promote\/([^/]+)\/?$/;
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -30,11 +30,33 @@ export const onRequest = defineMiddleware(async (context, next) => {
     unlocked: !!readMarkupsSession(cookieHeader),
   };
 
+  // The PDF exporter drives headless Chrome, which has no way to carry a
+  // session cookie. A dedicated token, scoped to the print route only and read
+  // from the environment, lets the renderer through without weakening the gate
+  // for anything else. Absent or mismatched, the normal rewrite applies.
+  // Same dual read as lib/promote/gate.ts — process.env on Node, import.meta
+  // for build-time inlined values.
+  const exportToken =
+    (typeof process !== 'undefined' ? process.env?.PROMOTE_EXPORT_TOKEN : undefined) ||
+    (import.meta.env as Record<string, string | undefined>).PROMOTE_EXPORT_TOKEN ||
+    undefined;
+  const isPrintRoute = /^\/proposals\/[^/]+\/print\/?$/.test(path);
+  const tokenOk =
+    isPrintRoute &&
+    !!exportToken &&
+    context.url.searchParams.get('export_token') === exportToken;
+
+  if (tokenOk) {
+    context.locals.promote = { unlocked: true, scope: 'export' };
+    return next();
+  }
+
   if (GATED_PATTERN.test(path) && !session) {
-    const slugMatch = path.match(/^\/promote\/([^/]+)\//);
-    const slug = slugMatch?.[1];
-    if (slug) {
-      return context.rewrite(`/promote/${slug}`);
+    const slugMatch = path.match(/^\/(promote|proposals)\/([^/]+)\//);
+    const section = slugMatch?.[1];
+    const slug = slugMatch?.[2];
+    if (section && slug) {
+      return context.rewrite(`/${section}/${slug}`);
     }
   }
 

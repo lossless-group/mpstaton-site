@@ -1,0 +1,140 @@
+---
+/**
+ * Print view of a proposal — the source document for the PDF export.
+ *
+ * Same loader, same section components, same markdown. Only the chrome and the
+ * palette differ, which is what makes "the PDF reflects every change" true by
+ * construction: there is no second copy of the content to drift.
+ *
+ * Deliberately NOT BaseLayout — the layout ships site navigation and forces
+ * the site's dark theme, neither of which belongs in a printed document.
+ */
+import '../../../styles/globals.css';
+import '../../../styles/proposal.css';
+import '../../../styles/proposal-print.css';
+import ProposalSection from '../../../components/promote/proposal/ProposalSection.astro';
+import BrandMark from '../../../components/promote/BrandMark.astro';
+import Sources from '../../../components/markdown/Sources.astro';
+import { getOpportunity, getVariantsRegistry } from '../../../lib/promote/opportunities';
+import { loadProposal, listProposalVersions } from '../../../lib/promote/proposals';
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/proposals');
+
+const opportunity = getOpportunity(slug);
+if (!opportunity) return new Response('Not found', { status: 404 });
+
+const registry = getVariantsRegistry(slug);
+const available = listProposalVersions(slug);
+const version = Number(Astro.url.searchParams.get('v'))
+  || registry.proposal?.default
+  || available.at(-1)
+  || 1;
+
+const doc = await loadProposal(slug, version);
+if (!doc) return new Response(`Proposal v${version} not found`, { status: 404 });
+
+const cover = doc.sections.find((s) => s.layout === 'cover');
+const rest = doc.sections.filter((s) => s !== cover);
+const today = new Date().toLocaleDateString('en-GB', {
+  day: 'numeric', month: 'long', year: 'numeric',
+});
+---
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{opportunity.company_name} — Proposal v{version}</title>
+  </head>
+  <body>
+    <article
+      class="proposal"
+      style={opportunity.accent_color ? `--proposal-accent: ${opportunity.accent_color};` : undefined}
+    >
+      <section class="proposal-coverpage">
+        {(opportunity.logo?.symbol || opportunity.logo?.wordmark) && (
+          <div class="proposal-coverpage__mark">
+            <BrandMark
+              symbol={opportunity.logo?.symbol}
+              wordmark={opportunity.logo?.wordmark}
+              alt={opportunity.company_name}
+              size={3}
+            />
+          </div>
+        )}
+        {opportunity.eyebrow && <p class="proposal-coverpage__eyebrow">{opportunity.eyebrow}</p>}
+        <h1 class="proposal-coverpage__title">{cover?.title ?? opportunity.company_name}</h1>
+        {cover?.headline && <p class="proposal-coverpage__lede">{cover.headline}</p>}
+        <dl class="proposal-coverpage__meta">
+          <div><dt>Prepared for</dt><dd>{opportunity.company_name}</dd></div>
+          <div><dt>Prepared by</dt><dd>The Lossless Group · Michael Staton</dd></div>
+          <div><dt>Version</dt><dd>v{version}</dd></div>
+          <div><dt>Exported</dt><dd>{today}</dd></div>
+        </dl>
+      </section>
+
+      <section class="proposal-contents-page">
+        <h2 class="proposal-h2">Contents</h2>
+        <ol class="proposal-contents-list">
+          {rest.map((section) => (
+            <li>
+              <span class="proposal-contents-list__num">{section.chapter}</span>
+              <span>{section.title.replace(/[*_`]/g, '')}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {rest.map((section) => <ProposalSection section={section} />)}
+
+      <Sources citations={doc.citations} />
+    </article>
+
+    <style>
+      .proposal-coverpage {
+        min-height: 60vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 22mm 0 0;
+        break-after: page;
+      }
+      .proposal-coverpage__mark { margin-bottom: 2.5rem; color: #14181f; }
+      .proposal-coverpage__eyebrow {
+        font-size: 9pt; letter-spacing: 0.18em; text-transform: uppercase;
+        color: var(--muted-foreground);
+      }
+      .proposal-coverpage__title {
+        margin-top: 1rem; font-size: 30pt; line-height: 1.08;
+        letter-spacing: -0.02em; font-weight: 600; text-wrap: balance;
+      }
+      .proposal-coverpage__lede {
+        margin-top: 1rem; font-size: 13pt; line-height: 1.45;
+        color: var(--muted-foreground); max-width: 34em;
+      }
+      .proposal-coverpage__meta {
+        margin-top: 3rem; display: grid; grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem 2rem; border-top: 1px solid var(--border); padding-top: 1rem;
+      }
+      .proposal-coverpage__meta dt {
+        font-size: 8pt; letter-spacing: 0.14em; text-transform: uppercase;
+        color: var(--muted-foreground);
+      }
+      .proposal-coverpage__meta dd { margin: 0.2rem 0 0; font-size: 10.5pt; }
+
+      .proposal-contents-page { break-after: page; }
+      .proposal-contents-list { list-style: none; padding: 0; margin: 1.5rem 0 0; }
+      .proposal-contents-list li {
+        display: flex; gap: 0.75rem; padding: 0.3rem 0;
+        border-bottom: 1px solid var(--border); font-size: 10.5pt;
+      }
+      .proposal-contents-list__num {
+        font-variant-numeric: tabular-nums; color: var(--muted-foreground); min-width: 2rem;
+      }
+    </style>
+  </body>
+</html>

@@ -6,6 +6,7 @@ import CodeBlock from "./CodeBlock.astro";
 import Callout from "./Callout.astro";
 import MarkdownImage from "./MarkdownImage.astro";
 import MermaidChartDisplay from "./MermaidChartDisplay.astro";
+import VegaLiteChart from "./VegaLiteChart.astro";
 import YouTubeEmbed from "./YouTubeEmbed.astro";
 import YouTubeShortsEmbed from "./YouTubeShortsEmbed.astro";
 import YouTubePlaylistEmbed from "./YouTubePlaylistEmbed.astro";
@@ -17,9 +18,17 @@ import { classifyBareLink, getBareLinkUrl } from "../../lib/markdown/classify-ba
 export interface Props {
   node: Root | Content;
   data?: any;
+  /**
+   * Set on the header row so its cells render as <th> rather than <td>.
+   * mdast has no separate header-cell node type — the table's first child IS
+   * the header row — so the distinction has to be carried down as a prop.
+   * Without it every cell rendered as <td>, which silently disabled every
+   * `th` rule in prose.css and proposal.css.
+   */
+  isHeader?: boolean;
 }
 
-const { node, data } = Astro.props as Props;
+const { node, data, isHeader = false } = Astro.props as Props;
 const type = (node as any)?.type ?? "root";
 
 function childrenOf(n: any): any[] {
@@ -187,6 +196,13 @@ function childrenOf(n: any): any[] {
 
 {type === "code" && (() => {
   const code = node as Code;
+  // LFM's code-fence router stamps `data.fence` when a format is registered.
+  // Dispatch on that rather than on `lang`, so the alias list (vega-lite /
+  // vegalite / vl) lives in the package instead of here.
+  const fence = (code as any).data?.fence;
+  if (fence?.format === "vega-lite" && fence.parsed) {
+    return <VegaLiteChart summary={fence.parsed} />;
+  }
   if (code.lang === "mermaid") {
     return <MermaidChartDisplay code={code.value} />;
   }
@@ -218,7 +234,7 @@ function childrenOf(n: any): any[] {
         if (idx === 0) {
           return (
             <thead>
-              <Astro.self node={child} data={data} />
+              <Astro.self node={child} data={data} isHeader />
             </thead>
           );
         }
@@ -236,18 +252,24 @@ function childrenOf(n: any): any[] {
 {type === "tableRow" && (
   <tr>
     {childrenOf(node).map((child) => (
-      <Astro.self node={child} data={data} />
+      <Astro.self node={child} data={data} isHeader={isHeader} />
     ))}
   </tr>
 )}
 
-{type === "tableCell" && (
+{type === "tableCell" && (isHeader ? (
+  <th scope="col">
+    {childrenOf(node).map((child) => (
+      <Astro.self node={child} data={data} />
+    ))}
+  </th>
+) : (
   <td>
     {childrenOf(node).map((child) => (
       <Astro.self node={child} data={data} />
     ))}
   </td>
-)}
+))}
 
 {type === "delete" && (
   <del>

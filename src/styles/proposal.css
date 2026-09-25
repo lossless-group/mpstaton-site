@@ -1,0 +1,429 @@
+/*
+ * Proposal primitives — the section vocabulary for the `proposal` material type.
+ *
+ * Modelled on reach-edu-hub's `deck-primitives.css`: a fixed set of classes that
+ * read ONLY semantic tokens, so a section never carries its own colour values.
+ * The scroll decks this replaces hardcoded an inline gradient string at the top
+ * of every section file, which is why thirteen slides never looked like one deck.
+ *
+ * Reads: --foreground, --muted-foreground, --border, --card, --primary, --radius.
+ * Per-proposal accent arrives as --proposal-accent, set inline on the article
+ * from `opportunity.yaml`'s `accent_color`.
+ */
+
+.proposal {
+  /* Tier 1 — named, straight from the Lossless brand palette.
+   * --clr-link -> --clr-lossless-accent--brightest -> --cyan-aqua--brightest
+   * in lossless-monorepo/site/src/styles/global.css. */
+  --color__cyan-aqua-brightest: rgb(4, 229, 229);
+  --color__cyan-aqua-deep: rgb(8, 118, 126);
+
+  /* Tier 2 — semantic. Light ground gets the deep variant: the brightest cyan
+   * on a near-white background is roughly 1.6:1 and fails WCAG outright. */
+  --proposal-accent: var(--primary);
+  --proposal-measure: 68ch;
+  --proposal-link: var(--color__cyan-aqua-deep);
+  --proposal-link-hover: var(--color__cyan-aqua-brightest);
+}
+
+[data-theme='dark'] .proposal {
+  --proposal-link: var(--color__cyan-aqua-brightest);
+  --proposal-link-hover: color-mix(in srgb, var(--color__cyan-aqua-brightest) 72%, white);
+}
+
+/* Links in prose, tables, columns, bands and stats all read the brand token.
+ * Scoped with :is() under .proposal so it outranks `.prose a`, and deliberately
+ * excludes the chapter cards, the rail and the back-to-top, which are
+ * navigation chrome with their own treatment. */
+.proposal :is(.proposal-body, .proposal-column, .proposal-band, .proposal-stat, .proposal-subhead) a:not(.lfm-link-preview) {
+  color: var(--proposal-link);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  text-decoration-color: color-mix(in srgb, var(--proposal-link) 38%, transparent);
+  transition: color 0.15s, text-decoration-color 0.15s;
+}
+.proposal :is(.proposal-body, .proposal-column, .proposal-band, .proposal-stat, .proposal-subhead) a:not(.lfm-link-preview):hover {
+  color: var(--proposal-link-hover);
+  text-decoration-color: var(--proposal-link-hover);
+}
+
+/* ---- Chapter rail (sticky nav) ------------------------------------------ */
+
+.proposal-rail {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  gap: 0.375rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0.625rem 0;
+  margin-bottom: 2rem;
+  background: color-mix(in oklab, var(--background) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.proposal-rail::-webkit-scrollbar { display: none; }
+
+.proposal-rail__item {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.375rem;
+  padding: 0.3rem 0.625rem;
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s, background-color 0.15s;
+}
+.proposal-rail__item:hover {
+  color: var(--foreground);
+  background: color-mix(in oklab, var(--muted) 60%, transparent);
+}
+.proposal-rail__item[aria-current='true'] {
+  color: var(--foreground);
+  background: color-mix(in oklab, var(--proposal-accent) 14%, transparent);
+}
+.proposal-rail__num {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  color: color-mix(in oklab, var(--proposal-accent) 80%, var(--muted-foreground));
+}
+
+/* ---- Chapter cards (the TOC that reads like a deck) -------------------- */
+
+.proposal-cards {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+}
+
+.proposal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.125rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--card) 45%, transparent);
+  text-decoration: none;
+  transition: border-color 0.15s, background-color 0.15s, transform 0.15s;
+}
+.proposal-card:hover {
+  border-color: color-mix(in oklab, var(--proposal-accent) 45%, var(--border));
+  background: color-mix(in oklab, var(--card) 85%, transparent);
+  transform: translateY(-1px);
+}
+.proposal-card__num {
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in oklab, var(--proposal-accent) 85%, var(--muted-foreground));
+}
+.proposal-card__title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+.proposal-card__summary {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+  text-wrap: pretty;
+}
+
+/* ---- Sections ---------------------------------------------------------- */
+
+.proposal-section {
+  scroll-margin-top: 4.5rem;
+  padding-block: 3.5rem;
+  border-top: 1px solid var(--border);
+}
+.proposal-section:first-of-type { border-top: 0; padding-top: 1rem; }
+
+.proposal-eyebrow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.625rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  margin-bottom: 1rem;
+}
+.proposal-eyebrow__num {
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in oklab, var(--proposal-accent) 85%, var(--muted-foreground));
+}
+
+.proposal-h2 {
+  font-size: clamp(1.625rem, 3.2vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+
+.proposal-headline {
+  margin-top: 0.875rem;
+  font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--foreground);
+  text-wrap: balance;
+  max-width: var(--proposal-measure);
+}
+
+.proposal-subhead {
+  margin-top: 0.625rem;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--muted-foreground);
+  text-wrap: pretty;
+  max-width: var(--proposal-measure);
+}
+
+.proposal .proposal-body { margin-top: 1.75rem; max-width: none; }
+/* Running text is held to the reading measure; tables, carousels and media get
+ * the full column. Capping the children rather than the wrapper is what lets
+ * both live in the same section without swapping wrappers. */
+.proposal .proposal-body > * { max-width: var(--proposal-measure); }
+.proposal .proposal-body > :is(.ak-table-wrap, .lfm-link-rollup, .lfm-rollup-carousel, figure, img) {
+  max-width: none;
+}
+
+/* ---- layout: cover ----------------------------------------------------- */
+
+.proposal-cover { padding-block: 1rem 2.5rem; border-top: 0; }
+.proposal-cover .proposal-h2 {
+  font-size: clamp(2.25rem, 6vw, 3.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.proposal-cover__rule {
+  margin-top: 2rem;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--proposal-accent) 0%,
+    color-mix(in oklab, var(--proposal-accent) 20%, transparent) 100%
+  );
+}
+
+/* ---- layout: stat-row -------------------------------------------------- */
+
+.proposal-stats {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+}
+.proposal-stat {
+  padding: 1.125rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--card) 35%, transparent);
+}
+.proposal-stat__value {
+  font-size: clamp(1.75rem, 3.5vw, 2.375rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: color-mix(in oklab, var(--proposal-accent) 70%, var(--foreground));
+  font-variant-numeric: tabular-nums;
+}
+.proposal-stat__label {
+  margin-top: 0.625rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--foreground);
+}
+.proposal-stat__note {
+  margin-top: 0.375rem;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--muted-foreground);
+}
+
+/* ---- layout: two-column ------------------------------------------------ */
+
+.proposal-columns {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+}
+.proposal-column {
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--card) 40%, transparent);
+}
+.proposal-column__title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--foreground);
+}
+.proposal-column__body {
+  margin-top: 0.75rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--muted-foreground);
+  text-wrap: pretty;
+}
+.proposal-column__items {
+  margin-top: 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+.proposal-column__items li {
+  position: relative;
+  padding-left: 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--muted-foreground);
+}
+.proposal-column__items li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--proposal-accent) 70%, transparent);
+}
+
+/* Label chip above a column's title. */
+.proposal-column__label {
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: color-mix(in oklab, var(--proposal-accent) 85%, var(--muted-foreground));
+  margin-bottom: 0.625rem;
+}
+
+/* The mindset strip — the line that says what the bullets add up to. */
+.proposal-column__mindset {
+  margin-top: 1.25rem;
+  padding-top: 0.875rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  font-weight: 500;
+  color: var(--foreground);
+  text-wrap: pretty;
+}
+
+/* ---- Column tones ------------------------------------------------------
+ * A before/after comparison fails when both cards look equally alive. `muted`
+ * drains one side on purpose: duller border, flatter ground, grey bullets, and
+ * type a shade down. `accent` does the opposite. Side by side the reader knows
+ * which one the argument is for before reading a word of it.
+ */
+
+.proposal-column--muted {
+  border-color: color-mix(in oklab, var(--border) 55%, transparent);
+  background: color-mix(in oklab, var(--muted) 14%, transparent);
+}
+.proposal-column--muted .proposal-column__label {
+  color: color-mix(in oklab, var(--muted-foreground) 85%, transparent);
+}
+.proposal-column--muted .proposal-column__title {
+  color: color-mix(in oklab, var(--foreground) 78%, transparent);
+  font-weight: 500;
+}
+.proposal-column--muted .proposal-column__items li::before {
+  background: color-mix(in oklab, var(--muted-foreground) 45%, transparent);
+}
+.proposal-column--muted .proposal-column__mindset {
+  color: var(--muted-foreground);
+  border-top-color: color-mix(in oklab, var(--border) 55%, transparent);
+}
+
+.proposal-column--accent {
+  border-color: color-mix(in oklab, var(--proposal-accent) 42%, var(--border));
+  background: color-mix(in oklab, var(--proposal-accent) 7%, transparent);
+  box-shadow: 0 1px 24px -12px color-mix(in oklab, var(--proposal-accent) 60%, transparent);
+}
+.proposal-column--accent .proposal-column__title {
+  color: var(--foreground);
+}
+.proposal-column--accent .proposal-column__body {
+  color: color-mix(in oklab, var(--foreground) 82%, var(--muted-foreground));
+}
+.proposal-column--accent .proposal-column__mindset {
+  color: color-mix(in oklab, var(--proposal-accent) 88%, var(--foreground));
+  border-top-color: color-mix(in oklab, var(--proposal-accent) 28%, var(--border));
+}
+
+/* ---- layout: table ----------------------------------------------------- */
+
+/* The body is a GFM table; the wrapper owns the horizontal scroll so a wide
+ * terms table never makes the page itself scroll sideways. */
+.proposal-body .ak-table-wrap {
+  margin-top: 1.75rem;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+}
+.proposal-body .ak-table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+.proposal-body .ak-table-wrap th,
+.proposal-body .ak-table-wrap td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.5;
+}
+.proposal-body .ak-table-wrap th {
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.proposal-body .ak-table-wrap td { color: var(--foreground); }
+.proposal-body .ak-table-wrap tbody tr:last-child td { border-bottom: 0; }
+
+/* ---- layout: band ------------------------------------------------------ */
+
+.proposal-band {
+  margin-top: 1.75rem;
+  padding: 2rem;
+  border: 1px solid color-mix(in oklab, var(--proposal-accent) 30%, var(--border));
+  border-radius: calc(var(--radius) + 4px);
+  background: color-mix(in oklab, var(--proposal-accent) 7%, transparent);
+}
+.proposal-band .proposal-body { margin-top: 0; }
+
+/* ---- Footer ------------------------------------------------------------ */
+
+.proposal-totop {
+  display: inline-block;
+  margin-top: 2.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  text-decoration: none;
+}
+.proposal-totop:hover { color: var(--foreground); }

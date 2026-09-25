@@ -1,16 +1,22 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getOpportunity } from '../../lib/promote/opportunities';
+import BrandMark from '../../components/promote/BrandMark.astro';
+import { getAllOpportunities, isProposalContent } from '../../lib/promote/opportunities';
 
 export const prerender = false;
 
-// Proposals are opportunity records with kind "proposal". Listed explicitly
-// while the surface is young — a filtered loader can replace this later.
-const SLUGS = ['lossless-palmer-ai'];
-
-const proposals = SLUGS
-  .map((slug) => ({ slug, opportunity: getOpportunity(slug) }))
-  .filter((p) => p.opportunity !== null && p.opportunity !== undefined);
+// Any opportunity carrying a `proposal` or `deck` material belongs here. This
+// replaces a hardcoded slug list — adding a proposal is now one content
+// directory, with no edit to this page.
+// Only content under src/content/proposals/ — an investment deck living in
+// src/content/promote/ is not a client proposal and does not belong here.
+const proposals = getAllOpportunities()
+  .filter((o) => isProposalContent(o.slug))
+  .map((opportunity) => {
+    // Prefer the proposal document; fall back to whatever is marked primary.
+    return { opportunity, href: `/proposals/${opportunity.slug}` };
+  })
+  .sort((a, b) => a.opportunity.company_name.localeCompare(b.opportunity.company_name));
 
 const meta = {
   title: 'Proposals · Michael P. Staton',
@@ -36,22 +42,33 @@ const meta = {
     )}
 
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      {proposals.map(({ slug, opportunity }) => (
+      {proposals.map(({ opportunity, href }) => (
         <a
-          href={`/promote/${slug}/deck/scroll/1`}
+          href={href}
           class="group flex flex-col rounded-xl border border-border bg-card/40 p-7 transition hover:border-foreground/30 hover:bg-card/70"
         >
-          <p class="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-            {opportunity!.eyebrow}
-          </p>
+          {opportunity.logo?.symbol || opportunity.logo?.wordmark ? (
+            <span class="text-foreground">
+              <BrandMark
+                symbol={opportunity.logo?.symbol}
+                wordmark={opportunity.logo?.wordmark}
+                alt={opportunity.company_name}
+                size={1.9}
+              />
+            </span>
+          ) : (
+            <p class="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+              {opportunity.eyebrow}
+            </p>
+          )}
           <p class="mt-4 text-2xl font-semibold leading-snug text-foreground">
-            {opportunity!.company_name}
+            {opportunity.company_name}
           </p>
           <p class="mt-3 flex-1 text-pretty text-sm leading-relaxed text-muted-foreground">
-            {opportunity!.short_description}
+            {opportunity.short_description}
           </p>
           <span class="mt-6 inline-flex items-center gap-2 text-sm text-foreground">
-            Open the deck
+            Open the proposal
             <span class="transition group-hover:translate-x-0.5">→</span>
           </span>
         </a>

@@ -23,10 +23,13 @@ src/data/youtube-playlist-cache.json
 #   • directories prefixed with `_` ARE committed (templates, scaffolding, demo)
 #   • directories with real opportunity slugs (e.g. chromadb, acme) are NOT committed
 src/content/promote/*/
+src/content/proposals/*/
+!src/content/proposals/_*/
 !src/content/promote/_*/
 src/layouts/sections/promote/*/
 !src/layouts/sections/promote/_*/
 public/promote/*/
+public/proposals/*/
 !public/promote/_*/
 
 # Track-record markups — local-only (this is a public repo).

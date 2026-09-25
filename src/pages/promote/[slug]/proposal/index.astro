@@ -1,0 +1,10 @@
+---
+/**
+ * Legacy redirect. Proposals moved from /promote/<slug>/proposal to
+ * /proposals/<slug> — /promote is the investment-promotion surface and a
+ * client proposal does not belong on it. Any link already shared keeps working.
+ */
+export const prerender = false;
+const { slug } = Astro.params;
+return Astro.redirect(slug ? `/proposals/${slug}` : '/proposals', 301);
+---

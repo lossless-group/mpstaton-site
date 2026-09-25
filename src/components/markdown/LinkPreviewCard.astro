@@ -40,10 +40,44 @@ const host = (() => {
 // browser. Free fallback when the OG image hasn't been fetched yet.
 const faviconUrl = `https://www.google.com/s2/favicons?domain=${host}&sz=64`;
 
-const title = data.title ?? host;
-const description = data.description;
-const image = data.image;
-const source = data.source ?? host;
+// OG tags arrive HTML-escaped from the source page ("Build &amp; ship"), and
+// Astro escapes again on render, so an ampersand surfaces as a literal
+// "&amp;". Decode once here — these are text fields rendered as text, never as
+// markup, so decoding cannot introduce injection.
+function decodeEntities(value?: string): string | undefined {
+  if (!value) return value;
+  // Some sources (and anything already cached from a double-escaped fetch)
+  // carry "&amp;amp;", so decode until the string stops changing. Bounded at
+  // three passes so a literal "&amp;" in real copy cannot loop.
+  let out = value;
+  for (let pass = 0; pass < 3; pass++) {
+    const next = decodeOnce(out);
+    if (next === out) break;
+    out = next;
+  }
+  return out;
+}
+
+function decodeOnce(value: string): string {
+  return value
+    .replace(/&(?:amp|#38|#x26);/gi, '&')
+    .replace(/&(?:lt|#60|#x3c);/gi, '<')
+    .replace(/&(?:gt|#62|#x3e);/gi, '>')
+    .replace(/&(?:quot|#34|#x22);/gi, '"')
+    .replace(/&(?:#39|apos|#x27);/gi, "'")
+    .replace(/&(?:nbsp|#160);/gi, ' ')
+    .replace(/&(?:mdash|#8212);/gi, '—')
+    .replace(/&(?:ndash|#8211);/gi, '–')
+    .replace(/&(?:hellip|#8230);/gi, '…');
+}
+
+const title = decodeEntities(data.title) ?? host;
+const description = decodeEntities(data.description);
+// URLs need this too: an OG image href carrying "&amp;" between query params
+// re-escapes to "&amp;amp;" and the browser then requests a literal "&amp;"
+// as part of the query string, silently corrupting the params.
+const image = decodeEntities(data.image);
+const source = decodeEntities(data.source) ?? host;
 const publishedAt = data.publishedAt;
 ---
 

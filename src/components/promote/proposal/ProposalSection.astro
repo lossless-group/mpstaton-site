@@ -1,0 +1,135 @@
+---
+/**
+ * One proposal section. Dispatches on the `layout` key in the section's
+ * frontmatter against the primitives in styles/proposal.css.
+ *
+ * `stats` and `columns` render whenever present, independent of `layout` —
+ * they are additive chrome, not layouts of their own. `layout` controls only
+ * how the BODY is wrapped (prose measure, table scroller, accent band), so a
+ * section can lead with a stat row and still carry a wide table underneath.
+ *
+ * Every layout renders the same three things in the same order — eyebrow,
+ * heading block, body — and differs only in what it puts BETWEEN the heading
+ * and the body (stats, columns) and how it wraps the body (prose, table, band).
+ * That is deliberate: a section can change layout by editing one frontmatter
+ * key, with no copy moved and no component swapped.
+ */
+import AstroMarkdown from '../../markdown/AstroMarkdown.astro';
+import type { ProposalSectionData } from '../../../lib/promote/proposals';
+
+interface Props {
+  section: ProposalSectionData;
+}
+
+const { section } = Astro.props;
+const { layout } = section;
+
+/**
+ * Frontmatter is plain YAML, so a title written as `_must leave_` would render
+ * its underscores literally. These two helpers give the heading fields the
+ * small subset of inline markdown an author actually reaches for, without
+ * putting the whole markdown pipeline behind a single string.
+ *
+ * Escaping happens BEFORE the markers are expanded, so the only tags that can
+ * reach the DOM are the three this function writes itself.
+ */
+function inlineEmphasis(text?: string): string | undefined {
+  if (!text) return text;
+  const escaped = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  return escaped
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/(?<![A-Za-z0-9])[_*]([^_*\n]+)[_*](?![A-Za-z0-9])/g, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+
+const titleHtml = inlineEmphasis(section.title);
+const headlineHtml = inlineEmphasis(section.headline);
+const subheadHtml = inlineEmphasis(section.subhead);
+
+const isCover = layout === 'cover';
+// ONE body wrapper for every layout. A `table` layout used to swap in a
+// non-prose wrapper, which silently dropped the reading measure, the prose
+// leading and the paragraph spacing — so prose in a table section rendered
+// full-width and with paragraphs butted together, while the same markdown in a
+// `prose` section rendered correctly. AstroMarkdown already wraps every table
+// in `.ak-table-wrap`, so tables get their own scroller without the body
+// wrapper having to change at all.
+const bodyWrapClass = 'proposal-body prose';
+---
+
+<section
+  id={section.id}
+  class:list={['proposal-section', { 'proposal-cover': isCover }]}
+  data-chapter={section.chapter}
+>
+  {!isCover && (
+    <p class="proposal-eyebrow">
+      <span class="proposal-eyebrow__num">{section.chapter}</span>
+      {section.eyebrow && <span>{section.eyebrow}</span>}
+    </p>
+  )}
+
+  {isCover && section.eyebrow && (
+    <p class="proposal-eyebrow"><span>{section.eyebrow}</span></p>
+  )}
+
+  <h2 class="proposal-h2" set:html={titleHtml} />
+
+  {headlineHtml && <p class="proposal-headline" set:html={headlineHtml} />}
+  {subheadHtml && <p class="proposal-subhead" set:html={subheadHtml} />}
+
+  {isCover && <div class="proposal-cover__rule" />}
+
+  {section.stats && (
+    <div class="proposal-stats">
+      {section.stats.map((stat) => (
+        <div class="proposal-stat">
+          <p class="proposal-stat__value">{stat.value}</p>
+          <p class="proposal-stat__label">{stat.label}</p>
+          {stat.note && <p class="proposal-stat__note">{stat.note}</p>}
+        </div>
+      ))}
+    </div>
+  )}
+
+  {section.columns && (
+    <div class="proposal-columns">
+      {section.columns.map((column) => (
+        <div
+          class:list={[
+            'proposal-column',
+            column.tone === 'muted' && 'proposal-column--muted',
+            column.tone === 'accent' && 'proposal-column--accent',
+          ]}
+        >
+          {column.label && <p class="proposal-column__label">{column.label}</p>}
+          <p class="proposal-column__title">{column.title}</p>
+          {column.body && <p class="proposal-column__body">{column.body}</p>}
+          {column.items && (
+            <ul class="proposal-column__items">
+              {column.items.map((item) => <li>{item}</li>)}
+            </ul>
+          )}
+          {column.mindset && <p class="proposal-column__mindset">{column.mindset}</p>}
+        </div>
+      ))}
+    </div>
+  )}
+
+  {!section.empty && layout === 'band' && (
+    <div class="proposal-band">
+      <div class="proposal-body prose">
+        <AstroMarkdown node={section.tree} />
+      </div>
+    </div>
+  )}
+
+  {!section.empty && layout !== 'band' && (
+    <div class={bodyWrapClass}>
+      <AstroMarkdown node={section.tree} />
+    </div>
+  )}
+</section>

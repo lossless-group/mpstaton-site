@@ -22,12 +22,22 @@ export const POST: APIRoute = async ({ request }) => {
 
   const result = checkCode(slug, code);
   if (!result.ok) {
-    const back = new URL(hubUrl(slug), request.url);
+    // Send them back where they came from. Bouncing a client proposal to the
+    // /promote hub on a typo shows them the wrong surface entirely.
+    const origin = redirectTo.startsWith(`/proposals/${slug}`)
+      ? `/proposals/${slug}`
+      : hubUrl(slug);
+    const back = new URL(origin, request.url);
     back.searchParams.set('e', '1');
     return new Response(null, { status: 303, headers: { Location: back.toString() } });
   }
 
-  const safeRedirect = redirectTo.startsWith(`/promote/${slug}`) ? redirectTo : hubUrl(slug);
+  // Both surfaces use this endpoint: /promote/<slug> for investment material,
+  // /proposals/<slug> for client proposals. Anything else falls back.
+  const allowed = [`/promote/${slug}`, `/proposals/${slug}`];
+  const safeRedirect = allowed.some((prefix) => redirectTo.startsWith(prefix))
+    ? redirectTo
+    : hubUrl(slug);
   return new Response(null, {
     status: 303,
     headers: {

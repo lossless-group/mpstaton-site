@@ -1,0 +1,75 @@
+---
+/**
+ * Sticky chapter rail with scroll-spy.
+ *
+ * A long proposal read on a phone is a wall of text without this — the rail is
+ * what makes the document navigable while you are inside it, as opposed to the
+ * cards, which only help before you start reading.
+ */
+import type { ProposalSectionData } from '../../../lib/promote/proposals';
+
+interface Props {
+  sections: ProposalSectionData[];
+}
+
+const { sections } = Astro.props;
+
+// Titles may carry inline markdown for the section heading; nav chrome shows
+// the plain text, so the markers are stripped rather than rendered.
+const stripInline = (t: string) => t.replace(/[*_`]/g, '');
+const chapters = sections.filter((s) => s.layout !== 'cover');
+---
+
+{chapters.length > 1 && (
+  <nav class="proposal-rail" aria-label="Chapter navigation" data-proposal-rail>
+    {chapters.map((section) => (
+      <a class="proposal-rail__item" href={`#${section.id}`} data-rail-target={section.id}>
+        <span class="proposal-rail__num">{section.chapter}</span>
+        <span>{stripInline(section.title)}</span>
+      </a>
+    ))}
+  </nav>
+)}
+
+<script>
+  // Marks the rail item for whichever section is currently deepest in view, and
+  // keeps it scrolled into sight on narrow screens where the rail overflows.
+  const rail = document.querySelector<HTMLElement>('[data-proposal-rail]');
+  if (rail) {
+    const items = new Map<string, HTMLAnchorElement>();
+    rail.querySelectorAll<HTMLAnchorElement>('[data-rail-target]').forEach((el) => {
+      const id = el.dataset.railTarget;
+      if (id) items.set(id, el);
+    });
+
+    let current: string | null = null;
+    const setCurrent = (id: string) => {
+      if (id === current) return;
+      current = id;
+      for (const [key, el] of items) {
+        const active = key === id;
+        el.setAttribute('aria-current', active ? 'true' : 'false');
+        if (active && rail.scrollWidth > rail.clientWidth) {
+          el.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+        }
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // The topmost intersecting section wins, so scrolling up and down both
+        // settle on the heading the reader is actually under.
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible[0]?.target.id) setCurrent(visible[0].target.id);
+      },
+      { rootMargin: '-25% 0px -60% 0px', threshold: 0 },
+    );
+
+    for (const id of items.keys()) {
+      const section = document.getElementById(id);
+      if (section) observer.observe(section);
+    }
+  }
+</script>

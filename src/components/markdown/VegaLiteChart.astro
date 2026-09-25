@@ -1,0 +1,105 @@
+---
+/**
+ * VegaLiteChart — renders a ```vega-lite fence to inline SVG, server-side.
+ *
+ * No client JavaScript and no CDN. The earlier version imported vega-embed
+ * from jsDelivr at view time, which failed twice in ways that were invisible:
+ * the "+esm" bundle resolved Vega-Lite 6 against a Vega 5 runtime, the compile
+ * threw, and what remained was an EMPTY <svg> — which every check for "did an
+ * svg appear" reported as success. Compiling here removes the network, the
+ * version skew and that whole class of silent failure, and means the chart is
+ * present in the PDF export and with JS disabled.
+ *
+ * Text colours are emitted as `currentColor` so one SVG reads correctly on the
+ * dark screen document and on the light print stylesheet.
+ */
+import { compile } from 'vega-lite';
+import { View, parse } from 'vega';
+
+interface VegaLiteSummary {
+  spec: Record<string, unknown>;
+  mark?: string;
+  channels?: string[];
+  data?: string;
+  title?: string;
+}
+
+interface Props {
+  summary: VegaLiteSummary;
+}
+
+const { summary } = Astro.props;
+const spec = { ...(summary?.spec ?? {}) } as Record<string, any>;
+
+// Sentinel colour, swapped for `currentColor` after render so the one SVG
+// works on both grounds.
+const INK = '#010203';
+
+let svg = '';
+let error = '';
+try {
+  // `width: "container"` needs a real width at render time; server-side there
+  // is no container, so give it a fixed canvas and let CSS scale the SVG.
+  if (spec.width === 'container') spec.width = 760;
+
+  const { spec: vgSpec } = compile(spec as any, {
+    config: {
+      background: null,
+      // Type is sized for the FINAL size, not this canvas. The SVG renders at
+      // 760px and CSS scales it up to the column, so anything set at a normal
+      // screen size lands small next to 18px body copy.
+      title: {
+        color: INK, subtitleColor: INK, anchor: 'start',
+        fontSize: 21, subtitleFontSize: 15, subtitlePadding: 8,
+      },
+      axis: {
+        labelColor: INK, titleColor: INK,
+        labelFontSize: 15, titleFontSize: 16, titlePadding: 8,
+        domainColor: '#8b93a1', tickColor: '#8b93a1',
+        gridColor: '#8b93a1', gridOpacity: 0.22,
+      },
+      // labelLimit stops "Without VAR partners" truncating to "…partne…".
+      legend: { labelColor: INK, titleColor: INK, labelFontSize: 15, labelLimit: 300, symbolSize: 160 },
+      view: { stroke: null },
+      font: 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif',
+    },
+  });
+
+  const view = new View(parse(vgSpec), { renderer: 'none' });
+  svg = await view.toSVG();
+  view.finalize();
+
+  svg = svg
+    .replaceAll(INK, 'currentColor')
+    .replace('<svg ', '<svg role="img" preserveAspectRatio="xMinYMin meet" ');
+} catch (err) {
+  error = err instanceof Error ? err.message : String(err);
+  console.error('[vega-lite] server render failed:', error);
+}
+
+const fallback = [summary?.title, summary?.mark && `${summary.mark} chart`, summary?.data]
+  .filter(Boolean)
+  .join(' · ');
+---
+
+<figure class="lfm-vega">
+  {svg ? (
+    <div class="lfm-vega__canvas" set:html={svg} />
+  ) : (
+    <p class="lfm-vega__fallback">{fallback || 'Chart'}{error ? ` — ${error}` : ''}</p>
+  )}
+</figure>
+
+<style>
+  .lfm-vega {
+    margin: 1.75rem 0;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius, 8px);
+    background: color-mix(in oklab, var(--card, #111) 35%, transparent);
+    color: var(--foreground);
+    overflow-x: auto;
+  }
+  .lfm-vega__canvas :global(svg) { width: 100%; height: auto; max-width: 100%; display: block; }
+  .lfm-vega__fallback { color: var(--muted-foreground); font-size: 0.875rem; margin: 0; }
+</style>

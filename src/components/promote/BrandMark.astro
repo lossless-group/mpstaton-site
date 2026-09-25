@@ -1,0 +1,46 @@
+---
+/**
+ * BrandMark — renders a partner's logomark and wordmark as CSS masks.
+ *
+ * The assets are single-colour SVGs (brands commonly ship a white-only mark
+ * with `fill="none"` on the root), so painting them with `currentColor` is what
+ * makes one file work on the dark screen document and the light print
+ * stylesheet alike.
+ * An <img> would render them black-on-transparent and vanish on the dark page.
+ */
+interface Props {
+  symbol?: string;
+  wordmark?: string;
+  alt: string;
+  /** Height of the logomark, in rem. The wordmark scales from it. */
+  size?: number;
+}
+
+const { symbol, wordmark, alt, size = 2.25 } = Astro.props;
+const mask = (src: string) =>
+  `-webkit-mask-image:url("${src}");mask-image:url("${src}");` +
+  '-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;' +
+  '-webkit-mask-size:contain;mask-size:contain;' +
+  'mask-position:left center;-webkit-mask-position:left center;' +
+  'background-color:currentColor;display:block;';
+---
+
+{(symbol || wordmark) && (
+  <span class="brand-mark" role="img" aria-label={alt}>
+    {symbol && (
+      <span aria-hidden="true" style={`${mask(symbol)}height:${size}rem;aspect-ratio:1141/445.7;`} />
+    )}
+    {wordmark && (
+      <span aria-hidden="true" style={`${mask(wordmark)}height:${size * 0.42}rem;aspect-ratio:865.8/86;`} />
+    )}
+  </span>
+)}
+
+<style>
+  .brand-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: currentColor;
+  }
+</style>

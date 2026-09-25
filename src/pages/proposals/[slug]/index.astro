@@ -1,0 +1,72 @@
+---
+/**
+ * /proposals/[slug] — a client proposal.
+ *
+ * Deliberately NOT under /promote. That path is the investment-promotion
+ * surface that sits beside /hype-machine and /investments; a proposal sent to
+ * a prospective client should not arrive on a URL that frames it as a deal
+ * being shopped.
+ *
+ * Locked and unlocked live on the same URL: the gate rewrites here, so a
+ * recipient who has not entered the code sees the unlock form at the address
+ * they were sent, and the document at the same address afterwards.
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ProposalDocument from '../../../components/promote/proposal/ProposalDocument.astro';
+import PromotionHeader from '../../../components/promote/PromotionHeader.astro';
+import UnlockForm from '../../../components/promote/UnlockForm.astro';
+import SessionToast from '../../../components/promote/SessionToast.astro';
+import { getOpportunity, getVariantsRegistry } from '../../../lib/promote/opportunities';
+import { loadProposal, listProposalVersions } from '../../../lib/promote/proposals';
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/proposals');
+
+const opportunity = getOpportunity(slug);
+if (!opportunity) return new Response('Not found', { status: 404 });
+
+const unlocked = Astro.locals.promote?.unlocked ?? false;
+const hasError = Astro.url.searchParams.get('e') === '1';
+
+const registry = getVariantsRegistry(slug);
+const available = listProposalVersions(slug);
+const version = registry.proposal?.default ?? available.at(-1) ?? 1;
+
+const doc = unlocked ? await loadProposal(slug, version) : null;
+if (unlocked && !doc) {
+  return new Response(`Proposal not found for ${slug} v${version}`, { status: 404 });
+}
+
+// The share card is generated from these — /api/og renders it on demand, so
+// it tracks the proposal's own copy instead of a hand-made file going stale.
+// Set on the LOCKED state too: an unfurl happens when the link is pasted,
+// which is before anyone has entered the code.
+const cover = doc?.sections.find((s) => s.layout === 'cover');
+const coverTitle = cover?.title
+  ?? (await loadProposal(slug, version).catch(() => null))?.sections.find((s) => s.layout === 'cover')?.title
+  ?? `${opportunity.company_name} — Proposal`;
+
+const title = `${opportunity.company_name} — Proposal`;
+const meta = {
+  title: coverTitle,
+  subtitle: opportunity.eyebrow ?? 'Proposal · The Lossless Group',
+  description: opportunity.short_description,
+  type: 'website' as const,
+};
+---
+<BaseLayout title={title} description={opportunity.short_description} meta={meta}>
+  <meta name="robots" content="noindex, nofollow" slot="head" />
+  {unlocked && doc ? (
+    <ProposalDocument opportunity={opportunity} doc={doc} />
+  ) : (
+    <section class="mx-auto max-w-3xl px-6 py-12">
+      <PromotionHeader opportunity={opportunity} />
+      <div class="mt-6">
+        <UnlockForm slug={opportunity.slug} hasError={hasError} />
+      </div>
+    </section>
+  )}
+  <SessionToast />
+</BaseLayout>

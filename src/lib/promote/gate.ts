@@ -1,7 +1,8 @@
 import { createHmac, scryptSync, timingSafeEqual } from 'node:crypto';
 
 const COOKIE_NAME = 'promote_session';
-const COOKIE_PATH = '/promote';
+// Covers /promote and /proposals; scoping it to one path locked the other out.
+const COOKIE_PATH = '/';
 const TTL_SECONDS = 7 * 24 * 60 * 60;
 const SCRYPT_SALT = 'mpstaton-promote-salt';
 const SCRYPT_KEY_LEN = 64;

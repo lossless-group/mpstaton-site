@@ -1,4 +1,4 @@
-export type MaterialType = 'deck' | 'memo' | 'data-room' | 'video' | 'qa-log';
+export type MaterialType = 'deck' | 'memo' | 'proposal' | 'data-room' | 'video' | 'qa-log';
 export type DeckFormat = 'scroll' | 'static' | 'interactive';
 export type OpportunityStatus = 'active' | 'closing-soon' | 'closed' | 'paused';
 export type MaterialStatus = 'live' | 'draft' | 'archived';
@@ -17,6 +17,13 @@ export interface OpportunityLogo {
   full_light?: string;
   full_dark?: string;
   symbol?: string;
+  /**
+   * Wordmark and symbol are rendered as CSS masks filled with currentColor,
+   * not as <img>. The brand ships single-colour SVGs (`fill="none"` on the
+   * root), so one asset then reads correctly on the dark screen document and
+   * on the light print stylesheet without a second file.
+   */
+  wordmark?: string;
 }
 
 export interface Opportunity {
@@ -37,4 +44,7 @@ export interface Opportunity {
 export interface VariantsRegistry {
   deck?: Partial<Record<DeckFormat, { versions: number[]; default: number }>>;
   memo?: { versions: number[]; default: number };
+  // Like memo, a proposal has only a version dimension — there is no
+  // scroll/static/interactive progression for a document.
+  proposal?: { versions: number[]; default: number };
 }

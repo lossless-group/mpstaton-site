@@ -21,6 +21,14 @@ export function memoVersionUrl(slug: string, version: number): string {
   return `/promote/${slug}/memo/version-${version}`;
 }
 
+export function proposalUrl(slug: string): string {
+  return `/proposals/${slug}`;
+}
+
+export function proposalVersionUrl(slug: string, version: number): string {
+  return `/proposals/${slug}/version-${version}`;
+}
+
 export function visibleMaterials(opp: Opportunity, isDev: boolean): Material[] {
   return opp.materials.filter(m => isDev || m.status !== 'draft');
 }

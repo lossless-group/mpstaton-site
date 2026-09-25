@@ -3,10 +3,21 @@ import { join } from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import type { Opportunity, VariantsRegistry } from './types';
 
-const CONTENT_ROOT = new URL('../../content/promote/', import.meta.url);
+// Two roots, one record shape. `promote/` is the investment-promotion surface
+// (decks, memos) that sits beside /hype-machine. `proposals/` is client work,
+// which has no business on that path — see src/pages/proposals/.
+const CONTENT_ROOTS = [
+  new URL('../../content/proposals/', import.meta.url),
+  new URL('../../content/promote/', import.meta.url),
+];
+const CONTENT_ROOT = CONTENT_ROOTS[1];
 
 function contentPath(...parts: string[]): string {
-  return join(new URL(CONTENT_ROOT).pathname, ...parts);
+  for (const rootUrl of CONTENT_ROOTS) {
+    const candidate = join(new URL(rootUrl).pathname, ...parts);
+    if (existsSync(candidate)) return candidate;
+  }
+  return join(new URL(CONTENT_ROOTS[0]).pathname, ...parts);
 }
 
 function readYaml<T>(path: string): T | null {
@@ -22,8 +33,9 @@ function load(): Map<string, Opportunity> {
   if (cache && !import.meta.env.DEV) return cache;
   cache = new Map();
 
-  const root = new URL(CONTENT_ROOT).pathname;
-  if (!existsSync(root)) return cache;
+  for (const rootUrl of CONTENT_ROOTS) {
+  const root = new URL(rootUrl).pathname;
+  if (!existsSync(root)) continue;
 
   for (const entry of readdirSync(root)) {
     const dir = join(root, entry);
@@ -50,6 +62,7 @@ function load(): Map<string, Opportunity> {
     };
 
     cache.set(entry, opportunity);
+  }
   }
   return cache;
 }
@@ -78,4 +91,9 @@ export function getVariantsRegistry(slug: string): VariantsRegistry {
 
 export function opportunityDir(slug: string): string {
   return contentPath(slug);
+}
+
+/** True when the slug lives under content/proposals rather than content/promote. */
+export function isProposalContent(slug: string): boolean {
+  return existsSync(join(new URL(CONTENT_ROOTS[0]).pathname, slug));
 }

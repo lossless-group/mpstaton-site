@@ -15,7 +15,9 @@
     "astro": "astro",
     "lfm:local": "node scripts/lfm-mode.mjs local",
     "lfm:jsr": "node scripts/lfm-mode.mjs jsr",
-    "lfm:auto": "node scripts/lfm-mode.mjs auto"
+    "lfm:auto": "node scripts/lfm-mode.mjs auto",
+    "audit-citations": "node scripts/audit-citations.mjs",
+    "proposal:pdf": "node scripts/export-proposal-pdf.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
@@ -32,6 +34,8 @@
     "@astrojs/svelte": "^9.0.1",
     "@tailwindcss/vite": "^4.3.2",
     "svelte": "^5.56.4",
-    "tailwindcss": "^4.3.2"
+    "tailwindcss": "^4.3.2",
+    "vega": "^6.4.0",
+    "vega-lite": "^6.4.3"
   }
 }

@@ -1,0 +1,109 @@
+---
+/**
+ * The whole proposal surface: cover, sticky rail, chapter cards, sections,
+ * document-wide sources. Both proposal routes (default version and explicit
+ * version) render this, so they stay thin and can't drift apart.
+ */
+import '../../../styles/proposal.css';
+import ChapterCards from './ChapterCards.astro';
+import ChapterRail from './ChapterRail.astro';
+import ProposalSection from './ProposalSection.astro';
+import Sources from '../../markdown/Sources.astro';
+import TableOfContents from '../../markdown/TableOfContents.astro';
+import { hasTableOfContents } from '../../../lib/markdown/toc';
+import type { Opportunity } from '../../../lib/promote/types';
+import type { ProposalDoc } from '../../../lib/promote/proposals';
+import BrandMark from '../BrandMark.astro';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+interface Props {
+  opportunity: Opportunity;
+  doc: ProposalDoc;
+  /** Rendered next to the title when the reader is not on the default version. */
+  versionLabel?: string;
+}
+
+const { opportunity, doc, versionLabel } = Astro.props;
+const showToc = hasTableOfContents(doc.headings);
+
+// The export writes into public/, so the link only appears once a PDF has
+// actually been generated — a download button that 404s is worse than none.
+const pdfPath = `/proposals/${opportunity.slug}/${opportunity.slug}-proposal.pdf`;
+const pdfExists = existsSync(join(process.cwd(), 'public', pdfPath));
+const cover = doc.sections.find((s) => s.layout === 'cover');
+const rest = doc.sections.filter((s) => s !== cover);
+---
+
+<article
+  class="proposal mx-auto max-w-4xl px-6 py-10"
+  style={opportunity.accent_color ? `--proposal-accent: ${opportunity.accent_color};` : undefined}
+>
+  <header class="mb-8 flex items-baseline justify-between gap-4">
+    {opportunity.logo?.symbol || opportunity.logo?.wordmark ? (
+      <BrandMark
+        symbol={opportunity.logo?.symbol}
+        wordmark={opportunity.logo?.wordmark}
+        alt={opportunity.company_name}
+        size={2}
+      />
+    ) : (
+      <span class="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+        {opportunity.company_name}
+      </span>
+    )}
+    <span class="flex items-center gap-4">
+      {versionLabel && (
+        <span class="text-xs uppercase tracking-[0.18em] text-muted-foreground">{versionLabel}</span>
+      )}
+      {pdfExists && (
+        <a
+          class="proposal-print-cta inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs uppercase tracking-[0.14em] text-muted-foreground transition hover:border-foreground/40 hover:text-foreground"
+          href={pdfPath}
+          download
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+          PDF
+        </a>
+      )}
+    </span>
+  </header>
+
+  {cover && <ProposalSection section={cover} />}
+
+  <div class="proposal-layout" data-has-toc={showToc || undefined}>
+    <TableOfContents headings={doc.headings} title="Contents" />
+
+    <div class="proposal-main">
+      <ChapterRail sections={doc.sections} />
+
+  <div id="proposal-contents" class="mb-4">
+    <ChapterCards sections={doc.sections} />
+  </div>
+
+  {rest.map((section) => <ProposalSection section={section} />)}
+
+      <Sources citations={doc.citations} />
+
+      <a class="proposal-totop" href="#proposal-contents">↑ Back to contents</a>
+    </div>
+  </div>
+</article>
+
+<style>
+  /* Mirrors the memo layout on /investments: a persistent 15rem rail once
+   * there is room, and the component's own hamburger/top-bar states below
+   * that. The article column is width-capped so a wide table does not push
+   * the rail off the grid. */
+  .proposal-layout { display: block; min-width: 0; max-width: 100%; }
+  .proposal-main { min-width: 0; max-width: 100%; }
+
+  @media (min-width: 1280px) {
+    .proposal-layout[data-has-toc] {
+      display: grid;
+      grid-template-columns: 15rem minmax(0, 1fr);
+      gap: 3rem;
+      align-items: start;
+    }
+  }
+</style>
