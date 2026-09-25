@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config'
 import tailwind from '@tailwindcss/vite'
 import { fileURLToPath } from 'node:url'
-import { existsSync } from 'node:fs'
+import { existsSync, readdirSync } from 'node:fs'
 import vercel from '@astrojs/vercel'
 import svelte from '@astrojs/svelte'
 import sitemap from '@astrojs/sitemap'
@@ -48,7 +48,14 @@ const aliases = {
 export default defineConfig({
   site: 'https://mpstaton.com',
   output: 'server',
-  adapter: vercel(),
+  adapter: vercel({
+    // The /promote and /proposals loaders read this content with readFileSync at
+    // request time rather than through Astro's content layer, so the files must
+    // be copied into the serverless bundle explicitly. Without it the routes
+    // deploy fine and every lookup returns null — an empty index and a
+    // "Not found" on every slug. `includeFiles` takes literal paths, not globs.
+    includeFiles: listContentFiles(),
+  }),
   // The dev-only toolbar overlays the bottom-centre of every page and sits
   // above the site's own chrome, which puts it on top of anything anchored
   // there — the playlist panel's controls among them — and makes it the hit
@@ -98,3 +105,21 @@ export default defineConfig({
     }
   }
 })
+
+// Every file under the raw-fs content roots, as literal paths — `includeFiles`
+// does not expand globs, and a glob string fails the build with ENOENT.
+function listContentFiles() {
+  const roots = ['src/content/proposals', 'src/content/promote']
+  const out = []
+  const walk = (dir) => {
+    let entries
+    try { entries = readdirSync(dir, { withFileTypes: true }) } catch { return }
+    for (const entry of entries) {
+      const full = `${dir}/${entry.name}`
+      if (entry.isDirectory()) walk(full)
+      else out.push(`./${full}`)
+    }
+  }
+  for (const root of roots) walk(root)
+  return out
+}
