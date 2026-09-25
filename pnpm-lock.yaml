@@ -32,6 +32,12 @@ importers:
       unist-util-visit:
         specifier: ^5.1.0
         version: 5.1.0
+      vega:
+        specifier: ^6.4.0
+        version: 6.4.0
+      vega-lite:
+        specifier: ^6.4.3
+        version: 6.4.3(vega@6.4.0)
       yaml:
         specifier: ^2.9.0
         version: 2.9.0
@@ -48,12 +54,6 @@ importers:
       tailwindcss:
         specifier: ^4.3.2
         version: 4.3.2
-      vega:
-        specifier: ^6.4.0
-        version: 6.4.0
-      vega-lite:
-        specifier: ^6.4.3
-        version: 6.4.3(vega@6.4.0)
 
 packages:
 

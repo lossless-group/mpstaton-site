@@ -28,14 +28,14 @@
     "mdast-util-to-string": "^4.0.0",
     "satori": "^0.26.0",
     "unist-util-visit": "^5.1.0",
+    "vega": "^6.4.0",
+    "vega-lite": "^6.4.3",
     "yaml": "^2.9.0"
   },
   "devDependencies": {
     "@astrojs/svelte": "^9.0.1",
     "@tailwindcss/vite": "^4.3.2",
     "svelte": "^5.56.4",
-    "tailwindcss": "^4.3.2",
-    "vega": "^6.4.0",
-    "vega-lite": "^6.4.3"
+    "tailwindcss": "^4.3.2"
   }
 }
