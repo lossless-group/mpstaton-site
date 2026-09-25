@@ -23,6 +23,7 @@ import { parseMarkdown } from '@lossless-group/lfm';
 import { vegaLite } from '@lossless-group/lfm/formats';
 import { visit } from 'unist-util-visit';
 import { opportunityDir } from './opportunities';
+import { ogFetchOptions } from './og-fetch';
 
 export type ProposalLayout =
   | 'cover'
@@ -157,15 +158,7 @@ export async function loadProposal(slug: string, version: number): Promise<Propo
     .sort((a, b) => a.localeCompare(b));
   if (files.length === 0) return null;
 
-  const apiKey = import.meta.env.OPENGRAPH_IO_API_KEY;
-  const ogFetch = {
-    enabled: true,
-    backend: (apiKey ? 'opengraph-io' : 'direct') as 'opengraph-io' | 'direct',
-    apiKey,
-    cachePath: 'src/data/og-cache.json',
-    maxConcurrent: 4,
-    rateLimit: { perMinute: 60, perMonth: 100 },
-  };
+  const ogFetch = ogFetchOptions();
 
   const sections: ProposalSectionData[] = [];
   const parsed: { tree: any; citations: any[] }[] = [];
@@ -179,7 +172,16 @@ export async function loadProposal(slug: string, version: number): Promise<Propo
     let tree: any = null;
     let citations: any[] = [];
     if (hasBody) {
-      tree = (await parseMarkdown(body, { ogFetch, codeFences: { formats: [vegaLite] } })) as any;
+      const codeFences = { formats: [vegaLite] };
+      try {
+        tree = (await parseMarkdown(body, { ogFetch, codeFences })) as any;
+      } catch (err) {
+        // Link previews are an enhancement; the proposal is the deliverable.
+        // Anything the OG stage can throw — a timeout, a read-only cache write —
+        // costs the previews, never the page.
+        console.warn(`[proposals] OG enrichment failed for ${file}; rendering without previews.`, err);
+        tree = (await parseMarkdown(body, { codeFences })) as any;
+      }
       citations = tree.data?.citations?.ordered ?? [];
     }
     parsed.push({ tree, citations });

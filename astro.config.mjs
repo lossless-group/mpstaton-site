@@ -110,7 +110,10 @@ export default defineConfig({
 // does not expand globs, and a glob string fails the build with ENOENT.
 function listContentFiles() {
   const roots = ['src/content/proposals', 'src/content/promote']
-  const out = []
+  // The gated routes render on demand and read the LFM Open Graph cache at
+  // request time. Without it every external link in a proposal becomes a live
+  // fetch inside the request, so it has to travel with the function.
+  const out = ['./src/data/og-cache.json']
   const walk = (dir) => {
     let entries
     try { entries = readdirSync(dir, { withFileTypes: true }) } catch { return }

@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseMarkdown } from '@lossless-group/lfm';
 import { opportunityDir } from './opportunities';
+import { ogFetchOptions } from './og-fetch';
 
 export interface ParsedMemo {
   tree: any;
@@ -20,17 +21,14 @@ export async function loadMemo(slug: string, version: number): Promise<ParsedMem
   if (!found) return null;
 
   const source = readFileSync(found, 'utf-8');
-  const apiKey = import.meta.env.OPENGRAPH_IO_API_KEY;
-  const tree = await parseMarkdown(source, {
-    ogFetch: {
-      enabled: true,
-      backend: apiKey ? 'opengraph-io' : 'direct',
-      apiKey,
-      cachePath: 'src/data/og-cache.json',
-      maxConcurrent: 4,
-      rateLimit: { perMinute: 60, perMonth: 100 },
-    },
-  }) as any;
+  let tree: any;
+  try {
+    tree = await parseMarkdown(source, { ogFetch: ogFetchOptions() }) as any;
+  } catch (err) {
+    // Link previews are an enhancement; the memo is the deliverable.
+    console.warn(`[memos] OG enrichment failed for ${found}; rendering without previews.`, err);
+    tree = await parseMarkdown(source) as any;
+  }
   const citations = tree.data?.citations?.ordered ?? [];
   return { tree, citations };
 }

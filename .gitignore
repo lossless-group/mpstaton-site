@@ -12,8 +12,10 @@ src/content/context-v/
 src/content/essays/
 .essays-cache/
 
-# LFM Open Graph fetch cache (regenerated on build, keyed by URL hash)
-src/data/og-cache.json
+# LFM Open Graph fetch cache (keyed by URL hash). Tracked on purpose: the
+# gated proposal routes render on demand, so a missing cache means a live fetch
+# per external link inside the request, then a write to a read-only serverless
+# filesystem. Both fail. Committing the cache keeps those routes offline-clean.
 
 # YouTube playlist data cache (regenerated on build, keyed by playlist ID)
 src/data/youtube-playlist-cache.json
