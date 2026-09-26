@@ -1,0 +1,107 @@
+/*
+ * Personal Strategic Plan.
+ *
+ * The source is a Google Docs form, so nearly everything in it is a table —
+ * 47 of them. They do three unrelated jobs and need to look like three
+ * different things:
+ *
+ *   1-column  → a prose box: a labelled answer, styled as a card
+ *   2-column, 1 row, goal label left → the goal's header band
+ *   3+ column → an actual data table (weekly plans, the scorecard)
+ *
+ * :has() is what lets one stylesheet tell them apart, since the markdown gives
+ * them no distinguishing class.
+ */
+
+.psp {
+  --psp-line: color-mix(in oklab, var(--color-foreground) 18%, transparent);
+  --psp-fill: color-mix(in oklab, var(--color-foreground) 4%, transparent);
+}
+
+/* ---- default: a real data table ---- */
+.psp table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+.psp :is(th, td) {
+  border: 1px solid var(--psp-line);
+  padding: 0.55rem 0.7rem;
+  vertical-align: top;
+  text-align: left;
+}
+
+.psp th {
+  background: var(--psp-fill);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+}
+
+/* The week column never needs to be wide, and the plan reads better when the
+   action column gets the room instead. */
+.psp td:first-child { white-space: nowrap; }
+.psp table:has(th:nth-child(4)) td:first-child { width: 1%; font-weight: 600; }
+
+/* ---- 1-column: a labelled prose box ---- */
+.psp table:has(th:only-child):not(:has(td:nth-child(2))) {
+  border: 1px solid var(--psp-line);
+  border-radius: 0.6rem;
+  overflow: hidden;
+  background: var(--psp-fill);
+  margin: 1.75rem 0;
+}
+
+.psp table:has(th:only-child) :is(th, td) {
+  border: 0;
+  display: block;
+}
+
+.psp table:has(th:only-child) th {
+  background: transparent;
+  padding-bottom: 0.15rem;
+  color: var(--color-primary);
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 0.8rem;
+}
+
+.psp table:has(th:only-child) td {
+  font-size: 0.98rem;
+  line-height: 1.65;
+  padding-top: 0;
+}
+
+/* ---- the goal header band ---- */
+.psp table:has(td:only-of-type):has(th:nth-child(2)):not(:has(th:nth-child(3))) th:first-child {
+  width: 1%;
+  white-space: nowrap;
+  color: var(--color-primary);
+}
+
+/* ---- headings ---- */
+.psp h2 {
+  margin-top: 3rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--psp-line);
+}
+
+.psp h3 { margin-top: 2.5rem; }
+.psp h4 { margin-top: 1.75rem; color: var(--color-primary); }
+
+.psp hr {
+  margin: 3rem 0;
+  border: 0;
+  border-top: 1px solid var(--psp-line);
+}
+
+/* Tables are the one thing allowed to scroll sideways on a phone. */
+@media (max-width: 640px) {
+  .psp .ak-table-wrap { overflow-x: auto; }
+  .psp table { min-width: 34rem; }
+  .psp table:has(th:only-child) { min-width: 0; }
+}

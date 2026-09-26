@@ -8,15 +8,22 @@
 import type { APIRoute } from 'astro';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { unpackBands } from '../../lib/diary/schedule';
 
-// Fetch and cache the Inter Bold font from Google Fonts
+// Inter Bold, for satori.
+//
+// This used to be fetched from Google Fonts on every cold start, which put a
+// third-party network call inside the request and had no fallback: one blip and
+// the endpoint answered "Failed to generate image: fetch failed" instead of a
+// card. The font now ships with the deploy (see listContentFiles() in
+// astro.config.mjs) and the network path survives only as a last resort.
 let fontDataCache: ArrayBuffer | null = null;
 
-async function loadFont(): Promise<ArrayBuffer> {
-  if (fontDataCache) return fontDataCache;
+const LOCAL_FONT = join(process.cwd(), 'src/assets/fonts/inter-bold.ttf');
 
-  // Google Fonts CSS API returns a CSS file with the font URL
+async function fetchFontFromGoogle(): Promise<ArrayBuffer> {
   const cssRes = await fetch(
     'https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap',
     { headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)' } }
@@ -24,9 +31,21 @@ async function loadFont(): Promise<ArrayBuffer> {
   const css = await cssRes.text();
   const match = css.match(/url\((https:\/\/fonts\.gstatic\.com[^)]+)\)/);
   if (!match) throw new Error('Could not extract font URL from Google Fonts CSS');
-
   const fontRes = await fetch(match[1]);
-  fontDataCache = await fontRes.arrayBuffer();
+  return fontRes.arrayBuffer();
+}
+
+async function loadFont(): Promise<ArrayBuffer> {
+  if (fontDataCache) return fontDataCache;
+
+  if (existsSync(LOCAL_FONT)) {
+    const buf = readFileSync(LOCAL_FONT);
+    fontDataCache = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer;
+    return fontDataCache;
+  }
+
+  console.warn('[og] bundled font missing, falling back to Google Fonts');
+  fontDataCache = await fetchFontFromGoogle();
   return fontDataCache;
 }
 

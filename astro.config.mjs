@@ -113,7 +113,9 @@ function listContentFiles() {
   // The gated routes render on demand and read the LFM Open Graph cache at
   // request time. Without it every external link in a proposal becomes a live
   // fetch inside the request, so it has to travel with the function.
-  const out = ['./src/data/og-cache.json']
+  // The OG endpoint reads the font from disk at request time rather than
+  // fetching it from Google Fonts, so it has to travel with the function too.
+  const out = ['./src/data/og-cache.json', './src/assets/fonts/inter-bold.ttf']
   const walk = (dir) => {
     let entries
     try { entries = readdirSync(dir, { withFileTypes: true }) } catch { return }

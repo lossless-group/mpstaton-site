@@ -1,0 +1,95 @@
+---
+/**
+ * Personal Strategic Plan.
+ *
+ * The plan is authored as one markdown file and rendered here, so the document
+ * of record stays the markdown rather than this page. Source of truth lives in
+ * the monorepo at context-v/extra/Michael_Staton_PSP.md and is copied in.
+ *
+ * Imported with ?raw and prerendered: the file is inlined at build time, so
+ * there is no runtime filesystem read and nothing to bundle into the serverless
+ * function.
+ */
+import { createLfmProcessor } from '@lossless-group/lfm';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AstroMarkdown from '../components/markdown/AstroMarkdown.astro';
+import TableOfContents from '../components/markdown/TableOfContents.astro';
+import { hasTableOfContents } from '../lib/markdown/toc';
+import raw from '../content/psp/personal-strategic-plan.md?raw';
+import '../styles/psp.css';
+
+export const prerender = true;
+
+// Two things are dropped before rendering, and only from the page — the markdown
+// stays whole, because the program's shared Google Doc expects both.
+//
+//   1. The document's own title line, which the page header already shows.
+//   2. The identity table (name, phone, age, occupation, city, handles). It is
+//      metadata about the author rather than part of the plan, and this page is
+//      public and linked from the nav.
+const body = raw
+  .replace(/^##\s+\*\*Personal Strategic Plan Outline\*\*\s*\n/, '')
+  .replace(/^\|\s*Name\s*\|[\s\S]*?\n(?=\s*\n)/m, '');
+
+const processor = createLfmProcessor();
+const tree = await processor.run(processor.parse(body));
+
+// LFM populates tree.data.headings with the same ids AstroMarkdown renders, so
+// the rail must read from there rather than re-slugging the text — hand-rolled
+// slugs drift from the anchors and the links quietly stop landing.
+//
+// The "Personal Goal N: " prefix is noise in a sidebar, so it is trimmed from
+// the label while the id is left alone.
+const headings = ((tree as any).data?.headings ?? []).map((h: any) => ({
+  ...h,
+  text: String(h.text ?? '').replace(/^(Personal|Creative)\s+Goal\s+\d+:\s*/, ''),
+}));
+const showToc = hasTableOfContents(headings);
+
+const title = 'Personal Strategic Plan';
+const description = 'A 100-day plan across body, operating system, income, music, and people. Scored on inputs, not outcomes.';
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  meta={{ title, description, subtitle: '100-Day Plan' }}
+>
+  <div class="max-w-5xl mx-auto px-6 py-8">
+    <header class="mb-10">
+      <h1 class="gradient-text mb-4">{title}</h1>
+      <p class="text-lg text-muted-foreground leading-relaxed">{description}</p>
+    </header>
+
+    <div class="psp-grid">
+      {showToc && (
+        <aside class="psp-rail">
+          <TableOfContents headings={headings} />
+        </aside>
+      )}
+      <article class="prose psp">
+        <AstroMarkdown node={tree} />
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .psp-grid {
+    display: grid;
+    gap: 2.5rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* The rail only earns its width once there is room for it beside the tables. */
+  @media (min-width: 1024px) {
+    .psp-grid { grid-template-columns: 15rem minmax(0, 1fr); }
+    .psp-rail {
+      position: sticky;
+      top: 2rem;
+      align-self: start;
+      max-height: calc(100vh - 4rem);
+      overflow-y: auto;
+    }
+  }
+</style>
