@@ -1,7 +1,37 @@
 # Week 1 · Days 1–7 · Mon Sep 28 – Sun Oct 4, 2026
 # Add each day under its own date as it's logged (catching up later is fine).
 # A day not listed here shows as "not logged", never as a miss.
+# Logged on Fri Oct 2 as a catch-up for Mon–Fri.
 week: 1
-days: {}
+days:
+  2026-09-28:
+    chunks: 2
+    note: "At a conference. Calisthenics and stretches; no walking."
+  2026-09-29:
+    chunks: 2
+    carb-meals: 1
+    note: "Calisthenics and stretches. Flew back to Austin for a birthday party; group meditation; margaritas (a drinking occasion)."
+  2026-09-30:
+    hydration: true
+    note: "A miss apart from water (quota exceeded). Slept early and slept in."
+  2026-10-01:
+    am-move: true
+    hydration: true
+    keto: true
+    discomfort: true
+    walk-in: true
+    resistance: 1
+    intervals: 0.5
+    frogs: 1
+    note: "Out of bed immediately. No food until dinner, no carbs. Gym walk-in, sauna, dead hangs, deadlift to shoulder press. Intervals as a 2x2 (half a 4x4). Frog: sent an expense reimbursement."
+  2026-10-02:
+    hydration: true
+    discomfort: true
+    walk-in: true
+    resistance: 1
+    carb-meals: 1
+    frogs: 1
+    note: "Not out of bed immediately. Moved, stretched, calisthenics. Gym walk-in, sauna, dead hang, shoulder extensions, curls. Carbs at dinner (sweet potato) plus four small Snickers. Frog: sent an invoice."
 totals: {}
-readings: []
+readings:
+  - { date: 2026-10-02, consulting-billed: 20000 }

@@ -282,6 +282,13 @@ goals:
         floor: 1
         target: 1
     outcomes:
+      - id: consulting-billed
+        label: Consulting billed (monthly run-rate)
+        unit: $/mo
+        direction: up
+        baseline: null
+        milestones: { 90: [17300, 26400] }
+        note: From the plan's consulting math; ~$17.3k billed covers the $12k after-tax floor on its own, ~$26.4k the $18k target.
       - id: income-after-tax
         label: After-tax income this month
         unit: $/mo
