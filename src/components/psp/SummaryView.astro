@@ -1,0 +1,201 @@
+---
+/**
+ * The 100-day summary: goals × program weeks, then the Day 30/60/90
+ * checkpoints, then this week so far. Written for a coach or a cohort member
+ * who hasn't read the plan, so every status is in words and the legend is
+ * always on screen.
+ */
+import StatusLegend from './StatusLegend.astro';
+import type { Dataset } from '../../lib/psp/load';
+import {
+  checkpoint,
+  currentWeek,
+  dateOfDay,
+  dayNumber,
+  formatMilestone,
+  fmt,
+  goalWeek,
+  isDeload,
+  lengthDays,
+  shortDate,
+  STATUS_LABEL,
+  todayIso,
+  totalWeeks,
+} from '../../lib/psp/tracker';
+
+interface Props {
+  ds: Dataset;
+  base: string;
+}
+const { ds, base } = Astro.props;
+const t = ds.tracker;
+const today = todayIso(t);
+const day = dayNumber(t, today);
+const len = lengthDays(t);
+const nowWeek = currentWeek(t, today);
+const weeks = Array.from({ length: totalWeeks(t) }, (_, i) => i + 1);
+
+const rows = t.goals.map((g) => ({
+  goal: g,
+  cells: weeks.map((w) => goalWeek(t, ds.idx, g, w, today)),
+}));
+const checkpoints = (t.checkpoints ?? [30, 60, 90]).map((d) => checkpoint(t, ds.idx, d, today));
+// Reached checkpoints and the next one show progress; later ones would only
+// repeat the same to-date numbers, so they show what they'll be scored on.
+const nextIdx = checkpoints.findIndex((c) => !c.reached);
+const showsProgress = (i: number) => checkpoints[i].reached || i === nextIdx;
+const thisWeek = nowWeek ? t.goals.map((g) => goalWeek(t, ds.idx, g, nowWeek, today)) : [];
+
+const dayShown = Math.min(Math.max(day, 0), len);
+const pct = (d: number) => `${((d - 0.5) / len) * 100}%`;
+---
+
+<div class="pspd space-y-10">
+  <!-- Where we are -->
+  <section class="space-y-3">
+    <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+      <p class="text-2xl font-semibold">
+        {day < 1 ? `Starts ${shortDate(t.day_one)}` : day > len ? 'Complete' : `Day ${day} of ${len}`}
+      </p>
+      {nowWeek > 0 && day <= len && (
+        <a href={`${base}/week/${nowWeek}`} class="text-sm font-semibold">Week {nowWeek} in detail →</a>
+      )}
+    </div>
+    <div class="pspd-timeline" aria-hidden="true">
+      <div class="pspd-timeline__done" style={`width:${(dayShown / len) * 100}%`}></div>
+      {checkpoints.map((c) => (
+        <>
+          <div class="pspd-timeline__mark" style={`left:${pct(c.day)}`}></div>
+          <div class="pspd-timeline__label" style={`left:${pct(c.day)}`}>Day {c.day}</div>
+        </>
+      ))}
+    </div>
+    <p class="pt-5 text-sm text-muted-foreground">
+      Day 1 was {shortDate(t.day_one)}; Day {len} is {shortDate(dateOfDay(t, len))}. Weeks run seven days from Day 1.
+      Habits are scored every week; outcomes are scored at Day {checkpoints.map((c) => c.day).join(', ')}.
+    </p>
+  </section>
+
+  <!-- Goals × weeks -->
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">Week by week</h2>
+    <div class="pspd-scroll">
+      <table class="pspd-grid">
+        <thead>
+          <tr>
+            <th class="pspd-goal-h" scope="col">Goal</th>
+            {weeks.map((w) => (
+              <th scope="col" class:list={{ 'is-now': w === nowWeek }}>
+                W{w}
+                {isDeload(t, w) && <span class="pspd-rest">rest</span>}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(({ goal, cells }) => (
+            <tr>
+              <td class="pspd-goal">
+                <span class="pspd-goal-n">{goal.number}</span>
+                <strong>{goal.area}</strong>
+                <span class="pspd-goal-t">{goal.title}</span>
+              </td>
+              {cells.map((c) => (
+                <td class="pspd-cell">
+                  {c.status === 'future' ? (
+                    <span data-status="future" title={`Week ${c.week}: ahead`}></span>
+                  ) : (
+                    <a
+                      href={`${base}/week/${c.week}#goal-${goal.id}`}
+                      data-status={c.status}
+                      data-partial={c.partlyLogged ? 'true' : undefined}
+                      title={`${goal.area}, week ${c.week}: ${STATUS_LABEL[c.status]}${c.partlyLogged ? ' (partly logged)' : ''}`}
+                      aria-label={`${goal.area}, week ${c.week}: ${STATUS_LABEL[c.status]}`}
+                    ></a>
+                  )}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <StatusLegend />
+  </section>
+
+  <!-- Checkpoints -->
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">Day 30 · 60 · 90</h2>
+    <p class="text-sm text-muted-foreground">
+      Habits against the paced plan to that day; outcomes against their milestones.
+      A checkpoint still ahead shows progress to date.
+    </p>
+    <div class="grid gap-4 lg:grid-cols-3">
+      {checkpoints.map((c, i) => (
+        <article class="pspd-card space-y-4">
+          <header>
+            <p class="pspd-eyebrow">{c.reached ? 'Reached' : showsProgress(i) && c.throughDay > 0 ? `Next · progress through Day ${c.throughDay}` : 'Ahead · what it will score'}</p>
+            <h3 class="text-lg font-semibold">Day {c.day} <span class="text-sm font-normal text-muted-foreground">· {shortDate(c.date)}</span></h3>
+          </header>
+          <ul class="space-y-4">
+            {c.goals.map((gc) => (
+              <li class="space-y-2">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-sm font-semibold"><span class="pspd-goal-n">{gc.goal.number}</span>{gc.goal.area}</span>
+                  {showsProgress(i) && <span class="pspd-chip" data-status={gc.process}>{STATUS_LABEL[gc.process]}</span>}
+                </div>
+                {showsProgress(i) && gc.share !== null && gc.process !== 'no-data' && (
+                  <div class="pspd-bar" data-status={gc.process} title={`${Math.round(gc.share * 100)}% of the paced target`}>
+                    <div class="pspd-bar__fill" style={`width:${Math.min(gc.share, 1) * 100}%`}></div>
+                  </div>
+                )}
+                {gc.outcomes.length > 0 && (
+                  <ul class="space-y-1 text-xs">
+                    {gc.outcomes.map((op) => (
+                      <li class="flex items-center justify-between gap-2">
+                        <span class="text-muted-foreground">
+                          {op.outcome.label}
+                          {op.milestone !== null && <> · goal {formatMilestone(op.milestone, op.outcome.unit)}</>}
+                          {showsProgress(i) && op.reading && <> · now {fmt(op.reading.value)}{op.outcome.unit ? ` ${op.outcome.unit}` : ''}</>}
+                        </span>
+                        {showsProgress(i) || op.status === 'not-paced' || op.status === 'tracked' ? (
+                          <span class="pspd-chip" data-status={op.status}>{STATUS_LABEL[op.status]}</span>
+                        ) : (
+                          <span class="pspd-chip" data-status="future">Ahead</span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- This week -->
+  {thisWeek.length > 0 && day <= len && (
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold">Week {nowWeek} so far</h2>
+      <ul class="grid gap-3 md:grid-cols-2">
+        {thisWeek.map((gw) => {
+          const scored = gw.habits.filter((h) => h.provisional && h.provisional !== 'bonus');
+          const good = scored.filter((h) => h.provisional === 'target' || h.provisional === 'floor').length;
+          const logged = gw.habits.some((h) => h.loggedDays > 0);
+          return (
+            <li class="pspd-card flex items-center justify-between gap-3">
+              <a href={`${base}/week/${nowWeek}#goal-${gw.goal.id}`} class="font-semibold">
+                <span class="pspd-goal-n">{gw.goal.number}</span>{gw.goal.area}
+              </a>
+              <span class="text-sm text-muted-foreground">
+                {logged ? `${good} of ${gw.goal.process.length} habits at floor or better so far` : 'Nothing logged yet this week'}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  )}
+</div>

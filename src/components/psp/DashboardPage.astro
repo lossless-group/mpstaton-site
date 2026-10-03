@@ -1,0 +1,52 @@
+---
+/**
+ * Page chrome shared by the PSP dashboard routes: layout, header, and the
+ * sample-data banner. `week` absent renders the summary.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SummaryView from './SummaryView.astro';
+import WeekView from './WeekView.astro';
+import type { Dataset } from '../../lib/psp/load';
+import '../../styles/psp-dashboard.css';
+
+interface Props {
+  ds: Dataset;
+  base: string;
+  week?: number;
+  sample?: boolean;
+}
+const { ds, base, week, sample = false } = Astro.props;
+const t = ds.tracker;
+const title = week ? `PSP Dashboard · Week ${week}` : 'PSP Dashboard';
+const description = sample
+  ? 'A sample 100-day Personal Strategic Plan dashboard, with fictional data, showing how daily habits roll up into weeks and Day 30/60/90 checkpoints.'
+  : `${t.person}'s 100-day Personal Strategic Plan: habits scored weekly, outcomes scored at Day 30, 60, and 90.`;
+---
+
+<BaseLayout title={title} description={description} meta={{ title, description, subtitle: sample ? 'Sample data' : '100-Day Plan' }}>
+  <div class="mx-auto max-w-6xl px-6 py-8 space-y-6">
+    <header class="space-y-2">
+      <p class="pspd-eyebrow" style="font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;opacity:.75">
+        {t.cohort ? `${t.cohort} · ` : ''}Personal Strategic Plan
+      </p>
+      <h1 class="gradient-text">{week ? `Week ${week}` : t.person}</h1>
+      <p class="text-muted-foreground pspd-links">
+        {week ? <a href={base}>{t.person}</a> : <>Habits scored every week, outcomes at Day 30, 60, and 90.</>}
+        {!sample && <> · <a href="/psp">Read the plan</a></>}
+        {!sample && <> · <a href="/psp/dashboard/sample">See a sample with data</a></>}
+      </p>
+    </header>
+    {sample && (
+      <p class="pspd-banner">
+        <strong>Sample data.</strong> A fictional cohort member, not a real person, used to show how the
+        dashboard reads forty days in. <a href="/psp/dashboard">Back to the real one.</a>
+      </p>
+    )}
+    {week ? <WeekView ds={ds} base={base} week={week} /> : <SummaryView ds={ds} base={base} />}
+    <p class="text-xs text-muted-foreground pt-6 pspd-links">
+      Built from <code>tracker.yaml</code> and weekly log files, per the{' '}
+      <a href="https://github.com/lossless-group/hope-ai/blob/main/references/dashboard-guidelines.md">hope-ai dashboard guidelines</a>.
+      Days not yet logged are shown hatched and never count as misses.
+    </p>
+  </div>
+</BaseLayout>

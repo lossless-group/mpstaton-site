@@ -1,0 +1,125 @@
+# SAMPLE DATA — a fictional cohort member, for demonstrating the dashboard.
+# Not a real person; not anyone's real numbers.
+person: Sample Member
+cohort: LV236
+day_one: 2026-08-24
+length_days: 100
+timezone: America/Chicago
+checkpoints: [30, 60, 90]
+deload_weeks: [8, 12]
+
+goals:
+  - id: body
+    number: 1
+    kind: Personal
+    area: Body
+    title: Walk after meals, eat low-carb, build an engine
+    process:
+      - id: walks
+        label: Walks after meals (0–2 a day)
+        cadence: daily
+        measure: count
+        floor: 10
+        target: 14
+      - id: low-carb
+        label: Low-carb breakfast and lunch
+        cadence: daily
+        measure: check
+        floor: null
+        target: null
+        weeks:
+          3: { floor: 4, target: 5 }
+          5: { floor: 5, target: 6 }
+      - id: zone2
+        label: Zone 2 sessions (30 min)
+        cadence: weekly
+        measure: count
+        floor: null
+        target: null
+        weeks:
+          5: { floor: 2, target: 2 }
+          7: { floor: 2, target: 3 }
+          8: { floor: 1, target: 1 }
+          9: { floor: 2, target: 3 }
+      - id: sugary-drinks
+        label: Sugary drinks
+        cadence: weekly
+        measure: count
+        direction: down
+        target: 1
+    outcomes:
+      - id: weight
+        label: Weight
+        unit: lb
+        direction: down
+        baseline: { date: 2026-08-24, value: 210 }
+        milestones: { 30: [203, 206], 60: [197, 201], 90: [191, 196] }
+
+  - id: career
+    number: 2
+    kind: Personal
+    area: Career
+    title: Land a role I want by spring
+    process:
+      - id: applications
+        label: Tailored applications
+        cadence: weekly
+        measure: count
+        floor: 3
+        target: 5
+      - id: coffee-chats
+        label: Coffee chats (per two weeks)
+        cadence: biweekly
+        measure: count
+        floor: 2
+        target: 4
+    outcomes:
+      - id: interviews
+        label: First-round interviews (cumulative)
+        direction: up
+        baseline: { date: 2026-08-24, value: 0 }
+        milestones: { 30: [1, 2], 60: [3, 4], 90: [5, 7] }
+
+  - id: writing
+    number: 3
+    kind: Creative
+    area: Writing
+    title: A finished draft of the book's first act
+    process:
+      - id: writing-min
+        label: Writing (minutes)
+        cadence: daily
+        measure: minutes
+        floor: 90
+        target: 150
+    outcomes:
+      - id: words
+        label: Words drafted (cumulative)
+        unit: k
+        direction: up
+        baseline: { date: 2026-08-24, value: 0 }
+        milestones: { 30: [8, 10], 60: [18, 22], 90: [28, 34] }
+
+  - id: people
+    number: 4
+    kind: Personal
+    area: People
+    title: Be there for my family
+    process:
+      - id: family-call
+        label: Call home
+        cadence: weekly
+        measure: check
+        floor: 1
+        target: 1
+      - id: date-night
+        label: Date night
+        cadence: weekly
+        measure: check
+        target: 1
+    outcomes:
+      - id: closeness
+        label: How close we feel (0–10)
+        direction: up
+        baseline: { date: 2026-08-24, value: 5 }
+        track_only: true

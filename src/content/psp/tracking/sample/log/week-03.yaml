@@ -1,0 +1,27 @@
+# SAMPLE DATA — fictional. Week 3.
+week: 3
+days:
+  2026-09-07:
+    walks: 2
+    low-carb: true
+    writing-min: 30
+  2026-09-08:
+    walks: 2
+    writing-min: 40
+  2026-09-11:
+    walks: 0
+    low-carb: true
+    writing-min: 30
+  2026-09-12:
+    walks: 2
+    low-carb: true
+    date-night: true
+  2026-09-13:
+    walks: 2
+    low-carb: true
+    writing-min: 45
+totals:
+  applications: 3
+  coffee-chats: 1
+readings:
+  - { date: 2026-09-07, weight: 206.4 }

@@ -1,0 +1,19 @@
+# SAMPLE DATA — fictional. Week 6.
+week: 6
+days:
+  2026-09-28:
+    walks: 2
+    writing-min: 40
+    zone2: 1
+  2026-09-29:
+    walks: 2
+    low-carb: true
+    writing-min: 30
+  2026-09-30:
+    walks: 2
+    low-carb: true
+    writing-min: 25
+    zone2: 1
+    family-call: true
+readings:
+  - { date: 2026-09-28, weight: 202.9 }

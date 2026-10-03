@@ -1,0 +1,199 @@
+---
+/**
+ * One program week in detail: per goal, a 7-day grid of habits with a week
+ * total scored against that week's floor and target. Daily habits show every
+ * day; weekly habits show the days they happened. Unlogged days are hatched,
+ * never marked as misses.
+ */
+import StatusLegend from './StatusLegend.astro';
+import type { Dataset } from '../../lib/psp/load';
+import {
+  dayNumber,
+  fmt,
+  goalWeek,
+  isDeload,
+  shortDate,
+  STATUS_LABEL,
+  todayIso,
+  totalWeeks,
+  weekDates,
+  weekday,
+  type HabitWeek,
+} from '../../lib/psp/tracker';
+
+interface Props {
+  ds: Dataset;
+  base: string;
+  week: number;
+}
+const { ds, base, week } = Astro.props;
+const t = ds.tracker;
+const today = todayIso(t);
+const dates = weekDates(t, week);
+const goals = t.goals.map((g) => goalWeek(t, ds.idx, g, week, today));
+const last = totalWeeks(t);
+
+const dayLogged = (d: string) => ds.idx.days.has(d);
+const notes = dates
+  .map((d) => ({ d, note: ds.idx.days.get(d)?.note }))
+  .filter((n) => typeof n.note === 'string' && n.note.trim());
+
+// Readings taken this week, labelled with their outcome names.
+const outcomeById = new Map(t.goals.flatMap((g) => (g.outcomes ?? []).map((o) => [o.id, o] as const)));
+const readings = ds.idx.readings
+  .filter((r) => dates.includes(r.date))
+  .flatMap((r) =>
+    Object.entries(r)
+      .filter(([k]) => k !== 'date' && outcomeById.has(k))
+      .map(([k, v]) => ({ date: r.date, label: outcomeById.get(k)!.label, unit: outcomeById.get(k)!.unit, value: Number(v) })),
+  );
+
+function totalLine(hw: HabitWeek): string {
+  const h = hw.habit;
+  const unit = h.measure === 'minutes' ? ' min' : '';
+  const v = `${fmt(hw.value)}${unit}`;
+  if (h.direction === 'down') return hw.target === null ? v : `${v} · limit ${fmt(hw.target)}`;
+  if (hw.floor === null && hw.target === null) return `${v} · bonus`;
+  if (hw.floor === null) return `${v} · aim ${fmt(hw.target)}`;
+  if (hw.floor === hw.target) return `${v} of ${fmt(hw.target)}`;
+  return `${v} · floor ${fmt(hw.floor)} · target ${fmt(hw.target)}`;
+}
+
+function windowNote(hw: HabitWeek): string | null {
+  return hw.window.length > 1 ? `Weeks ${hw.window[0]}–${hw.window[hw.window.length - 1]} together` : null;
+}
+
+// Mid-week, only good news is shown early: a target already hit says so, and
+// everything else stays "In progress" rather than reading as a miss on Friday.
+function shownStatus(hw: HabitWeek) {
+  if (hw.status !== 'progress') return hw.status;
+  if (hw.habit.direction === 'down') return hw.provisional === 'miss' ? 'miss' : 'progress';
+  return hw.provisional === 'target' ? 'target' : 'progress';
+}
+---
+
+<div class="pspd space-y-8">
+  <header class="space-y-3">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <nav class="flex gap-4 text-sm font-semibold">
+        {week > 1 ? <a href={`${base}/week/${week - 1}`}>← Week {week - 1}</a> : <span></span>}
+        <a href={base}>Summary</a>
+        {week < last && <a href={`${base}/week/${week + 1}`}>Week {week + 1} →</a>}
+      </nav>
+      {isDeload(t, week) && <span class="pspd-chip" data-status="bonus">Deload week: floors only</span>}
+    </div>
+    <p class="text-sm text-muted-foreground">
+      Days {dayNumber(t, dates[0])}–{dayNumber(t, dates[dates.length - 1])} ·{' '}
+      {shortDate(dates[0])} – {shortDate(dates[dates.length - 1])}
+      {' '}· {dates.filter(dayLogged).length} of {dates.filter((d) => d <= today).length} days so far logged
+    </p>
+  </header>
+
+  {goals.map((gw) => (
+    <section id={`goal-${gw.goal.id}`} class="pspd-card space-y-3">
+      <header class="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 class="text-lg font-semibold">
+          <span class="pspd-goal-n">{gw.goal.number}</span>{gw.goal.area}
+          <span class="text-sm font-normal text-muted-foreground"> · {gw.goal.title}</span>
+        </h2>
+        <span class="pspd-chip" data-status={gw.status}>
+          {STATUS_LABEL[gw.status]}{gw.partlyLogged ? ' · partly logged' : ''}
+        </span>
+      </header>
+      <div class="pspd-scroll">
+        <table class="pspd-week">
+          <colgroup>
+            <col class="pspd-col-habit" />
+            {dates.map(() => <col class="pspd-col-day" />)}
+            {Array.from({ length: 7 - dates.length }, () => <col class="pspd-col-day" />)}
+            <col class="pspd-col-total" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="pspd-habit" scope="col"><span class="sr-only">Habit</span></th>
+              {dates.map((d) => (
+                <th
+                  scope="col"
+                  class:list={{ 'is-today': d === today, 'is-unlogged': d < today && !dayLogged(d) }}
+                  title={d < today && !dayLogged(d) ? 'Not logged yet' : undefined}
+                >
+                  {weekday(d)}<br />{shortDate(d)}<br /><span class="font-normal">Day {dayNumber(t, d)}</span>
+                </th>
+              ))}
+              {Array.from({ length: 7 - dates.length }, () => <th aria-hidden="true"></th>)}
+              <th class="pspd-total" scope="col">This week</th>
+            </tr>
+          </thead>
+          <tbody>
+            {gw.habits.map((hw) => (
+              <tr>
+                <th class="pspd-habit" scope="row">
+                  {hw.habit.label}
+                  <small>{hw.habit.cadence === 'daily' ? 'Daily' : hw.habit.cadence === 'weekly' ? 'Weekly' : 'Every two weeks'}{hw.habit.direction === 'down' ? ' · no more than' : ''}</small>
+                </th>
+                {hw.cells.map((c) => {
+                  const daily = hw.habit.cadence === 'daily';
+                  const mark =
+                    c.state === 'done'
+                      ? hw.habit.measure === 'check' ? '✓' : fmt(c.value)
+                      : c.state === 'not-done' && daily ? '·' : '';
+                  return (
+                    <td
+                      class="pspd-day"
+                      data-state={daily || c.state === 'done' || c.state === 'future' ? c.state : undefined}
+                      data-twice={c.missedTwice ? 'true' : undefined}
+                      title={c.missedTwice ? 'Second miss in a row: never miss twice' : undefined}
+                    >
+                      {mark}
+                    </td>
+                  );
+                })}
+                {Array.from({ length: 7 - dates.length }, () => <td aria-hidden="true"></td>)}
+                <td class="pspd-total">
+                  <div class="flex items-center justify-end gap-2">
+                    <span><strong>{totalLine(hw)}</strong></span>
+                    <span class="pspd-chip" data-status={shownStatus(hw)}>{STATUS_LABEL[shownStatus(hw)]}</span>
+                  </div>
+                  {windowNote(hw) && <small>{windowNote(hw)}</small>}
+                  {hw.target !== null && hw.habit.direction !== 'down' && hw.target > 0 && (
+                    <div class="pspd-bar mt-1" data-status={shownStatus(hw)}>
+                      <div class="pspd-bar__fill" style={`width:${Math.min(hw.value / hw.target, 1) * 100}%`}></div>
+                      {hw.floor !== null && hw.floor < hw.target && (
+                        <div class="pspd-bar__floor" style={`left:${(hw.floor / hw.target) * 100}%`} title={`Floor: ${hw.floor}`}></div>
+                      )}
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  ))}
+
+  {(readings.length > 0 || notes.length > 0) && (
+    <section class="grid gap-4 md:grid-cols-2">
+      {readings.length > 0 && (
+        <div class="pspd-card">
+          <h3 class="mb-2 text-base font-semibold">Readings this week</h3>
+          <ul class="space-y-1 text-sm">
+            {readings.map((r) => (
+              <li>{shortDate(r.date)} · {r.label}: <strong>{fmt(r.value)}{r.unit ? ` ${r.unit}` : ''}</strong></li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {notes.length > 0 && (
+        <div class="pspd-card">
+          <h3 class="mb-2 text-base font-semibold">Notes</h3>
+          <ul class="space-y-1 text-sm">
+            {notes.map((n) => <li>{shortDate(n.d)} · {String(n.note)}</li>)}
+          </ul>
+        </div>
+      )}
+    </section>
+  )}
+
+  <StatusLegend />
+</div>

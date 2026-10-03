@@ -1,0 +1,34 @@
+# SAMPLE DATA — fictional. Week 4.
+week: 4
+days:
+  2026-09-14:
+    walks: 2
+    note: Travel all week.
+  2026-09-15:
+    walks: 2
+    low-carb: true
+    writing-min: 40
+  2026-09-16:
+    walks: 1
+    low-carb: true
+    writing-min: 25
+  2026-09-17:
+    walks: 1
+    sugary-drinks: 1
+  2026-09-18:
+    walks: 1
+    low-carb: true
+    writing-min: 30
+  2026-09-19:
+    walks: 2
+    low-carb: true
+    writing-min: 45
+    sugary-drinks: 1
+  2026-09-20:
+    walks: 1
+    sugary-drinks: 1
+totals:
+  applications: 1
+  coffee-chats: 0
+readings:
+  - { date: 2026-09-14, weight: 205.1 }

@@ -1,0 +1,395 @@
+# Michael Staton's PSP, as numbers. Source of truth for the plan itself:
+# src/content/psp/personal-strategic-plan.md. Format and rules:
+# hope-ai/references/dashboard-guidelines.md
+#
+# Floors and targets are per program week. `weeks:` overrides carry forward
+# from that week on; they encode each goal's weekly action plan, including
+# the Week 8 and Week 12 deloads.
+
+person: Michael Staton
+cohort: LV236
+day_one: 2026-09-28
+length_days: 100
+timezone: America/Chicago
+checkpoints: [30, 60, 90]
+deload_weeks: [8, 12]
+
+goals:
+  # ── 1 ────────────────────────────────────────────────────────────────────
+  - id: body
+    number: 1
+    kind: Personal
+    area: Body
+    title: Move first, move after meals, track everything
+    process:
+      - id: am-move
+        label: Morning move
+        cadence: daily
+        measure: check
+        floor: 7
+        target: 7
+      - id: hydration
+        label: Hydration Day
+        cadence: daily
+        measure: check
+        floor: 5
+        target: 7
+      - id: keto
+        label: Keto until dinner
+        cadence: daily
+        measure: check
+        floor: 5
+        target: 7
+      - id: chunks
+        label: Movement chunks (0–3 a day)
+        cadence: daily
+        measure: count
+        floor: 15
+        target: 21
+        weeks:
+          8: { floor: 14 }
+          9: { floor: 15 }
+          12: { floor: 14 }
+      - id: discomfort
+        label: Chosen discomfort
+        cadence: daily
+        measure: check
+        floor: 4
+        target: 7
+      - id: walk-in
+        label: Gym walk-in
+        cadence: daily
+        measure: check
+        note: Every day with gym access; a bonus, never a miss.
+      - id: resistance
+        label: Resistance sessions
+        cadence: weekly
+        measure: count
+        floor: 2
+        target: 4
+        weeks:
+          2: { floor: 3 }
+          8: { floor: 2, target: 2 }
+          9: { floor: 3, target: 4 }
+          12: { floor: 2, target: 2 }
+      - id: intervals
+        label: Interval sessions (4x4, sprints)
+        cadence: weekly
+        measure: count
+        floor: 1
+        target: 1
+        weeks:
+          3: { floor: 2, target: 2 }
+          6: { floor: 3, target: 3 }
+          8: { floor: 1, target: 1 }
+          9: { floor: 3, target: 3 }
+          12: { floor: 1, target: 1 }
+      - id: fast
+        label: Weekly fast (36 h; Week 8 is the Sardine Fast)
+        cadence: weekly
+        measure: check
+        floor: 1
+        target: 1
+      - id: carb-meals
+        label: Carb meals
+        cadence: weekly
+        measure: count
+        direction: down
+        target: 4
+    outcomes:
+      - id: weight
+        label: Weight
+        unit: lb
+        direction: down
+        baseline: null
+        milestones: {}
+        note: Pace once the Day 0 reading and the GP's advice are in.
+      - id: waist-height
+        label: Waist-to-height ratio
+        direction: down
+        baseline: null
+        milestones: {}
+        note: Healthy/fit target is under 0.5.
+      - id: resting-hr
+        label: Resting heart rate
+        unit: bpm
+        direction: down
+        baseline: null
+        milestones: {}
+        note: Healthy/fit target is under 60 bpm.
+      - id: hba1c
+        label: HbA1c (lab)
+        unit: '%'
+        direction: down
+        baseline: null
+        milestones: {}
+        note: Labs at Day 0 and the end only. Target under 5.7%.
+
+  # ── 2 ────────────────────────────────────────────────────────────────────
+  - id: operating-system
+    number: 2
+    kind: Personal
+    area: Operating System
+    title: Attention, presence, completion
+    process:
+      - id: checkin
+        label: Check-ins (both morning and evening)
+        cadence: daily
+        measure: check
+        floor: 5
+        target: 7
+      - id: language
+        label: French + Spanish (20+ min)
+        cadence: daily
+        measure: check
+        floor: 5
+        target: 7
+      - id: frog-morning
+        label: Frog Morning
+        cadence: weekly
+        measure: check
+        floor: 1
+        target: 1
+      - id: weekly-review
+        label: Weekly Review
+        cadence: weekly
+        measure: check
+        floor: null
+        target: null
+        weeks:
+          2: { floor: 1, target: 1 }
+      - id: frogs
+        label: Frogs eaten
+        cadence: weekly
+        measure: count
+        target: 3
+        weeks:
+          2: { target: 4 }
+          3: { target: 5 }
+          5: { target: 6 }
+          7: { target: 7 }
+          8: { target: null }
+          9: { target: 8 }
+          12: { target: null }
+      - id: pages
+        label: Visual note pages
+        cadence: weekly
+        measure: count
+        floor: 1
+        target: 1
+        weeks:
+          2: { floor: 3, target: 5 }
+          8: { floor: 2, target: 2 }
+          9: { floor: 3, target: 5 }
+          12: { floor: 2, target: 2 }
+      - id: pushes
+        label: Pushes (public artifacts)
+        cadence: weekly
+        measure: count
+        floor: 1
+        target: 1
+        weeks:
+          2: { target: 2 }
+          4: { target: 3 }
+          8: { target: 1 }
+          9: { target: 3 }
+          12: { target: 1 }
+    outcomes:
+      - id: frog-list
+        label: Frogs on the list
+        direction: down
+        baseline: null
+        milestones: {}
+        note: Week 1 count is the baseline; Day 90 goal is under half of it.
+
+  # ── 3 ────────────────────────────────────────────────────────────────────
+  - id: income
+    number: 3
+    kind: Personal
+    area: Income
+    title: Stop burning savings, build Humain
+    process:
+      - id: conversations
+        label: Conversations
+        cadence: weekly
+        measure: count
+        floor: 3
+        target: 6
+        weeks:
+          3: { floor: 4 }
+          5: { floor: 5 }
+          8: { floor: 3, target: 3 }
+          9: { floor: 6, target: 6 }
+          12: { floor: 3, target: 3 }
+      - id: calls
+        label: Calls
+        cadence: weekly
+        measure: count
+        floor: 5
+        target: 12
+        weeks:
+          3: { floor: 8 }
+          5: { floor: 10 }
+          8: { floor: 5, target: 5 }
+          9: { floor: 12, target: 12 }
+          12: { floor: 5, target: 5 }
+      - id: solicitations
+        label: Solicitations
+        cadence: weekly
+        measure: count
+        floor: 10
+        target: 40
+        weeks:
+          3: { floor: 20 }
+          4: { floor: 25 }
+          5: { floor: 30 }
+          8: { floor: null, target: null }
+          9: { floor: 40, target: 40 }
+          12: { floor: null, target: null }
+      - id: activations
+        label: Activations
+        cadence: weekly
+        measure: count
+        floor: 5
+        target: 12
+        weeks:
+          3: { floor: 8 }
+          5: { floor: 10 }
+          8: { floor: null, target: null }
+          9: { floor: 12, target: 12 }
+          12: { floor: null, target: null }
+      - id: asks
+        label: Explicit asks
+        cadence: weekly
+        measure: count
+        target: 2
+      - id: artifacts
+        label: Artifacts
+        cadence: weekly
+        measure: count
+        target: 1
+      - id: productization
+        label: Productization block (3+ h)
+        cadence: weekly
+        measure: count
+        target: null
+        weeks:
+          4: { target: 1 }
+      - id: day-off
+        label: Full day off (the ceiling)
+        cadence: weekly
+        measure: check
+        floor: 1
+        target: 1
+    outcomes:
+      - id: income-after-tax
+        label: After-tax income this month
+        unit: $/mo
+        direction: up
+        baseline: null
+        milestones: { 90: [12000, 18000] }
+        note: Breakeven is about $6k/mo. Read monthly.
+      - id: spv-closed
+        label: SPV capital closed (cumulative)
+        unit: $M
+        direction: up
+        baseline: null
+        milestones: { 90: [87, 125] }
+      - id: anchor-commitments
+        label: Anchor soft commitments
+        unit: $M
+        direction: up
+        baseline: null
+        milestones: { 90: [3, 6] }
+
+  # ── 4 ────────────────────────────────────────────────────────────────────
+  - id: music
+    number: 4
+    kind: Creative
+    area: Music
+    title: A song's first cut in an hour
+    process:
+      - id: evenings
+        label: Music evenings
+        cadence: weekly
+        measure: count
+        floor: 2
+        target: 3
+        weeks:
+          8: { floor: 1, target: 1 }
+          9: { floor: 2, target: 3 }
+      - id: song-clock
+        label: Song Clock logged
+        cadence: weekly
+        measure: check
+        floor: 1
+        target: 1
+        weeks:
+          8: { floor: null, target: null }
+          9: { floor: 1, target: 1 }
+      - id: voice
+        label: Pitch practice (15 min)
+        cadence: daily
+        measure: check
+        note: A bonus on any day; never a miss.
+    outcomes:
+      - id: song-clock-pct
+        label: Song Clock vs. Week 1 baseline
+        unit: '%'
+        direction: down
+        baseline: { date: 2026-10-04, value: 100 }
+        milestones: { 30: [37, 45], 60: [20, 25], 90: [10, 13] }
+        note: From a 10-hour baseline, 10% is the 1-hour first cut.
+
+  # ── 5 ────────────────────────────────────────────────────────────────────
+  - id: people
+    number: 5
+    kind: Personal
+    area: People
+    title: Show up for my people
+    process:
+      - id: billie
+        label: Billie (phone-free time)
+        cadence: weekly
+        measure: check
+        floor: 1
+        target: 1
+      - id: mom
+        label: Mom (a real call)
+        cadence: weekly
+        measure: check
+        floor: 1
+        target: 1
+      - id: liu
+        label: Liu (intentional conversation)
+        cadence: weekly
+        measure: check
+        target: 1
+        weeks:
+          8: { target: null }
+          9: { target: 1 }
+      - id: list
+        label: List reach-outs
+        cadence: weekly
+        measure: count
+        target: 2
+        weeks:
+          8: { target: null }
+          9: { target: 2 }
+    outcomes:
+      - id: billie-rating
+        label: Billie (0–10)
+        direction: up
+        baseline: { date: 2026-09-25, value: 3 }
+        track_only: true
+        note: A thermometer, not a target. Re-rated in Weeks 6 and 12.
+      - id: mom-rating
+        label: Mom (0–10)
+        direction: up
+        baseline: { date: 2026-09-25, value: 4 }
+        track_only: true
+      - id: liu-rating
+        label: Liu (0–10)
+        direction: up
+        baseline: { date: 2026-09-25, value: 6 }
+        track_only: true

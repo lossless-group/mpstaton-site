@@ -1,0 +1,30 @@
+# SAMPLE DATA — fictional. Week 1.
+week: 1
+days:
+  2026-08-24:
+    walks: 2
+    writing-min: 20
+  2026-08-25:
+    walks: 2
+    writing-min: 40
+  2026-08-26:
+    walks: 2
+    writing-min: 30
+    family-call: true
+  2026-08-27:
+    walks: 1
+    writing-min: 20
+  2026-08-28:
+    walks: 2
+    writing-min: 20
+  2026-08-29:
+    walks: 2
+    writing-min: 30
+  2026-08-30:
+    walks: 2
+    writing-min: 25
+totals:
+  applications: 4
+  coffee-chats: 1
+readings:
+  - { date: 2026-08-24, weight: 210.0 }

@@ -1,0 +1,11 @@
+---
+import DashboardPage from '../../../../components/psp/DashboardPage.astro';
+import { loadDataset } from '../../../../lib/psp/load';
+import { totalWeeks } from '../../../../lib/psp/tracker';
+const ds = loadDataset('mpstaton');
+const week = Number(Astro.params.week);
+if (!Number.isInteger(week) || week < 1 || week > totalWeeks(ds.tracker)) {
+  return new Response(null, { status: 404 });
+}
+---
+<DashboardPage ds={ds} base="/psp/dashboard" week={week} />

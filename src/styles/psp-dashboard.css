@@ -1,0 +1,303 @@
+/*
+ * PSP dashboard. Built on the site's semantic tokens so it follows light and
+ * dark mode. Status colors are mixed from fixed hues into the background, so
+ * they stay legible in either mode without a second palette.
+ *
+ * The status vocabulary (target / floor / miss / progress / unlogged / future,
+ * and ahead / on-pace / behind for checkpoints) is defined in
+ * hope-ai/references/dashboard-guidelines.md.
+ */
+
+.pspd {
+  --pspd-line: color-mix(in oklab, var(--color-foreground) 14%, transparent);
+  --pspd-fill: color-mix(in oklab, var(--color-foreground) 4%, transparent);
+  --pspd-good: oklch(0.66 0.15 155);
+  --pspd-ok: oklch(0.78 0.12 150);
+  --pspd-bad: oklch(0.65 0.17 35);
+  --pspd-now: var(--color-primary);
+  --pspd-hatch: repeating-linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--color-foreground) 10%, transparent) 0 2px,
+    transparent 2px 6px
+  );
+  font-variant-numeric: tabular-nums;
+}
+
+.pspd-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+}
+
+.pspd-card {
+  border: 1px solid var(--pspd-line);
+  border-radius: 0.75rem;
+  background: var(--pspd-fill);
+  padding: 1.25rem;
+}
+
+.pspd-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Status chip ─────────────────────────────────────────────────────────── */
+.pspd-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid var(--pspd-line);
+  color: var(--color-muted-foreground);
+}
+.pspd-chip::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.85;
+}
+.pspd-chip:is([data-status='target'], [data-status='ahead']) {
+  color: color-mix(in oklab, var(--pspd-good) 75%, var(--color-foreground));
+  border-color: color-mix(in oklab, var(--pspd-good) 45%, transparent);
+  background: color-mix(in oklab, var(--pspd-good) 12%, transparent);
+}
+.pspd-chip:is([data-status='floor'], [data-status='on-pace']) {
+  color: color-mix(in oklab, var(--pspd-good) 60%, var(--color-foreground));
+  border-color: color-mix(in oklab, var(--pspd-ok) 45%, transparent);
+  background: color-mix(in oklab, var(--pspd-ok) 10%, transparent);
+}
+.pspd-chip:is([data-status='miss'], [data-status='behind']) {
+  color: color-mix(in oklab, var(--pspd-bad) 80%, var(--color-foreground));
+  border-color: color-mix(in oklab, var(--pspd-bad) 50%, transparent);
+  background: color-mix(in oklab, var(--pspd-bad) 10%, transparent);
+}
+.pspd-chip[data-status='progress'] {
+  color: var(--pspd-now);
+  border-color: color-mix(in oklab, var(--pspd-now) 45%, transparent);
+}
+.pspd-chip:is([data-status='unlogged'], [data-status='no-data'], [data-status='no-reading']) {
+  background-image: var(--pspd-hatch);
+}
+.pspd-chip:is([data-status='future'], [data-status='not-paced'], [data-status='tracked'], [data-status='bonus'])::before {
+  background: transparent;
+  border: 1.5px solid currentColor;
+}
+
+/* ── Summary grid: goals × weeks ────────────────────────────────────────── */
+.pspd-grid {
+  border-collapse: separate;
+  border-spacing: 4px;
+}
+.pspd-grid th {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-muted-foreground);
+  text-align: center;
+  padding: 0 0 0.25rem;
+}
+.pspd-grid th.pspd-goal-h,
+.pspd-grid td.pspd-goal {
+  text-align: left;
+  min-width: 11rem;
+  padding-right: 0.75rem;
+}
+.pspd-goal a { color: inherit; text-decoration: none; }
+.pspd-goal-n {
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-right: 0.35rem;
+}
+.pspd-goal-t {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+  line-height: 1.3;
+}
+.pspd-rest { display: block; font-weight: 500; font-size: 0.6rem; letter-spacing: 0.06em; text-transform: uppercase; }
+
+.pspd-cell {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+}
+.pspd-cell a,
+.pspd-cell span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 1.6rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--pspd-line);
+}
+.pspd-cell [data-status='target']   { background: var(--pspd-good); border-color: transparent; }
+.pspd-cell [data-status='floor']    { background: var(--pspd-ok); border-color: transparent; }
+.pspd-cell [data-status='miss']     { border: 2px solid var(--pspd-bad); background: color-mix(in oklab, var(--pspd-bad) 12%, transparent); }
+.pspd-cell [data-status='progress'] { border: 2px solid var(--pspd-now); background: color-mix(in oklab, var(--pspd-now) 10%, transparent); }
+.pspd-cell [data-status='unlogged'] { background-image: var(--pspd-hatch); }
+.pspd-cell [data-status='future']   { opacity: 0.45; }
+.pspd-cell [data-partial='true']    { background-image: var(--pspd-hatch); }
+.pspd-cell a:hover { outline: 2px solid var(--color-foreground); outline-offset: 1px; }
+.pspd-grid .is-now { color: var(--pspd-now); }
+
+/* ── Timeline (Day 1 → 100) ─────────────────────────────────────────────── */
+.pspd-timeline {
+  position: relative;
+  height: 0.6rem;
+  border-radius: 999px;
+  background: var(--pspd-fill);
+  border: 1px solid var(--pspd-line);
+  overflow: visible;
+}
+.pspd-timeline__done {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+.pspd-timeline__mark {
+  position: absolute;
+  top: -0.35rem;
+  bottom: -0.35rem;
+  width: 2px;
+  background: var(--color-foreground);
+  opacity: 0.55;
+}
+.pspd-timeline__label {
+  position: absolute;
+  top: 1rem;
+  transform: translateX(-50%);
+  font-size: 0.68rem;
+  color: var(--color-muted-foreground);
+  white-space: nowrap;
+}
+
+/* ── Bars ───────────────────────────────────────────────────────────────── */
+.pspd-bar {
+  position: relative;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--pspd-fill);
+  border: 1px solid var(--pspd-line);
+  min-width: 4rem;
+}
+.pspd-bar__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  background: var(--pspd-ok);
+}
+.pspd-bar[data-status='target'] .pspd-bar__fill,
+.pspd-bar[data-status='ahead'] .pspd-bar__fill { background: var(--pspd-good); }
+.pspd-bar[data-status='miss'] .pspd-bar__fill,
+.pspd-bar[data-status='behind'] .pspd-bar__fill { background: var(--pspd-bad); }
+.pspd-bar[data-status='progress'] .pspd-bar__fill { background: var(--pspd-now); }
+.pspd-bar__floor {
+  position: absolute;
+  top: -0.25rem;
+  bottom: -0.25rem;
+  width: 2px;
+  background: var(--color-foreground);
+  opacity: 0.6;
+}
+
+/* ── Week detail grid ───────────────────────────────────────────────────── */
+.pspd-week {
+  width: 100%;
+  min-width: 46rem;
+  border-collapse: collapse;
+  table-layout: fixed;   /* every goal card's day columns line up */
+  font-size: 0.85rem;
+}
+.pspd-col-habit { width: 15rem; }
+.pspd-col-day { width: 3.1rem; }
+.pspd-col-total { width: auto; }
+.pspd-week th,
+.pspd-week td {
+  border-bottom: 1px solid var(--pspd-line);
+  padding: 0.45rem 0.4rem;
+  vertical-align: middle;
+}
+.pspd-week thead th {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-muted-foreground);
+  text-align: center;
+  line-height: 1.25;
+}
+.pspd-week thead th.is-today { color: var(--pspd-now); }
+.pspd-week thead th.is-unlogged { background-image: var(--pspd-hatch); border-radius: 0.3rem; }
+.pspd-week .pspd-habit {
+  text-align: left;
+  min-width: 10rem;
+}
+.pspd-week .pspd-habit small {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--color-muted-foreground);
+}
+.pspd-day {
+  width: 2.6rem;
+  text-align: center;
+  font-weight: 600;
+}
+.pspd-day[data-state='done']     { color: color-mix(in oklab, var(--pspd-good) 80%, var(--color-foreground)); }
+.pspd-day[data-state='not-done'] { color: var(--color-muted-foreground); font-weight: 400; }
+.pspd-day[data-state='unlogged'] { background-image: var(--pspd-hatch); }
+.pspd-day[data-state='future']   { opacity: 0.35; }
+.pspd-day[data-twice='true'] {
+  box-shadow: inset 0 0 0 2px var(--pspd-bad);
+  border-radius: 0.3rem;
+  color: var(--pspd-bad);
+}
+.pspd-total {
+  text-align: right;
+  white-space: nowrap;
+  min-width: 9rem;
+}
+.pspd-total strong { font-size: 0.95rem; }
+.pspd-total small { color: var(--color-muted-foreground); }
+
+/* ── Legend ─────────────────────────────────────────────────────────────── */
+.pspd-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.1rem;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+}
+.pspd-legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.pspd-legend i {
+  display: inline-block;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--pspd-line);
+}
+.pspd-legend i[data-status='target']   { background: var(--pspd-good); border-color: transparent; }
+.pspd-legend i[data-status='floor']    { background: var(--pspd-ok); border-color: transparent; }
+.pspd-legend i[data-status='miss']     { border: 2px solid var(--pspd-bad); }
+.pspd-legend i[data-status='progress'] { border: 2px solid var(--pspd-now); }
+.pspd-legend i[data-status='unlogged'] { background-image: var(--pspd-hatch); }
+.pspd-legend i[data-status='future']   { opacity: 0.45; }
+
+.pspd-banner a,
+.pspd-links a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
+}
+
+.pspd-banner {
+  border: 1px dashed color-mix(in oklab, var(--pspd-bad) 60%, transparent);
+  background: color-mix(in oklab, var(--pspd-bad) 8%, transparent);
+  border-radius: 0.6rem;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.85rem;
+}

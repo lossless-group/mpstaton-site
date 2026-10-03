@@ -1,0 +1,7 @@
+---
+// Rendered per request so "today" (and so the current week) is always right.
+import DashboardPage from '../../../components/psp/DashboardPage.astro';
+import { loadDataset } from '../../../lib/psp/load';
+const ds = loadDataset('mpstaton');
+---
+<DashboardPage ds={ds} base="/psp/dashboard" />
