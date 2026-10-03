@@ -101,7 +101,7 @@ goals:
         label: Weight
         unit: lb
         direction: down
-        baseline: null
+        baseline: { date: 2026-09-28, value: 213 }
         milestones: {}
         note: Pace once the Day 0 reading and the GP's advice are in.
       - id: waist-height

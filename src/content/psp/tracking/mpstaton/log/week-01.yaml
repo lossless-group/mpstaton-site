@@ -6,11 +6,11 @@ week: 1
 days:
   2026-09-28:
     chunks: 2
-    note: "At a conference. Calisthenics and stretches; no walking."
+    note: "Notecards in use (capture only, no visual note pages yet). At a conference. Calisthenics and stretches; no walking."
   2026-09-29:
     chunks: 2
     carb-meals: 1
-    note: "Calisthenics and stretches. Flew back to Austin for a birthday party; group meditation; margaritas (a drinking occasion)."
+    note: "Notecards in use (capture only). Calisthenics and stretches. Flew back to Austin for a birthday party; group meditation; margaritas (a drinking occasion)."
   2026-09-30:
     hydration: true
     note: "A miss apart from water (quota exceeded). Slept early and slept in."
@@ -22,16 +22,24 @@ days:
     walk-in: true
     resistance: 1
     intervals: 0.5
+    chunks: 3
     frogs: 1
     note: "Out of bed immediately. No food until dinner, no carbs. Gym walk-in, sauna, dead hangs, deadlift to shoulder press. Intervals as a 2x2 (half a 4x4). Frog: sent an expense reimbursement."
   2026-10-02:
+    keto: true
+    chunks: 3
+    conversations: 4
+    calls: 2
     hydration: true
     discomfort: true
     walk-in: true
     resistance: 1
     carb-meals: 1
     frogs: 1
-    note: "Not out of bed immediately. Moved, stretched, calisthenics. Gym walk-in, sauna, dead hang, shoulder extensions, curls. Carbs at dinner (sweet potato) plus four small Snickers. Frog: sent an invoice."
-totals: {}
+    note: "Not out of bed immediately. Moved, stretched, calisthenics. Gym walk-in, sauna, dead hang, shoulder extensions, curls. Carbs at dinner (sweet potato) plus four small Snickers. Frog: sent an invoice. Four work conversations, two of them Zooms. Bought Ableton Live 12 (setup for Goal 4). Language software waits on an incoming payment."
+totals:
+  mom: 1    # a good conversation this week
+  liu: 1    # a real conversation this week
 readings:
+  - { date: 2026-09-28, weight: 213 }
   - { date: 2026-10-02, consulting-billed: 20000 }
