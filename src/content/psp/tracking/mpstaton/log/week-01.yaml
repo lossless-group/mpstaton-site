@@ -1,7 +1,7 @@
-# Week 1 · Days 1–7 · Mon Sep 28 – Sun Oct 4, 2026
+# Week 1 · Days 1–6 · Mon Sep 28 – Sat Oct 3, 2026 (a short week: the cohort's weeks start on Sunday)
 # Add each day under its own date as it's logged (catching up later is fine).
 # A day not listed here shows as "not logged", never as a miss.
-# Logged on Fri Oct 2 as a catch-up for Mon–Fri.
+# Logged on Fri Oct 2 as a catch-up for Mon–Fri; Sat added Sun Oct 4.
 week: 1
 days:
   2026-09-28:
@@ -13,8 +13,10 @@ days:
     note: "Notecards in use (capture only). Calisthenics and stretches. Flew back to Austin for a birthday party; group meditation; margaritas (a drinking occasion)."
   2026-09-30:
     hydration: true
-    note: "A miss apart from water (quota exceeded). Slept early and slept in."
+    keto: true
+    note: "A miss apart from water and keto until dinner (quota exceeded). Slept early and slept in."
   2026-10-01:
+    checkin: 1
     am-move: true
     hydration: true
     keto: true
@@ -24,8 +26,11 @@ days:
     intervals: 0.5
     chunks: 3
     frogs: 1
+    family: true
     note: "Out of bed immediately. No food until dinner, no carbs. Gym walk-in, sauna, dead hangs, deadlift to shoulder press. Intervals as a 2x2 (half a 4x4). Frog: sent an expense reimbursement."
   2026-10-02:
+    checkin: 1
+    am-move: true
     keto: true
     chunks: 3
     conversations: 4
@@ -36,10 +41,41 @@ days:
     resistance: 1
     carb-meals: 1
     frogs: 1
-    note: "Not out of bed immediately. Moved, stretched, calisthenics. Gym walk-in, sauna, dead hang, shoulder extensions, curls. Carbs at dinner (sweet potato) plus four small Snickers. Frog: sent an invoice. Four work conversations, two of them Zooms. Bought Ableton Live 12 (setup for Goal 4). Language software waits on an incoming payment."
+    frog-morning: true
+    family: true
+    note: "Not out of bed immediately. Moved, stretched, calisthenics. Gym walk-in, sauna, dead hang, shoulder extensions, curls. Carbs at dinner (sweet potato) plus four small Snickers. Frog: sent an invoice. Four work conversations, two of them Zooms. Bought Ableton Live 12 (setup for Goal 4). Language software waits on an incoming payment. Drank in the evening with no occasion (off plan)."
+  2026-10-03:
+    am-move: true
+    chunks: 2
+    fast: 24
+    frogs: 1
+    hydration: true
+    walk-in: true
+    intervals: 1
+    carb-meals: 1
+    frog-morning: true
+    family: true
+    note: "Morning walk. Gym: intervals and sauna. Planned carb day. Started a 24-hour fast after dinner (ended at Sunday's family dinner; logged here, the day it started). Helped a cohort member get set up with Claude Code for their PSP project. Reconnected with an old contact who could benefit from the program."
 totals:
-  mom: 1    # a good conversation this week
+  mom: 3    # home this week: three days with Mom
+  list: 1   # reconnected with a contact at Cobuy; likely interested in Choice
+  solicitations: 3     # third: Humain VC
+  activations: 3
+  asks: 3              # (Also asked Humain for expenses and invoiced the reimbursement; cut an SF trip they couldn't say the purpose of.)
+  artifacts: 3
+  productization: 1    # Flave, Dididecks AI
+  evenings: 2          # includes the first Ableton session; far from a song in one sitting
+  voice: 0             # no pitch practice this week
+  pushes: 2            # hope-ai (packaged, live, shared with the class); lossless.group/content-areas
+  journaling: 4        # program practice (basic journaling); not in tracker.yaml yet
+  language: 0          # behind: waiting on a payment to buy the app. From Oct 5: 10 min French + 10 min Spanish a day with free tools.
+  buddy-calls: 2       # program practice: supported my buddy; not in tracker.yaml yet
   liu: 1    # a real conversation this week
+reasons:
+  calls: "PersonalOS email system isn't set up and my relationships aren't imported yet, so outreach had nowhere to run from."
+  solicitations: "Same blocker: no email system or imported relationships yet."
+  activations: "Same blocker: no email system or imported relationships yet."
+  language: "Waiting on a payment to buy the app. Free tools from Oct 5."
 readings:
   - { date: 2026-09-28, weight: 213 }
-  - { date: 2026-10-02, consulting-billed: 20000 }
+  - { date: 2026-10-02, consulting-billed: 20000, income-after-tax: 13800 }   # after-tax estimated from the plan's consulting math

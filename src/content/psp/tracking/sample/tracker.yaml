@@ -1,5 +1,10 @@
 # SAMPLE DATA — a fictional cohort member, for demonstrating the dashboard.
 # Not a real person; not anyone's real numbers.
+#
+# Shows every cadence: daily (walks, low-carb, writing minutes), weekly
+# (applications, Zone 2, sugary drinks as a "no more than"), every two weeks
+# (coffee chats), and monthly (portfolio refresh, Weeks 1–4, 5–8, …). Outcomes
+# get a reading each week in the logs, so the dashboard can show the trend.
 person: Sample Member
 cohort: LV236
 day_one: 2026-08-24
@@ -19,34 +24,34 @@ goals:
         label: Walks after meals (0–2 a day)
         cadence: daily
         measure: count
-        floor: 10
-        target: 14
+        base: 10
+        stretch: 14
       - id: low-carb
         label: Low-carb breakfast and lunch
         cadence: daily
         measure: check
-        floor: null
-        target: null
+        base: null
+        stretch: null
         weeks:
-          3: { floor: 4, target: 5 }
-          5: { floor: 5, target: 6 }
+          3: { base: 4, stretch: 5 }
+          5: { base: 5, stretch: 6 }
       - id: zone2
         label: Zone 2 sessions (30 min)
         cadence: weekly
         measure: count
-        floor: null
-        target: null
+        base: null
+        stretch: null
         weeks:
-          5: { floor: 2, target: 2 }
-          7: { floor: 2, target: 3 }
-          8: { floor: 1, target: 1 }
-          9: { floor: 2, target: 3 }
+          5: { base: 2, stretch: 2 }
+          7: { base: 2, stretch: 3 }
+          8: { base: 1, stretch: 1 }
+          9: { base: 2, stretch: 3 }
       - id: sugary-drinks
         label: Sugary drinks
         cadence: weekly
         measure: count
         direction: down
-        target: 1
+        stretch: 1
     outcomes:
       - id: weight
         label: Weight
@@ -65,14 +70,20 @@ goals:
         label: Tailored applications
         cadence: weekly
         measure: count
-        floor: 3
-        target: 5
+        base: 3
+        stretch: 5
       - id: coffee-chats
         label: Coffee chats (per two weeks)
         cadence: biweekly
         measure: count
-        floor: 2
-        target: 4
+        base: 2
+        stretch: 4
+      - id: portfolio
+        label: Portfolio refresh (one a month)
+        cadence: monthly
+        measure: check
+        base: 1
+        stretch: 1
     outcomes:
       - id: interviews
         label: First-round interviews (cumulative)
@@ -90,8 +101,8 @@ goals:
         label: Writing (minutes)
         cadence: daily
         measure: minutes
-        floor: 90
-        target: 150
+        base: 90
+        stretch: 150
     outcomes:
       - id: words
         label: Words drafted (cumulative)
@@ -102,7 +113,7 @@ goals:
 
   - id: people
     number: 4
-    kind: Personal
+    kind: Relationships
     area: People
     title: Be there for my family
     process:
@@ -110,13 +121,13 @@ goals:
         label: Call home
         cadence: weekly
         measure: check
-        floor: 1
-        target: 1
+        base: 1
+        stretch: 1
       - id: date-night
         label: Date night
         cadence: weekly
         measure: check
-        target: 1
+        stretch: 1
     outcomes:
       - id: closeness
         label: How close we feel (0–10)

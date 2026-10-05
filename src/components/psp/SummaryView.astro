@@ -17,6 +17,7 @@ import {
   goalWeek,
   isDeload,
   lengthDays,
+  outcomeSeries,
   shortDate,
   STATUS_LABEL,
   todayIso,
@@ -44,6 +45,33 @@ const checkpoints = (t.checkpoints ?? [30, 60, 90]).map((d) => checkpoint(t, ds.
 // repeat the same to-date numbers, so they show what they'll be scored on.
 const nextIdx = checkpoints.findIndex((c) => !c.reached);
 const showsProgress = (i: number) => checkpoints[i].reached || i === nextIdx;
+const series = t.goals.flatMap((g) =>
+  (g.outcomes ?? []).map((o) => ({ goal: g, s: outcomeSeries(t, ds.idx, o, today) })),
+);
+
+// A small trend chart per outcome: day on x (0 → program length), value on y.
+const W = 240;
+const H = 64;
+const PAD = 4;
+function chart(s: ReturnType<typeof outcomeSeries>) {
+  const ys = [...s.points.map((p) => p.value), ...s.band.flatMap((b) => [b.lo, b.hi])];
+  if (!ys.length) return null;
+  let lo = Math.min(...ys);
+  let hi = Math.max(...ys);
+  if (lo === hi) { lo -= 1; hi += 1; }
+  const minDay = Math.min(0, ...s.points.map((p) => p.day), ...s.band.map((b) => b.day));
+  const x = (d: number) => PAD + ((d - minDay) / (len - minDay)) * (W - 2 * PAD);
+  const y = (v: number) => PAD + (1 - (v - lo) / (hi - lo)) * (H - 2 * PAD);
+  const band = s.band.length > 1
+    ? [...s.band.map((b) => `${x(b.day)},${y(b.hi)}`), ...[...s.band].reverse().map((b) => `${x(b.day)},${y(b.lo)}`)].join(' ')
+    : null;
+  const line = s.points.map((p) => `${x(p.day)},${y(p.value)}`).join(' ');
+  const marks = (t.checkpoints ?? [30, 60, 90]).map((d) => x(d));
+  const nowX = x(Math.min(Math.max(day, 0), len));
+  return { band, line, last: s.points.length ? { cx: x(s.points[s.points.length - 1].day), cy: y(s.points[s.points.length - 1].value) } : null, marks, nowX };
+}
+const unitOf = (o: { unit?: string }) => (o.unit ? ` ${o.unit}` : '');
+
 const thisWeek = nowWeek ? t.goals.map((g) => goalWeek(t, ds.idx, g, nowWeek, today)) : [];
 
 const dayShown = Math.min(Math.max(day, 0), len);
@@ -109,7 +137,8 @@ const pct = (d: number) => `${((d - 0.5) / len) * 100}%`;
                       href={`${base}/week/${c.week}#goal-${goal.id}`}
                       data-status={c.status}
                       data-partial={c.partlyLogged ? 'true' : undefined}
-                      title={`${goal.area}, week ${c.week}: ${STATUS_LABEL[c.status]}${c.partlyLogged ? ' (partly logged)' : ''}`}
+                      data-reason={c.reasons.length ? 'true' : undefined}
+                      title={`${goal.area}, week ${c.week}: ${STATUS_LABEL[c.status]}${c.partlyLogged ? ' (partly logged)' : ''}${c.reasons.length ? `\n${c.reasons.join('\n')}` : ''}`}
                       aria-label={`${goal.area}, week ${c.week}: ${STATUS_LABEL[c.status]}`}
                     ></a>
                   )}
@@ -145,7 +174,7 @@ const pct = (d: number) => `${((d - 0.5) / len) * 100}%`;
                   {showsProgress(i) && <span class="pspd-chip" data-status={gc.process}>{STATUS_LABEL[gc.process]}</span>}
                 </div>
                 {showsProgress(i) && gc.share !== null && gc.process !== 'no-data' && (
-                  <div class="pspd-bar" data-status={gc.process} title={`${Math.round(gc.share * 100)}% of the paced target`}>
+                  <div class="pspd-bar" data-status={gc.process} title={`${Math.round(gc.share * 100)}% of the paced stretch`}>
                     <div class="pspd-bar__fill" style={`width:${Math.min(gc.share, 1) * 100}%`}></div>
                   </div>
                 )}
@@ -175,14 +204,52 @@ const pct = (d: number) => `${((d - 0.5) / len) * 100}%`;
     </div>
   </section>
 
+  <!-- Outcomes, week by week -->
+  {series.length > 0 && (
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold">Outcomes, week by week</h2>
+      <p class="text-sm text-muted-foreground">
+        Readings logged each week, against the paced range (shaded) from the starting point to each milestone.
+        Shown for progress only; outcomes are scored at Day {(t.checkpoints ?? [30, 60, 90]).join(', ')}.
+      </p>
+      <ul class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+        {series.map(({ goal, s }) => {
+          const c = chart(s);
+          return (
+            <li class="pspd-card space-y-2">
+              <p class="text-sm font-semibold"><span class="pspd-goal-n">{goal.number}</span>{s.outcome.label}</p>
+              {c && s.points.length > 0 ? (
+                <svg class="pspd-trend" viewBox={`0 0 ${W} ${H}`} role="img"
+                  aria-label={`${s.outcome.label}: ${s.points.length} readings, latest ${fmt(s.latest?.value)}${unitOf(s.outcome)}`}>
+                  {c.marks.map((mx) => <line class="pspd-trend__mark" x1={mx} x2={mx} y1="0" y2={H} />)}
+                  <line class="pspd-trend__now" x1={c.nowX} x2={c.nowX} y1="0" y2={H} />
+                  {c.band && <polygon class="pspd-trend__band" points={c.band} />}
+                  {s.points.length > 1 && <polyline class="pspd-trend__line" points={c.line} />}
+                  {c.last && <circle class="pspd-trend__dot" cx={c.last.cx} cy={c.last.cy} r="3" />}
+                </svg>
+              ) : (
+                <p class="text-xs text-muted-foreground">No readings yet. Log one under <code>readings:</code> on Sunday.</p>
+              )}
+              <p class="text-xs text-muted-foreground">
+                {s.latest ? <>Latest {fmt(s.latest.value)}{unitOf(s.outcome)} · {shortDate(s.latest.date)}</> : 'No reading'}
+                {s.next && <> · Day {s.next.day} aim {formatMilestone(s.next.milestone, s.outcome.unit)}</>}
+                {s.outcome.track_only && <> · tracked, not scored</>}
+              </p>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  )}
+
   <!-- This week -->
   {thisWeek.length > 0 && day <= len && (
     <section class="space-y-4">
       <h2 class="text-xl font-semibold">Week {nowWeek} so far</h2>
       <ul class="grid gap-3 md:grid-cols-2">
         {thisWeek.map((gw) => {
-          const scored = gw.habits.filter((h) => h.provisional && h.provisional !== 'bonus');
-          const good = scored.filter((h) => h.provisional === 'target' || h.provisional === 'floor').length;
+          const scored = gw.habits.filter((h) => h.provisional && h.provisional !== 'bonus' && h.provisional !== 'optional');
+          const good = scored.filter((h) => h.provisional === 'stretch' || h.provisional === 'base').length;
           const logged = gw.habits.some((h) => h.loggedDays > 0);
           return (
             <li class="pspd-card flex items-center justify-between gap-3">
@@ -190,7 +257,7 @@ const pct = (d: number) => `${((d - 0.5) / len) * 100}%`;
                 <span class="pspd-goal-n">{gw.goal.number}</span>{gw.goal.area}
               </a>
               <span class="text-sm text-muted-foreground">
-                {logged ? `${good} of ${gw.goal.process.length} habits at floor or better so far` : 'Nothing logged yet this week'}
+                {logged ? `${good} of ${gw.goal.process.length} habits at base or better so far` : 'Nothing logged yet this week'}
               </span>
             </li>
           );

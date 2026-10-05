@@ -1,0 +1,14 @@
+# Week 2 · Days 7–13 · Sun Oct 4 – Sat Oct 10, 2026
+# Add each day under its own date as it's logged (catching up later is fine).
+# A day not listed here shows as "not logged", never as a miss.
+week: 2
+days:
+  2026-10-04:
+    hydration: true
+    keto: true
+    note: "Fasted until a family dinner (cabbage and sausage), ending the 24-hour fast logged on Saturday."
+    checkin: 1
+    chunks: 2
+totals: {}
+readings:
+  - { date: 2026-10-04, indicated-interest: 30 }   # one LP indicated $30M on a live SPV

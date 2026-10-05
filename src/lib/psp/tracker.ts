@@ -13,12 +13,21 @@
 
 // ─── Data contract ────────────────────────────────────────────────────────
 
-export type Cadence = 'daily' | 'weekly' | 'biweekly';
-export type Measure = 'check' | 'count' | 'minutes' | 'amount';
+export type Cadence = 'daily' | 'weekly' | 'biweekly' | 'monthly';
+export type Measure = 'check' | 'count' | 'minutes' | 'hours' | 'amount';
 export type Direction = 'up' | 'down';
 
+/**
+ * The weekly bars, in the program's words: `base` (a good-enough week) and
+ * `stretch` (a great one). For a `direction: down` habit, `stretch` is the
+ * limit. `floor` / `target` are the toolkit's older names, read as aliases.
+ */
 export interface Standard {
+  base?: number | null;
+  stretch?: number | null;
+  /** @deprecated alias of `base` */
   floor?: number | null;
+  /** @deprecated alias of `stretch` */
   target?: number | null;
 }
 
@@ -28,6 +37,13 @@ export interface Habit extends Standard {
   short?: string;
   cadence: Cadence;
   measure: Measure;
+  /**
+   * How logged days add up to the week: `sum` (default) or `max`, the best
+   * single entry. Use `max` for something continuous, like the longest fast
+   * in hours: a 24-hour fast is two-thirds of a 36-hour bar, not a miss, and
+   * two 20-hour fasts are not a 40-hour one. A `max` bar is never prorated.
+   */
+  aggregate?: 'sum' | 'max';
   direction?: Direction;
   unit?: string;
   note?: string;
@@ -45,6 +61,13 @@ export interface Outcome {
   milestones?: Record<string, Milestone>;
   /** Measured and shown, never scored against a milestone (a "thermometer"). */
   track_only?: boolean;
+  /**
+   * How to project it forward: `linear` (default) extends the rate from the
+   * baseline to the latest reading, for things that accumulate or drift
+   * (weight, words drafted). `none` for a level that's read as it stands,
+   * like a monthly income run-rate: progress only, no projection.
+   */
+  projection?: 'linear' | 'none';
   note?: string;
 }
 
@@ -64,6 +87,13 @@ export interface Tracker {
   day_one: string;
   length_days?: number;
   timezone?: string;
+  /**
+   * The weekday a week starts on, when the cohort runs on a fixed clock
+   * (e.g. `sunday` for a Sunday-to-Sunday cohort week). Week 1 is then the
+   * part-week from Day 1 to the first boundary. Omit it and weeks run seven
+   * days from Day 1, whatever weekday that is.
+   */
+  week_starts?: string;
   checkpoints?: number[];
   deload_weeks?: number[];
   goals: Goal[];
@@ -76,14 +106,20 @@ export interface WeekLog {
   days?: Record<string, DayEntry | null>;
   totals?: Record<string, number>;
   readings?: Array<{ date: string } & Record<string, unknown>>;
+  /**
+   * Context for a week's result, keyed by habit id (or goal id): why a bar
+   * was missed, what got in the way, what changed. Shown beside the status,
+   * never instead of it.
+   */
+  reasons?: Record<string, string>;
 }
 
 // ─── Statuses ─────────────────────────────────────────────────────────────
 
 /** One habit in one week (or biweekly window). */
-export type HabitStatus = 'target' | 'floor' | 'miss' | 'bonus' | 'progress' | 'unlogged' | 'future';
+export type HabitStatus = 'stretch' | 'base' | 'miss' | 'bonus' | 'optional' | 'progress' | 'unlogged' | 'future';
 /** One goal in one week. */
-export type GoalWeekStatus = 'target' | 'floor' | 'miss' | 'progress' | 'unlogged' | 'future';
+export type GoalWeekStatus = 'stretch' | 'base' | 'miss' | 'progress' | 'unlogged' | 'future';
 /** Process or outcome at a checkpoint. */
 export type PaceStatus = 'ahead' | 'on-pace' | 'behind' | 'not-paced' | 'tracked' | 'no-reading' | 'no-data';
 
@@ -138,13 +174,29 @@ function normDate(v: unknown): string {
 // ─── Program weeks ────────────────────────────────────────────────────────
 
 export const lengthDays = (t: Tracker) => t.length_days ?? 100;
-export const totalWeeks = (t: Tracker) => Math.ceil(lengthDays(t) / 7);
-export const weekOfDay = (day: number) => Math.ceil(day / 7);
 
-/** The dates in a program week, capped at the program's last day. */
+const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+/**
+ * Days between the start of Week 1's clock and Day 1: 0 when weeks run from
+ * Day 1, otherwise how far Day 1 sits past the cohort's week boundary.
+ */
+export function weekOffset(t: Tracker): number {
+  const name = String(t.week_starts ?? '').trim().toLowerCase();
+  const start = name.length >= 3 ? WEEKDAYS.findIndex((w) => w.startsWith(name.slice(0, 3))) : -1;
+  if (start < 0) return 0;
+  const dow = new Date(toUtc(normDate(t.day_one))).getUTCDay();
+  return (dow - start + 7) % 7;
+}
+
+export const totalWeeks = (t: Tracker) => Math.ceil((lengthDays(t) + weekOffset(t)) / 7);
+export const weekOfDay = (t: Tracker, day: number) => Math.ceil((day + weekOffset(t)) / 7);
+
+/** The dates in a program week, from Day 1 to the program's last day. */
 export function weekDates(t: Tracker, week: number): string[] {
-  const first = (week - 1) * 7 + 1;
-  const last = Math.min(week * 7, lengthDays(t));
+  const off = weekOffset(t);
+  const first = Math.max((week - 1) * 7 + 1 - off, 1);
+  const last = Math.min(week * 7 - off, lengthDays(t));
   const out: string[] = [];
   for (let d = first; d <= last; d++) out.push(dateOfDay(t, d));
   return out;
@@ -154,29 +206,43 @@ export function isDeload(t: Tracker, week: number): boolean {
   return (t.deload_weeks ?? [8, 12]).includes(week);
 }
 
+/** Program weeks scored together: 1 (daily, weekly), 2 (biweekly), 4 (monthly). */
+export function spanWeeks(c: Cadence): number {
+  return c === 'monthly' ? 4 : c === 'biweekly' ? 2 : 1;
+}
+
+/** The first week of the window a week falls in (Weeks 1–4, 5–8, … for monthly). */
+export function windowStart(c: Cadence, week: number): number {
+  const n = spanWeeks(c);
+  return Math.floor((week - 1) / n) * n + 1;
+}
+
 /** The current program week, clamped to the program. 0 before Day 1. */
 export function currentWeek(t: Tracker, today: string): number {
   const d = dayNumber(t, today);
   if (d < 1) return 0;
-  return Math.min(weekOfDay(d), totalWeeks(t));
+  return Math.min(weekOfDay(t, d), totalWeeks(t));
 }
 
 // ─── Standards (the ramp) ─────────────────────────────────────────────────
 
-/** Floor and target for a habit in a program week; `weeks:` overrides carry forward. */
-export function standardFor(h: Habit, week: number): { floor: number | null; target: number | null } {
-  let floor = h.floor ?? null;
-  let target = h.target ?? null;
+const baseOf = (o: Standard) => ('base' in o ? o.base : o.floor) ?? null;
+const stretchOf = (o: Standard) => ('stretch' in o ? o.stretch : o.target) ?? null;
+
+/** Base and stretch for a habit in a program week; `weeks:` overrides carry forward. */
+export function standardFor(h: Habit, week: number): { base: number | null; stretch: number | null } {
+  let base = baseOf(h);
+  let stretch = stretchOf(h);
   const keys = Object.keys(h.weeks ?? {})
     .map(Number)
     .filter((k) => k <= week)
     .sort((a, b) => a - b);
   for (const k of keys) {
     const o = h.weeks![String(k)];
-    if (o && 'floor' in o) floor = o.floor ?? null;
-    if (o && 'target' in o) target = o.target ?? null;
+    if (o && ('base' in o || 'floor' in o)) base = baseOf(o);
+    if (o && ('stretch' in o || 'target' in o)) stretch = stretchOf(o);
   }
-  return { floor, target };
+  return { base, stretch };
 }
 
 // ─── Values ───────────────────────────────────────────────────────────────
@@ -198,20 +264,29 @@ export interface LogIndex {
   days: Map<string, DayEntry>;
   totals: Map<number, Record<string, number>>;
   readings: Array<{ date: string } & Record<string, unknown>>;
+  reasons: Map<number, Record<string, string>>;
 }
 
 export function indexLogs(logs: WeekLog[]): LogIndex {
   const days = new Map<string, DayEntry>();
   const totals = new Map<number, Record<string, number>>();
   const readings: LogIndex['readings'] = [];
+  const reasons = new Map<number, Record<string, string>>();
   for (const l of logs) {
     for (const [date, entry] of Object.entries(l.days ?? {})) {
       days.set(normDate(date), entry ?? {});
     }
     if (l.totals && Object.keys(l.totals).length) totals.set(Number(l.week), l.totals);
     for (const r of l.readings ?? []) readings.push({ ...r, date: normDate(r.date) });
+    if (l.reasons && Object.keys(l.reasons).length) reasons.set(Number(l.week), l.reasons);
   }
-  return { days, totals, readings };
+  return { days, totals, readings, reasons };
+}
+
+/** The reasons logged for an id across some weeks, oldest first. */
+export function reasonsFor(idx: LogIndex, id: string, weeks: number[]): string | null {
+  const out = weeks.map((w) => idx.reasons.get(w)?.[id]).filter((r): r is string => !!r && !!r.trim());
+  return out.length ? out.join(' · ') : null;
 }
 
 // ─── Habit in a week ──────────────────────────────────────────────────────
@@ -228,10 +303,10 @@ export interface DayCell {
 export interface HabitWeek {
   habit: Habit;
   week: number;
-  /** Weeks scored together: [w] or a biweekly window [w1, w2]. */
+  /** Weeks scored together: [w], a biweekly [w1, w2], or a monthly [w1..w4]. */
   window: number[];
-  floor: number | null;
-  target: number | null;
+  base: number | null;
+  stretch: number | null;
   value: number;
   status: HabitStatus;
   /** Status the value would earn if the week ended now. */
@@ -240,30 +315,39 @@ export interface HabitWeek {
   partlyLogged: boolean;
   loggedDays: number;
   cells: DayCell[];
+  /** The person's own context for this result, if they logged one. */
+  reason: string | null;
 }
 
-function scoreValue(h: Habit, value: number, floor: number | null, target: number | null): HabitStatus {
+/**
+ * A habit with no base this week can't be missed. Doing it anyway is a
+ * `bonus`, shown green like any other win; not doing it is `optional`,
+ * shown neutral.
+ */
+function scoreValue(h: Habit, value: number, base: number | null, stretch: number | null): HabitStatus {
   if (h.direction === 'down') {
-    if (target === null) return 'bonus';
-    return value <= target ? 'target' : 'miss';
+    if (stretch === null) return 'optional';
+    return value <= stretch ? 'stretch' : 'miss';
   }
-  if (target !== null && value >= target) return 'target';
-  if (floor === null) return 'bonus';
-  return value >= floor ? 'floor' : 'miss';
+  if (stretch !== null && value >= stretch) return 'stretch';
+  if (base === null) return value > 0 ? 'bonus' : 'optional';
+  return value >= base ? 'base' : 'miss';
 }
 
 export function habitWeek(t: Tracker, idx: LogIndex, h: Habit, week: number, today: string): HabitWeek {
-  const window = h.cadence === 'biweekly' ? (week % 2 === 1 ? [week, week + 1] : [week - 1, week]) : [week];
+  const start = windowStart(h.cadence, week);
+  const window = Array.from({ length: spanWeeks(h.cadence) }, (_, i) => start + i);
   const validWindow = window.filter((w) => w >= 1 && w <= totalWeeks(t));
   const dates = validWindow.flatMap((w) => weekDates(t, w));
 
-  // Standards come from the window's first week; a short final week is prorated.
-  let { floor, target } = standardFor(h, validWindow[0]);
-  const span = h.cadence === 'biweekly' ? 14 : 7;
-  if (dates.length < span) {
+  // Standards come from the window's first week; a short final window is prorated.
+  let { base, stretch } = standardFor(h, validWindow[0]);
+  const span = spanWeeks(h.cadence) * 7;
+  const isMax = h.aggregate === 'max';
+  if (dates.length < span && !isMax) {
     const k = dates.length / span;
-    if (floor !== null) floor = Math.ceil(floor * k);
-    if (target !== null) target = h.direction === 'down' ? Math.floor(target * k) : Math.ceil(target * k);
+    if (base !== null) base = Math.ceil(base * k);
+    if (stretch !== null) stretch = h.direction === 'down' ? Math.floor(stretch * k) : Math.ceil(stretch * k);
   }
 
   const shownDates = weekDates(t, week);
@@ -274,7 +358,7 @@ export function habitWeek(t: Tracker, idx: LogIndex, h: Habit, week: number, tod
     const entry = idx.days.get(date);
     if (entry === undefined) continue;
     loggedDays += 1;
-    value += dayValue(h, entry);
+    value = isMax ? Math.max(value, dayValue(h, entry)) : value + dayValue(h, entry);
   }
   let hasTotals = false;
   const totalsSum = validWindow.reduce((s, w) => {
@@ -300,7 +384,7 @@ export function habitWeek(t: Tracker, idx: LogIndex, h: Habit, week: number, tod
   const firstDate = dates[0];
   const complete = lastDate < today;
   const anyData = loggedDays > 0 || hasTotals;
-  const scored = scoreValue(h, value, floor, target);
+  const scored = scoreValue(h, value, base, stretch);
 
   let status: HabitStatus;
   if (firstDate > today) status = 'future';
@@ -312,8 +396,8 @@ export function habitWeek(t: Tracker, idx: LogIndex, h: Habit, week: number, tod
     habit: h,
     week,
     window: validWindow,
-    floor,
-    target,
+    base,
+    stretch,
     value,
     status,
     provisional: status === 'progress' && anyData ? scored : null,
@@ -321,6 +405,7 @@ export function habitWeek(t: Tracker, idx: LogIndex, h: Habit, week: number, tod
     partlyLogged: complete && !hasTotals && anyData && loggedDays < dates.length,
     loggedDays,
     cells,
+    reason: reasonsFor(idx, h.id, validWindow),
   };
 }
 
@@ -340,28 +425,32 @@ export interface GoalWeek {
   status: GoalWeekStatus;
   partlyLogged: boolean;
   habits: HabitWeek[];
+  /** Goal-level and habit-level reasons for this week, as "Label: reason". */
+  reasons: string[];
 }
 
 export function goalWeek(t: Tracker, idx: LogIndex, g: Goal, week: number, today: string): GoalWeek {
   const habits = g.process.map((h) => habitWeek(t, idx, h, week, today));
-  // A biweekly habit is only scored in the second week of its window.
-  const scored = habits.filter(
-    (hw) => hw.habit.cadence !== 'biweekly' || hw.window[hw.window.length - 1] === week,
-  );
+  // A biweekly or monthly habit is only scored in the last week of its window.
+  const scored = habits.filter((hw) => hw.window[hw.window.length - 1] === week);
   const dates = weekDates(t, week);
   let status: GoalWeekStatus;
   if (dates[0] > today) status = 'future';
   else if (dates[dates.length - 1] >= today) status = 'progress';
   else if (scored.every((hw) => hw.status === 'unlogged')) status = 'unlogged';
   else if (scored.some((hw) => hw.status === 'miss')) status = 'miss';
-  else if (scored.some((hw) => hw.status === 'floor')) status = 'floor';
-  else status = 'target';
+  else if (scored.some((hw) => hw.status === 'base')) status = 'base';
+  else status = 'stretch';
   return {
     goal: g,
     week,
     status,
     partlyLogged: status !== 'progress' && scored.some((hw) => hw.partlyLogged || hw.status === 'unlogged'),
     habits,
+    reasons: [
+      reasonsFor(idx, g.id, [week]),
+      ...habits.filter((hw) => hw.reason && hw.window[hw.window.length - 1] === week).map((hw) => `${hw.habit.label}: ${hw.reason}`),
+    ].filter((r): r is string => !!r),
   };
 }
 
@@ -370,8 +459,8 @@ export function goalWeek(t: Tracker, idx: LogIndex, g: Goal, week: number, today
 export interface HabitPace {
   habit: Habit;
   actual: number;
-  expectedFloor: number | null;
-  expectedTarget: number | null;
+  expectedBase: number | null;
+  expectedStretch: number | null;
   status: PaceStatus;
 }
 
@@ -385,7 +474,7 @@ export interface OutcomePace {
 export interface GoalCheckpoint {
   goal: Goal;
   process: PaceStatus;
-  /** Share of the paced target done so far, 0..1+, across scored habits. */
+  /** Share of the paced stretch done so far, 0..1+, across scored habits. */
   share: number | null;
   habits: HabitPace[];
   outcomes: OutcomePace[];
@@ -415,8 +504,8 @@ export function checkpoint(t: Tracker, idx: LogIndex, day: number, today: string
     else if (scored.every((hp) => hp.status === 'ahead')) process = 'ahead';
     else process = 'on-pace';
     const shares = habits
-      .filter((hp) => hp.habit.direction !== 'down' && hp.expectedTarget)
-      .map((hp) => Math.min(hp.actual / (hp.expectedTarget as number), 1.5));
+      .filter((hp) => hp.habit.direction !== 'down' && hp.expectedStretch)
+      .map((hp) => Math.min(hp.actual / (hp.expectedStretch as number), 1.5));
     const share = shares.length ? shares.reduce((a, b) => a + b, 0) / shares.length : null;
     const outcomes = (g.outcomes ?? []).map((o) => outcomePace(t, idx, o, day));
     return { goal: g, process, share, habits, outcomes };
@@ -426,47 +515,50 @@ export function checkpoint(t: Tracker, idx: LogIndex, day: number, today: string
 }
 
 function habitPace(t: Tracker, idx: LogIndex, h: Habit, throughDay: number, throughDate: string): HabitPace {
-  let expFloor: number | null = 0;
-  let expTarget: number | null = 0;
+  let expBase: number | null = 0;
+  let expStretch: number | null = 0;
   let actual = 0;
   let anyLogged = false;
 
-  for (let w = 1; w <= weekOfDay(Math.max(throughDay, 1)); w++) {
+  for (let w = 1; w <= weekOfDay(t, Math.max(throughDay, 1)); w++) {
     const dates = weekDates(t, w).filter((d) => d <= throughDate);
     if (!dates.length) break;
-    const { floor, target } = standardFor(h, h.cadence === 'biweekly' ? (w % 2 ? w : w - 1) : w);
-    const share = (dates.length / 7) * (h.cadence === 'biweekly' ? 0.5 : 1);
-    expFloor = floor === null || expFloor === null ? null : expFloor + floor * share;
-    expTarget = target === null || expTarget === null ? null : expTarget + target * share;
+    const { base, stretch } = standardFor(h, windowStart(h.cadence, w));
+    const share = h.aggregate === 'max' ? 1 / spanWeeks(h.cadence) : dates.length / 7 / spanWeeks(h.cadence);
+    expBase = base === null || expBase === null ? null : expBase + base * share;
+    expStretch = stretch === null || expStretch === null ? null : expStretch + stretch * share;
 
     const total = idx.totals.get(w)?.[h.id];
     if (total !== undefined && total !== null) {
       actual += Number(total);
       anyLogged = true;
     } else {
+      let best = 0;
       for (const d of dates) {
         const e = idx.days.get(d);
         if (e !== undefined) {
           anyLogged = true;
-          actual += dayValue(h, e);
+          if (h.aggregate === 'max') best = Math.max(best, dayValue(h, e));
+          else actual += dayValue(h, e);
         }
       }
+      actual += best;
     }
   }
 
   let status: PaceStatus;
   if (throughDay < 1 || !anyLogged) status = 'no-data';
   else if (h.direction === 'down') {
-    status = expTarget === null ? 'not-paced' : actual <= expTarget ? 'on-pace' : 'behind';
-  } else if (expTarget !== null && actual >= expTarget) status = 'ahead';
-  else if (expFloor === null) status = 'not-paced';
-  else status = actual >= expFloor ? 'on-pace' : 'behind';
+    status = expStretch === null ? 'not-paced' : actual <= expStretch ? 'on-pace' : 'behind';
+  } else if (expStretch !== null && actual >= expStretch) status = 'ahead';
+  else if (expBase === null) status = 'not-paced';
+  else status = actual >= expBase ? 'on-pace' : 'behind';
 
   return {
     habit: h,
     actual,
-    expectedFloor: expFloor === null ? null : Math.round(expFloor * 10) / 10,
-    expectedTarget: expTarget === null ? null : Math.round(expTarget * 10) / 10,
+    expectedBase: expBase === null ? null : Math.round(expBase * 10) / 10,
+    expectedStretch: expStretch === null ? null : Math.round(expStretch * 10) / 10,
     status,
   };
 }
@@ -498,13 +590,161 @@ function outcomePace(t: Tracker, idx: LogIndex, o: Outcome, day: number): Outcom
   return { outcome: o, milestone, reading: best, status };
 }
 
+// ─── Outcomes, week by week ───────────────────────────────────────────────
+
+export interface OutcomePoint {
+  date: string;
+  day: number;
+  value: number;
+}
+
+export interface OutcomeSeries {
+  outcome: Outcome;
+  /** Every reading, oldest first. The baseline counts as the first point. */
+  points: OutcomePoint[];
+  /**
+   * The paced band: baseline, then each milestone's [lo, hi] at its day.
+   * Read straight across between them. Empty if nothing is paced yet.
+   */
+  band: Array<{ day: number; lo: number; hi: number }>;
+  latest: OutcomePoint | null;
+  /** The next checkpoint still ahead, and its milestone, if paced. */
+  next: { day: number; milestone: Milestone } | null;
+}
+
+/**
+ * An outcome's readings over time against its paced band. This is for
+ * showing progress every week; it carries no status. Outcomes are only
+ * scored at the checkpoints (see `checkpoint`).
+ */
+export function outcomeSeries(t: Tracker, idx: LogIndex, o: Outcome, today: string): OutcomeSeries {
+  const points: OutcomePoint[] = [];
+  if (o.baseline) {
+    const date = normDate(o.baseline.date);
+    points.push({ date, day: dayNumber(t, date), value: o.baseline.value });
+  }
+  for (const r of idx.readings) {
+    const v = r[o.id];
+    if (v === undefined || v === null || v === '') continue;
+    if (points.some((p) => p.date === r.date)) continue;
+    points.push({ date: r.date, day: dayNumber(t, r.date), value: Number(v) });
+  }
+  points.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+
+  const band: OutcomeSeries['band'] = [];
+  const paced = Object.entries(o.milestones ?? {})
+    .map(([d, m]) => ({ day: Number(d), m }))
+    .filter((x) => Number.isFinite(x.day))
+    .sort((a, b) => a.day - b.day);
+  if (!o.track_only && paced.length && o.baseline) {
+    const d0 = dayNumber(t, normDate(o.baseline.date));
+    band.push({ day: d0, lo: o.baseline.value, hi: o.baseline.value });
+    for (const { day, m } of paced) {
+      const [a, b] = Array.isArray(m) ? m : [m, m];
+      band.push({ day, lo: Math.min(a, b), hi: Math.max(a, b) });
+    }
+  }
+
+  const todayDay = dayNumber(t, today);
+  const ahead = paced.find((x) => x.day >= todayDay);
+  return {
+    outcome: o,
+    points,
+    band,
+    latest: points.length ? points[points.length - 1] : null,
+    next: !o.track_only && ahead ? { day: ahead.day, milestone: ahead.m } : null,
+  };
+}
+
+// ─── Outcome progress: how far, and where it's heading ────────────────────
+
+export interface OutcomeProgress {
+  outcome: Outcome;
+  baseline: OutcomePoint | null;
+  latest: OutcomePoint | null;
+  /** The far milestone: the last checkpoint's stretch end (lo for down, hi for up). */
+  goal: { day: number; value: number; band: [number, number] } | null;
+  /** Share of the way from baseline to goal, 0..1+ (null without both ends). */
+  share: number | null;
+  /** Linear projection to the goal's day, from baseline → latest. */
+  projected: number | null;
+  /** projected − goal, signed so positive means beyond the goal. */
+  variance: number | null;
+  /** Projection against the goal's band. Information, not the checkpoint verdict. */
+  status: PaceStatus;
+  /** Why there's no number yet, in words. */
+  reason: string | null;
+}
+
+export function outcomeProgress(t: Tracker, idx: LogIndex, o: Outcome, today: string): OutcomeProgress {
+  const s = outcomeSeries(t, idx, o, today);
+  const baseline = o.baseline ? s.points.find((p) => p.date === normDate(o.baseline!.date)) ?? null : null;
+  const latest = s.latest;
+  const ms = Object.entries(o.milestones ?? {})
+    .map(([d, m]) => ({ day: Number(d), m }))
+    .filter((x) => Number.isFinite(x.day))
+    .sort((a, b) => a.day - b.day);
+  const far = ms[ms.length - 1];
+  const down = o.direction === 'down';
+  const goal = far
+    ? (() => {
+        const [a, b] = Array.isArray(far.m) ? far.m : [far.m, far.m];
+        const lo = Math.min(a, b);
+        const hi = Math.max(a, b);
+        return { day: far.day, value: down ? lo : hi, band: [lo, hi] as [number, number] };
+      })()
+    : null;
+
+  const sign = down ? -1 : 1;
+  let share: number | null = null;
+  let projected: number | null = null;
+  let variance: number | null = null;
+  let status: PaceStatus = 'no-data';
+  let reason: string | null = null;
+
+  if (o.track_only) {
+    status = 'tracked';
+  } else if (!goal) {
+    status = 'not-paced';
+    reason = 'No goal set yet';
+  } else if (!baseline) {
+    reason = 'No starting point yet';
+    share = 0;
+  } else if (!latest || latest.date === baseline.date) {
+    reason = 'No reading since the start';
+    share = 0;
+  } else {
+    const span = goal.value - baseline.value;
+    share = span === 0 ? 1 : Math.max(0, (latest.value - baseline.value) / span);
+    const [lo, hi] = goal.band;
+    const rank = (v: number) =>
+      down ? (v <= lo ? 'ahead' : v <= hi ? 'on-pace' : 'behind') : v >= hi && hi !== lo ? 'ahead' : v >= lo ? 'on-pace' : 'behind';
+    if (o.projection === 'none') {
+      // A level: where it stands now against the goal's band.
+      status = rank(latest.value);
+    } else {
+      const days = latest.day - baseline.day;
+      if (days > 0) {
+        const rate = (latest.value - baseline.value) / days;
+        projected = latest.value + rate * (goal.day - latest.day);
+        variance = sign * (projected - goal.value);
+        status = rank(projected);
+      } else {
+        reason = 'Readings on one day only';
+      }
+    }
+  }
+  return { outcome: o, baseline, latest, goal, share, projected, variance, status, reason };
+}
+
 // ─── Labels ───────────────────────────────────────────────────────────────
 
 export const STATUS_LABEL: Record<HabitStatus | GoalWeekStatus | PaceStatus, string> = {
-  target: 'Target hit',
-  floor: 'Floor met',
-  miss: 'Below floor',
+  stretch: 'Stretch hit',
+  base: 'Base met',
+  miss: 'Below base',
   bonus: 'Bonus',
+  optional: 'Optional',
   progress: 'In progress',
   unlogged: 'Not logged',
   future: 'Ahead',

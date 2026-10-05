@@ -1,0 +1,132 @@
+---
+/**
+ * Outcomes at a glance: one stat tile per outcome, grouped by goal. Each
+ * shows the latest reading, how far it is from the starting point toward the
+ * goal (a meter), and, where the outcome drifts or accumulates, where the
+ * current rate lands it by the goal's day. That projection is information
+ * for the week; the scored verdict still happens only at the checkpoints.
+ */
+import type { Dataset } from '../../lib/psp/load';
+import { fmt, outcomeProgress, shortDate, todayIso, type OutcomeProgress } from '../../lib/psp/tracker';
+
+interface Props {
+  ds: Dataset;
+}
+const { ds } = Astro.props;
+const t = ds.tracker;
+const today = todayIso(t);
+
+// Outcomes with neither a goal nor a reading collapse into one quiet line,
+// so the tiles stay about the results that can actually move.
+const isEmpty = (p: OutcomeProgress) => p.status === 'not-paced' && !p.latest;
+const groups = t.goals
+  .map((g) => {
+    const all = (g.outcomes ?? []).map((o) => outcomeProgress(t, ds.idx, o, today));
+    return { goal: g, items: all.filter((p) => !isEmpty(p)), waiting: all.filter(isEmpty) };
+  })
+  .filter((g) => g.items.length + g.waiting.length > 0);
+
+/** A value in its unit: $/mo → $13,600/mo, $M → $30M, % → 45%, else "190 lb". */
+function withUnit(p: OutcomeProgress, v: number): string {
+  const n = fmt(Math.round(v * 10) / 10);
+  const unit = p.outcome.unit;
+  if (!unit) return n;
+  if (unit.startsWith('$')) return `$${n}${unit.slice(1)}`;
+  if (unit === '%') return `${n}%`;
+  return `${n} ${unit}`;
+}
+const val = (p: OutcomeProgress, v: number | null | undefined) => (v === null || v === undefined ? '—' : withUnit(p, v));
+
+const PROJ_LABEL: Record<string, string> = {
+  ahead: 'Heading past goal',
+  'on-pace': 'Heading into range',
+  behind: 'Heading short',
+};
+const LEVEL_LABEL: Record<string, string> = {
+  ahead: 'At goal',
+  'on-pace': 'In range',
+  behind: 'Below range',
+};
+function chip(p: OutcomeProgress): { status: string; label: string } | null {
+  if (p.status === 'tracked') return { status: 'tracked', label: 'Tracked, not scored' };
+  if (p.status === 'not-paced') return { status: 'not-paced', label: 'No goal yet' };  // reason line omitted below
+  if (!['ahead', 'on-pace', 'behind'].includes(p.status)) return null;
+  const map = p.outcome.projection === 'none' ? LEVEL_LABEL : PROJ_LABEL;
+  return { status: p.status, label: map[p.status] };
+}
+function projLine(p: OutcomeProgress): string | null {
+  if (p.projected === null || !p.goal || p.variance === null) return null;
+  const v = Math.abs(Math.round(p.variance * 10) / 10);
+  const side = p.variance >= 0 ? 'past' : 'short of';
+  return `At this rate: ${val(p, p.projected)} by Day ${p.goal.day}, ${withUnit(p, v)} ${side} the goal`;
+}
+---
+
+{groups.length > 0 && (
+  <section class="pspd-outcomes pspd-card space-y-4" aria-labelledby="pspd-outcomes-h">
+    <header class="space-y-1">
+      <h2 id="pspd-outcomes-h" class="text-lg font-semibold">Outcomes</h2>
+      <p class="text-sm text-muted-foreground">
+        Where each result stands against its goal, and where the current rate is heading. Read every week;
+        scored only at the Day 30, 60, and 90 checkpoints.
+      </p>
+    </header>
+    {groups.map(({ goal, items, waiting }) => (
+      <div class="space-y-2">
+        <p class="pspd-eyebrow"><span class="pspd-goal-n">{goal.number}</span>{goal.area}</p>
+        {items.length > 0 && <ul class="pspd-tiles">
+          {items.map((p) => {
+            const c = chip(p);
+            const share = p.share === null ? null : Math.min(p.share, 1);
+            const projShare =
+              p.projected !== null && p.baseline && p.goal && p.goal.value !== p.baseline.value
+                ? Math.max(0, Math.min((p.projected - p.baseline.value) / (p.goal.value - p.baseline.value), 1.15))
+                : null;
+            const tip = [
+              p.baseline ? `Start ${val(p, p.baseline.value)} (${shortDate(p.baseline.date)})` : 'No starting point',
+              p.latest && p.latest !== p.baseline ? `Latest ${val(p, p.latest.value)} (${shortDate(p.latest.date)})` : null,
+              p.goal ? `Goal ${val(p, p.goal.value)} by Day ${p.goal.day}` : null,
+              share !== null && p.goal ? `${Math.round((p.share ?? 0) * 100)}% of the way` : null,
+              projLine(p),
+            ].filter(Boolean).join('\n');
+            return (
+              <li class="pspd-tile" title={tip}>
+                <p class="pspd-tile__label">{p.outcome.label}</p>
+                <p class="pspd-tile__value">{val(p, p.latest?.value)}</p>
+                <p class="pspd-tile__sub">
+                  {(p.status === 'not-paced' ? null : p.reason) ?? (p.latest ? `as of ${shortDate(p.latest.date)}` : '')}
+                  {p.goal && <> · goal {val(p, p.goal.value)} by Day {p.goal.day}</>}
+                </p>
+                {share !== null && p.goal && (
+                  <div
+                    class="pspd-meter"
+                    role="meter"
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={Math.round(share * 100)}
+                    aria-label={`${p.outcome.label}: ${Math.round((p.share ?? 0) * 100)}% of the way to the goal`}
+                  >
+                    <div class="pspd-meter__fill" style={`width:${share * 100}%`}></div>
+                    {projShare !== null && (
+                      <div class="pspd-meter__proj" style={`left:${(Math.min(projShare, 1.0) * 100).toFixed(1)}%`} title={projLine(p) ?? ''}></div>
+                    )}
+                  </div>
+                )}
+                {share !== null && p.goal && (
+                  <p class="pspd-tile__sub"><strong>{Math.round((p.share ?? 0) * 100)}%</strong> of the way from the start</p>
+                )}
+                {projLine(p) && <p class="pspd-tile__sub">{projLine(p)}</p>}
+                {c && <span class="pspd-chip" data-status={c.status}>{c.label}</span>}
+              </li>
+            );
+          })}
+        </ul>}
+        {waiting.length > 0 && (
+          <p class="pspd-tile__sub">
+            Also tracked, waiting on a goal and a first reading: {waiting.map((p) => p.outcome.label).join(', ')}.
+          </p>
+        )}
+      </div>
+    ))}
+  </section>
+)}

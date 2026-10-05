@@ -3,7 +3,7 @@
  * dark mode. Status colors are mixed from fixed hues into the background, so
  * they stay legible in either mode without a second palette.
  *
- * The status vocabulary (target / floor / miss / progress / unlogged / future,
+ * The status vocabulary (stretch / base / miss / progress / unlogged / future,
  * and ahead / on-pace / behind for checkpoints) is defined in
  * hope-ai/references/dashboard-guidelines.md.
  */
@@ -63,12 +63,12 @@
   background: currentColor;
   opacity: 0.85;
 }
-.pspd-chip:is([data-status='target'], [data-status='ahead']) {
+.pspd-chip:is([data-status='stretch'], [data-status='bonus'], [data-status='ahead']) {
   color: color-mix(in oklab, var(--pspd-good) 75%, var(--color-foreground));
   border-color: color-mix(in oklab, var(--pspd-good) 45%, transparent);
   background: color-mix(in oklab, var(--pspd-good) 12%, transparent);
 }
-.pspd-chip:is([data-status='floor'], [data-status='on-pace']) {
+.pspd-chip:is([data-status='base'], [data-status='on-pace']) {
   color: color-mix(in oklab, var(--pspd-good) 60%, var(--color-foreground));
   border-color: color-mix(in oklab, var(--pspd-ok) 45%, transparent);
   background: color-mix(in oklab, var(--pspd-ok) 10%, transparent);
@@ -85,7 +85,7 @@
 .pspd-chip:is([data-status='unlogged'], [data-status='no-data'], [data-status='no-reading']) {
   background-image: var(--pspd-hatch);
 }
-.pspd-chip:is([data-status='future'], [data-status='not-paced'], [data-status='tracked'], [data-status='bonus'])::before {
+.pspd-chip:is([data-status='future'], [data-status='not-paced'], [data-status='tracked'], [data-status='optional'])::before {
   background: transparent;
   border: 1.5px solid currentColor;
 }
@@ -136,8 +136,8 @@
   border-radius: 0.4rem;
   border: 1px solid var(--pspd-line);
 }
-.pspd-cell [data-status='target']   { background: var(--pspd-good); border-color: transparent; }
-.pspd-cell [data-status='floor']    { background: var(--pspd-ok); border-color: transparent; }
+.pspd-cell [data-status='stretch']   { background: var(--pspd-good); border-color: transparent; }
+.pspd-cell [data-status='base']    { background: var(--pspd-ok); border-color: transparent; }
 .pspd-cell [data-status='miss']     { border: 2px solid var(--pspd-bad); background: color-mix(in oklab, var(--pspd-bad) 12%, transparent); }
 .pspd-cell [data-status='progress'] { border: 2px solid var(--pspd-now); background: color-mix(in oklab, var(--pspd-now) 10%, transparent); }
 .pspd-cell [data-status='unlogged'] { background-image: var(--pspd-hatch); }
@@ -193,12 +193,13 @@
   border-radius: 999px;
   background: var(--pspd-ok);
 }
-.pspd-bar[data-status='target'] .pspd-bar__fill,
+.pspd-bar[data-status='stretch'] .pspd-bar__fill,
+.pspd-bar[data-status='bonus'] .pspd-bar__fill,
 .pspd-bar[data-status='ahead'] .pspd-bar__fill { background: var(--pspd-good); }
 .pspd-bar[data-status='miss'] .pspd-bar__fill,
 .pspd-bar[data-status='behind'] .pspd-bar__fill { background: var(--pspd-bad); }
 .pspd-bar[data-status='progress'] .pspd-bar__fill { background: var(--pspd-now); }
-.pspd-bar__floor {
+.pspd-bar__base {
   position: absolute;
   top: -0.25rem;
   bottom: -0.25rem;
@@ -280,8 +281,8 @@
   border-radius: 0.25rem;
   border: 1px solid var(--pspd-line);
 }
-.pspd-legend i[data-status='target']   { background: var(--pspd-good); border-color: transparent; }
-.pspd-legend i[data-status='floor']    { background: var(--pspd-ok); border-color: transparent; }
+.pspd-legend i[data-status='stretch']   { background: var(--pspd-good); border-color: transparent; }
+.pspd-legend i[data-status='base']    { background: var(--pspd-ok); border-color: transparent; }
 .pspd-legend i[data-status='miss']     { border: 2px solid var(--pspd-bad); }
 .pspd-legend i[data-status='progress'] { border: 2px solid var(--pspd-now); }
 .pspd-legend i[data-status='unlogged'] { background-image: var(--pspd-hatch); }
@@ -300,4 +301,111 @@
   border-radius: 0.6rem;
   padding: 0.6rem 0.9rem;
   font-size: 0.85rem;
+}
+
+/* Outcome trend: progress only, so neutral ink, never status colors. */
+.pspd-trend { width: 100%; height: auto; display: block; }
+.pspd-trend__band { fill: currentColor; opacity: 0.1; }
+.pspd-trend__line { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.pspd-trend__dot { fill: currentColor; }
+.pspd-trend__mark { stroke: currentColor; opacity: 0.15; stroke-dasharray: 2 3; vector-effect: non-scaling-stroke; }
+.pspd-trend__now { stroke: currentColor; opacity: 0.35; vector-effect: non-scaling-stroke; }
+
+/* Reasons: the person's own context for a result, one tap away. */
+.pspd-why {
+  flex-shrink: 0;
+  inline-size: 1.25rem; block-size: 1.25rem; border-radius: 999px;
+  border: 1px solid currentColor; opacity: 0.6;
+  font: italic 600 0.7rem/1 Georgia, serif; cursor: pointer; background: transparent; color: inherit;
+}
+.pspd-why:hover, .pspd-why:focus-visible { opacity: 1; }
+.pspd-pop {
+  /* Positioned by WeekView's script against its ⓘ; these undo the UA's centering. */
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  overflow: visible;
+  inline-size: min(22rem, calc(100vw - 16px));
+  padding: 0.75rem 1rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--pspd-line);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  text-align: start;
+  white-space: normal;
+  overflow-wrap: break-word;
+  font-weight: 400;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.25);
+}
+/* The arrow: a rotated square sharing the bubble's border, aimed at the ⓘ. */
+.pspd-pop::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--arrow-x, 50%) - 6px);
+  inline-size: 12px;
+  block-size: 12px;
+  background: inherit;
+  border: inherit;
+  transform: rotate(45deg);
+}
+.pspd-pop[data-place='below']::before { top: -7px; border-right: 0; border-bottom: 0; }
+.pspd-pop[data-place='above']::before { bottom: -7px; border-left: 0; border-top: 0; }
+.pspd-pop__head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+.pspd-pop__meta { margin-block-start: 0.15rem; font-size: 0.75rem; color: var(--color-muted-foreground); }
+.pspd-pop__why { margin-block-start: 0.5rem; }
+.pspd-pop__why span { font-weight: 600; }
+.pspd-why[aria-expanded='true'] { opacity: 1; background: color-mix(in oklab, currentColor 12%, transparent); }
+.pspd-cell [data-reason='true'] { position: relative; }
+.pspd-cell [data-reason='true']::after {
+  content: ''; position: absolute; inset-block-start: 1px; inset-inline-end: 1px;
+  inline-size: 5px; block-size: 5px; border-radius: 999px; background: currentColor; opacity: 0.55;
+}
+
+/* ── Outcomes panel: stat tiles with a meter ──────────────────────────────── */
+.pspd-tiles {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr));
+}
+.pspd-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-start;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--pspd-line);
+  border-radius: 0.6rem;
+  background: var(--pspd-fill);
+}
+.pspd-tile__label { font-size: 0.8rem; font-weight: 600; color: var(--color-muted-foreground); }
+.pspd-tile__value { font-size: 1.6rem; font-weight: 600; line-height: 1.1; color: var(--color-foreground); }
+.pspd-tile__sub { font-size: 0.75rem; color: var(--color-muted-foreground); }
+.pspd-tile__sub strong { color: var(--color-foreground); }
+/* The meter: start (left) to goal (right). Neutral ink: the chip carries status. */
+.pspd-meter {
+  position: relative;
+  inline-size: 100%;
+  block-size: 8px;
+  margin-block: 0.25rem 0.1rem;
+  border-radius: 4px;
+  background: color-mix(in oklab, var(--color-foreground) 10%, transparent);
+}
+.pspd-meter__fill {
+  block-size: 100%;
+  border-radius: 4px;
+  background: color-mix(in oklab, var(--color-foreground) 70%, transparent);
+}
+/* Where the current rate lands by the goal's day: an open marker on the track. */
+.pspd-meter__proj {
+  position: absolute;
+  inset-block-start: 50%;
+  inline-size: 12px;
+  block-size: 12px;
+  margin-inline-start: -6px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  border: 2px solid var(--color-foreground);
+  background: var(--color-background);
 }

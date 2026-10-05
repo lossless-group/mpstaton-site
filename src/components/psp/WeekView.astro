@@ -1,11 +1,12 @@
 ---
 /**
  * One program week in detail: per goal, a 7-day grid of habits with a week
- * total scored against that week's floor and target. Daily habits show every
+ * total scored against that week's base and stretch. Daily habits show every
  * day; weekly habits show the days they happened. Unlogged days are hatched,
  * never marked as misses.
  */
 import StatusLegend from './StatusLegend.astro';
+import OutcomesPanel from './OutcomesPanel.astro';
 import type { Dataset } from '../../lib/psp/load';
 import {
   dayNumber,
@@ -50,25 +51,25 @@ const readings = ds.idx.readings
 
 function totalLine(hw: HabitWeek): string {
   const h = hw.habit;
-  const unit = h.measure === 'minutes' ? ' min' : '';
+  const unit = h.measure === 'minutes' ? ' min' : h.measure === 'hours' ? ' h' : '';
   const v = `${fmt(hw.value)}${unit}`;
-  if (h.direction === 'down') return hw.target === null ? v : `${v} · limit ${fmt(hw.target)}`;
-  if (hw.floor === null && hw.target === null) return `${v} · bonus`;
-  if (hw.floor === null) return `${v} · aim ${fmt(hw.target)}`;
-  if (hw.floor === hw.target) return `${v} of ${fmt(hw.target)}`;
-  return `${v} · floor ${fmt(hw.floor)} · target ${fmt(hw.target)}`;
+  if (h.direction === 'down') return hw.stretch === null ? v : `${v} · limit ${fmt(hw.stretch)}`;
+  if (hw.base === null && hw.stretch === null) return `${v} · optional`;
+  if (hw.base === null) return `${v} · aim ${fmt(hw.stretch)}`;
+  if (hw.base === hw.stretch) return `${v} of ${fmt(hw.stretch)}`;
+  return `${v} · base ${fmt(hw.base)} · stretch ${fmt(hw.stretch)}`;
 }
 
 function windowNote(hw: HabitWeek): string | null {
   return hw.window.length > 1 ? `Weeks ${hw.window[0]}–${hw.window[hw.window.length - 1]} together` : null;
 }
 
-// Mid-week, only good news is shown early: a target already hit says so, and
+// Mid-week, only good news is shown early: a stretch already hit says so, and
 // everything else stays "In progress" rather than reading as a miss on Friday.
 function shownStatus(hw: HabitWeek) {
   if (hw.status !== 'progress') return hw.status;
   if (hw.habit.direction === 'down') return hw.provisional === 'miss' ? 'miss' : 'progress';
-  return hw.provisional === 'target' ? 'target' : 'progress';
+  return hw.provisional === 'stretch' || hw.provisional === 'bonus' ? hw.provisional : 'progress';
 }
 ---
 
@@ -80,7 +81,7 @@ function shownStatus(hw: HabitWeek) {
         <a href={base}>Summary</a>
         {week < last && <a href={`${base}/week/${week + 1}`}>Week {week + 1} →</a>}
       </nav>
-      {isDeload(t, week) && <span class="pspd-chip" data-status="bonus">Deload week: floors only</span>}
+      {isDeload(t, week) && <span class="pspd-chip" data-status="optional">Deload week: base only</span>}
     </div>
     <p class="text-sm text-muted-foreground">
       Days {dayNumber(t, dates[0])}–{dayNumber(t, dates[dates.length - 1])} ·{' '}
@@ -88,6 +89,9 @@ function shownStatus(hw: HabitWeek) {
       {' '}· {dates.filter(dayLogged).length} of {dates.filter((d) => d <= today).length} days so far logged
     </p>
   </header>
+
+
+  <OutcomesPanel ds={ds} />
 
   {goals.map((gw) => (
     <section id={`goal-${gw.goal.id}`} class="pspd-card space-y-3">
@@ -129,7 +133,7 @@ function shownStatus(hw: HabitWeek) {
               <tr>
                 <th class="pspd-habit" scope="row">
                   {hw.habit.label}
-                  <small>{hw.habit.cadence === 'daily' ? 'Daily' : hw.habit.cadence === 'weekly' ? 'Weekly' : 'Every two weeks'}{hw.habit.direction === 'down' ? ' · no more than' : ''}</small>
+                  <small>{hw.habit.cadence === 'daily' ? 'Daily' : hw.habit.cadence === 'weekly' ? 'Weekly' : hw.habit.cadence === 'biweekly' ? `Every two weeks (Weeks ${hw.window[0]}–${hw.window[hw.window.length - 1]})` : `Monthly (Weeks ${hw.window[0]}–${hw.window[hw.window.length - 1]})`}{hw.habit.direction === 'down' ? ' · no more than' : ''}</small>
                 </th>
                 {hw.cells.map((c) => {
                   const daily = hw.habit.cadence === 'daily';
@@ -153,13 +157,26 @@ function shownStatus(hw: HabitWeek) {
                   <div class="flex items-center justify-end gap-2">
                     <span><strong>{totalLine(hw)}</strong></span>
                     <span class="pspd-chip" data-status={shownStatus(hw)}>{STATUS_LABEL[shownStatus(hw)]}</span>
+                    {hw.reason && (
+                      <>
+                        <button type="button" class="pspd-why" popovertarget={`why-${gw.goal.id}-${hw.habit.id}`} title={hw.reason} aria-label={`Context for ${hw.habit.label}`}>i</button>
+                        <div id={`why-${gw.goal.id}-${hw.habit.id}`} popover class="pspd-pop" role="tooltip">
+                          <p class="pspd-pop__head">
+                            <strong>{hw.habit.label}</strong>
+                            <span class="pspd-chip" data-status={shownStatus(hw)}>{STATUS_LABEL[shownStatus(hw)]}</span>
+                          </p>
+                          <p class="pspd-pop__meta">Week {week} · {totalLine(hw)}</p>
+                          <p class="pspd-pop__why"><span>Why:</span> {hw.reason}</p>
+                        </div>
+                      </>
+                    )}
                   </div>
                   {windowNote(hw) && <small>{windowNote(hw)}</small>}
-                  {hw.target !== null && hw.habit.direction !== 'down' && hw.target > 0 && (
+                  {hw.stretch !== null && hw.habit.direction !== 'down' && hw.stretch > 0 && (
                     <div class="pspd-bar mt-1" data-status={shownStatus(hw)}>
-                      <div class="pspd-bar__fill" style={`width:${Math.min(hw.value / hw.target, 1) * 100}%`}></div>
-                      {hw.floor !== null && hw.floor < hw.target && (
-                        <div class="pspd-bar__floor" style={`left:${(hw.floor / hw.target) * 100}%`} title={`Floor: ${hw.floor}`}></div>
+                      <div class="pspd-bar__fill" style={`width:${Math.min(hw.value / hw.stretch, 1) * 100}%`}></div>
+                      {hw.base !== null && hw.base < hw.stretch && (
+                        <div class="pspd-bar__base" style={`left:${(hw.base / hw.stretch) * 100}%`} title={`Base: ${hw.base}`}></div>
                       )}
                     </div>
                   )}
@@ -197,3 +214,40 @@ function shownStatus(hw: HabitWeek) {
 
   <StatusLegend />
 </div>
+
+<script>
+  // Anchor each reason popover to its ⓘ: centered on it, below it (or above
+  // when there's no room), with the arrow pointing at the button's center.
+  const GAP = 10;
+  const EDGE = 8;
+
+  function place(pop: HTMLElement, btn: HTMLElement) {
+    const b = btn.getBoundingClientRect();
+    const p = pop.getBoundingClientRect();
+    const cx = b.left + b.width / 2;
+    const left = Math.min(Math.max(cx - p.width / 2, EDGE), window.innerWidth - p.width - EDGE);
+    const below = b.bottom + GAP + p.height <= window.innerHeight - EDGE || b.top - GAP - p.height < EDGE;
+    pop.style.left = `${left}px`;
+    pop.style.top = `${below ? b.bottom + GAP : b.top - GAP - p.height}px`;
+    pop.dataset.place = below ? 'below' : 'above';
+    pop.style.setProperty('--arrow-x', `${cx - left}px`);
+  }
+
+  document.querySelectorAll<HTMLElement>('.pspd-pop').forEach((pop) => {
+    const btn = document.querySelector<HTMLElement>(`[popovertarget="${pop.id}"]`);
+    if (!btn) return;
+    const reposition = () => place(pop, btn);
+    pop.addEventListener('toggle', (e) => {
+      const open = (e as ToggleEvent).newState === 'open';
+      btn.setAttribute('aria-expanded', String(open));
+      if (open) {
+        reposition();
+        window.addEventListener('scroll', reposition, true);
+        window.addEventListener('resize', reposition);
+      } else {
+        window.removeEventListener('scroll', reposition, true);
+        window.removeEventListener('resize', reposition);
+      }
+    });
+  });
+</script>

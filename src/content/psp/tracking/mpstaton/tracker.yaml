@@ -11,6 +11,7 @@ cohort: LV236
 day_one: 2026-09-28
 length_days: 100
 timezone: America/Chicago
+week_starts: sunday         # the cohort's clock: weeks run Sunday to Saturday; the form is due Sunday afternoon
 checkpoints: [30, 60, 90]
 deload_weeks: [8, 12]
 
@@ -19,7 +20,7 @@ goals:
   - id: body
     number: 1
     kind: Personal
-    area: Body
+    area: BodyOS
     title: Move first, move after meals, track everything
     process:
       - id: am-move
@@ -85,25 +86,39 @@ goals:
           9: { floor: 3, target: 3 }
           12: { floor: 1, target: 1 }
       - id: fast
-        label: Weekly fast (36 h; Week 8 is the Sardine Fast)
+        label: Weekly fast (longest continuous hours; Week 8 is the Sardine Fast)
         cadence: weekly
-        measure: check
-        floor: 1
-        target: 1
+        measure: hours
+        aggregate: max
+        floor: 36
+        target: 36
       - id: carb-meals
         label: Carb meals
         cadence: weekly
         measure: count
         direction: down
         target: 4
-    outcomes:
+    outcomes:               # the coach's focus: VO2max, BMI, weight
+      - id: vo2max
+        label: VO2max
+        unit: ml/kg/min
+        direction: up
+        baseline: null
+        milestones: {}
+        note: Needs a first measurement (lab test or a wearable estimate).
+      - id: bmi
+        label: BMI
+        direction: down
+        baseline: null
+        milestones: {}
+        note: Healthy range is 18.5–24.9. Needs height on record to derive from weight.
       - id: weight
         label: Weight
         unit: lb
         direction: down
         baseline: { date: 2026-09-28, value: 213 }
-        milestones: {}
-        note: Pace once the Day 0 reading and the GP's advice are in.
+        milestones: { 90: 190 }
+        note: Goal 190 lb by Day 90. Pace the 30/60 milestones once the GP's advice is in.
       - id: waist-height
         label: Waist-to-height ratio
         direction: down
@@ -129,17 +144,18 @@ goals:
   - id: operating-system
     number: 2
     kind: Personal
-    area: Operating System
+    area: PersonalOS
     title: Attention, presence, completion
     process:
       - id: checkin
-        label: Check-ins (both morning and evening)
+        label: Check-ins (morning and evening, 0–2 a day)
         cadence: daily
-        measure: check
-        floor: 5
-        target: 7
+        measure: count
+        floor: 10
+        target: 14
       - id: language
         label: French + Spanish (20+ min)
+        note: 10 min French + 10 min Spanish. Free tools from Week 2 (Oct 5) until the app is bought.
         cadence: daily
         measure: check
         floor: 5
@@ -286,14 +302,16 @@ goals:
         label: Consulting billed (monthly run-rate)
         unit: $/mo
         direction: up
-        baseline: null
+        baseline: { date: 2026-09-28, value: 0 }
+        projection: none
         milestones: { 90: [17300, 26400] }
         note: From the plan's consulting math; ~$17.3k billed covers the $12k after-tax floor on its own, ~$26.4k the $18k target.
       - id: income-after-tax
         label: After-tax income this month
         unit: $/mo
         direction: up
-        baseline: null
+        baseline: { date: 2026-09-28, value: 0 }
+        projection: none
         milestones: { 90: [12000, 18000] }
         note: Breakeven is about $6k/mo. Read monthly.
       - id: spv-closed
@@ -302,6 +320,13 @@ goals:
         direction: up
         baseline: null
         milestones: { 90: [87, 125] }
+      - id: indicated-interest
+        label: LP indicated interest (live SPVs, cumulative)
+        unit: $M
+        direction: up
+        baseline: { date: 2026-09-28, value: 0 }
+        track_only: true
+        note: An LP saying what they could do on a live SPV. Softer than a soft-circled anchor commitment; tracked, not scored, until it has a pace.
       - id: anchor-commitments
         label: Anchor soft commitments
         unit: $M
@@ -313,7 +338,7 @@ goals:
   - id: music
     number: 4
     kind: Creative
-    area: Music
+    area: Music & Songwriting
     title: A song's first cut in an hour
     process:
       - id: evenings
@@ -340,23 +365,24 @@ goals:
         measure: check
         note: A bonus on any day; never a miss.
     outcomes:
-      - id: song-clock-pct
-        label: Song Clock vs. Week 1 baseline
-        unit: '%'
+      - id: song-clock
+        label: Song Clock (hours to a first cut)
+        unit: h
         direction: down
-        baseline: { date: 2026-10-04, value: 100 }
-        milestones: { 30: [37, 45], 60: [20, 25], 90: [10, 13] }
-        note: From a 10-hour baseline, 10% is the 1-hour first cut.
+        baseline: null
+        milestones: { 90: 1 }
+        note: Goal is a first cut in one hour. No baseline yet; the first timed song sets it, then 30/60 milestones follow (the plan assumed ~10 h).
+
 
   # ── 5 ────────────────────────────────────────────────────────────────────
   - id: people
     number: 5
-    kind: Personal
-    area: People
+    kind: Relationships
+    area: Relationships
     title: Show up for my people
     process:
-      - id: billie
-        label: Billie (phone-free time)
+      - id: family
+        label: Family / close friends (quality time)
         cadence: weekly
         measure: check
         floor: 1
@@ -389,7 +415,7 @@ goals:
         direction: up
         baseline: { date: 2026-09-25, value: 3 }
         track_only: true
-        note: A thermometer, not a target. Re-rated in Weeks 6 and 12.
+        note: A thermometer, not a target. Re-rated in Weeks 6 and 12. Billie lives in France; in-person presence waits for the Christmas trip (around Day 89).
       - id: mom-rating
         label: Mom (0–10)
         direction: up

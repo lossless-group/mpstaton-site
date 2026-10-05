@@ -10,10 +10,11 @@ days:
     low-carb: true
     writing-min: 30
   2026-09-30:
+    portfolio: true
     walks: 2
     low-carb: true
     writing-min: 25
     zone2: 1
     family-call: true
-readings:
-  - { date: 2026-09-28, weight: 202.9 }
+readings:                # one reading per outcome, each week
+  - { date: 2026-09-28, weight: 202.9, interviews: 1, words: 8.6, closeness: 7 }

@@ -29,5 +29,5 @@ days:
 totals:
   applications: 5
   coffee-chats: 2
-readings:
-  - { date: 2026-09-22, weight: 204.2, interviews: 1, words: 7.2 }
+readings:                # one reading per outcome, each week
+  - { date: 2026-09-22, weight: 204.2, interviews: 1, words: 7.2, closeness: 6 }

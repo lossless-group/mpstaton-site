@@ -9,6 +9,7 @@ days:
     walks: 2
     writing-min: 40
   2026-09-11:
+    portfolio: true
     walks: 0
     low-carb: true
     writing-min: 30
@@ -23,5 +24,5 @@ days:
 totals:
   applications: 3
   coffee-chats: 1
-readings:
-  - { date: 2026-09-07, weight: 206.4 }
+readings:                # one reading per outcome, each week
+  - { date: 2026-09-07, weight: 206.4, interviews: 0, words: 3.1, closeness: 6 }

@@ -41,11 +41,11 @@
 
 | Goal | What I count each week | Floor | Target |
 | :---- | :---- | :---- | :---- |
-| 1. Body | Morning move, hydration, food, chosen discomfort, movement chunks, resistance, intervals, gym walk-ins, weekly fast | Morning move 7/7, Hydration 5/7, keto until dinner 5/7, carb meals ≤4, discomfort 4, 15/21 chunks, 3 resistance, the week's intervals, 1 fast | Hydration 7/7, keto until dinner 7/7, discomfort 7/7, 21/21 chunks, 4 resistance, 3 intervals, walk-in every access day |
-| 2. Operating System | Check-ins (M☐ E☐), Frog Morning, Weekly Review, frogs eaten, visual note pages, pushes, language days | M☐E☐ 5/7 + Frog Morning + review + 3 pages + 1 push + language 5/7 | M☐E☐ 7/7 + Frog Morning + review + 5 pages + 3 pushes + language 7/7 + 3–8 frogs |
+| 1. BodyOS | Morning move, hydration, food, chosen discomfort, movement chunks, resistance, intervals, gym walk-ins, weekly fast | Morning move 7/7, Hydration 5/7, keto until dinner 5/7, carb meals ≤4, discomfort 4, 15/21 chunks, 3 resistance, the week's intervals, 1 fast | Hydration 7/7, keto until dinner 7/7, discomfort 7/7, 21/21 chunks, 4 resistance, 3 intervals, walk-in every access day |
+| 2. PersonalOS | Check-ins (M☐ E☐), Frog Morning, Weekly Review, frogs eaten, visual note pages, pushes, language days | M☐E☐ 5/7 + Frog Morning + review + 3 pages + 1 push + language 5/7 | M☐E☐ 7/7 + Frog Morning + review + 5 pages + 3 pushes + language 7/7 + 3–8 frogs |
 | 3. Income | Conversations, calls, solicitations, activations, asks, artifacts, productization blocks; monthly readings | 3 conversations + 5 calls + 10 solicitations + 5 activations; one consulting role closed; $12k/mo income | 6 conversations + 12 calls + 40 solicitations + 12 activations + 2 asks + 1 artifact; $18k/mo |
-| 4. Music | Music evenings + one Song Clock | 2 evenings | 3 evenings + song timed |
-| 5. People | Intentional touches | Billie + Mom | Billie, Mom, Liu + 2 from my list |
+| 4. Music & Songwriting | Music evenings + one Song Clock | 2 evenings | 3 evenings + song timed |
+| 5. Relationships | Intentional touches | Family/close friends + Mom | Family/close friends, Mom, Liu + 2 from my list |
 
 *Ceiling on Goal 3: one full day off from Humain and capital work each week, and a hard stop time on workdays. Ceiling on pushes in Goal 2: 45 minutes of editing per piece.*
 
@@ -53,7 +53,7 @@
 
 ---
 
-### **Personal Goal 1: BODY: Move first, move after meals, track everything**
+### **Personal Goal 1: BODYOS: Move first, move after meals, track everything**
 
 Build a body that runs on daily movement, not willpower: out of bed and moving immediately, moving right after every meal, lifting three times a week, fasting once a week, and tracking all of it. By day 100, bring my biomarkers into the healthy/fit range for a 46-year-old man, including blood sugar and belly fat.
 
@@ -206,7 +206,7 @@ Set it up once, then leave it alone.
 
 ---
 
-### **Personal Goal 2: OPERATING SYSTEM: Attention, presence, completion**
+### **Personal Goal 2: PERSONALOS: Attention, presence, completion**
 
 Remaster my existing tools for ADHD, ASD, focus, presence, and learning for a fully engaged life, build the habit of eating the frogs (the tasks I avoid and let pile up), anchored by a weekly Frog Morning, capture my days on notecards that I close the loop on, and push finished work out in public every week.
 
@@ -400,7 +400,7 @@ What consulting would have to bill to cover each level on its own, taxed as self
 
 ---
 
-### **Creative Goal 4: MUSIC: A song's first cut in an hour**
+### **Creative Goal 4: MUSIC & SONGWRITING: A song's first cut in an hour**
 
 Get fluent enough in Ableton that I can write, record, and produce the first cut of a song in an hour or less, and play my music live. I already know how to find flow and finish a song; I recorded a full-length album on guitar. What's slow now is the tooling, so that's what I'm training.
 
@@ -451,24 +451,25 @@ My weekly action plan:
 
 ---
 
-### **Personal Goal 5: PEOPLE: Show up for my people**
+### **Relationships Goal 5: RELATIONSHIPS: Show up for my people**
 
-Elevate and expand my most important relationships through presence, not grand gestures, starting with Billie, Mom, and Liu.
+Elevate and expand my most important relationships through presence, not grand gestures, starting with my family and close friends, Mom, and Liu.
 
 **What counts:** Each of these is a touch:
 
-- **Billie:** phone-free time, or an activity she chooses.
+- **Family / close friends:** phone-free time together, or an activity they choose.
+- **Billie:** she lives in France, so presence in person waits for my trip around Christmas. Until then, a call or message where I'm actually present counts as a family touch.
 - **Mom:** a call where I share something real, not just "I'm fine."
 - **Liu:** an intentional conversation, Spanish practice together, or planning travel.
 - **My list:** a real reach-out to someone on my 25–40 relationship list.
 
-**How I score it:** Touches per week. Floor: Billie + Mom. Target: Billie, Mom, Liu + 2 from my list.
+**How I score it:** Touches per week. Floor: family/close friends + Mom. Target: family/close friends, Mom, Liu + 2 from my list.
 
 **Rules:** The 0–10 ratings are a thermometer, not a target. I re-rate at Weeks 6 and 12 to see how things feel, not to hit a number.
 
 | This is important in my life and I am committed to this because: |
 | :---- |
-| My ambition was paid for with my relationships. Billie at a 3 is the number in this document I most want to change. I want my mom to stop worrying about me because she actually knows me, not because I'm keeping things from her. |
+| My ambition was paid for with my relationships. I've been anxious and absent with my family and close friends, and Billie at a 3 is the number in this document I most want to change. I want my mom to stop worrying about me because she actually knows me, not because I'm keeping things from her. |
 
 | The prices I am willing to pay to have it happen are: |
 | :---- |
@@ -483,22 +484,22 @@ My weekly action plan:
 | Week | Action | Floor / Target | Results |
 | :---- | :---- | :---- | :---- |
 | Week 1 | Fill in my 25–40 relationship list and rate each person 0–10. | 2 / 5 |   |
-| Week 2 | Start the weekly rhythm: time with Billie, a call with Mom, an intentional conversation with Liu. | 2 / 5 |   |
+| Week 2 | Start the weekly rhythm: time with family or close friends, a call with Mom, an intentional conversation with Liu. | 2 / 5 |   |
 | Week 3 | Hold, plus 2 list reach-outs. | 2 / 5 |   |
 | Week 4 | Tell Mom one real thing I've been keeping from her. | 2 / 5 |   |
-| Week 5 | Ask Billie what she'd like to do together, and do it. | 2 / 5 |   |
+| Week 5 | Ask someone in my family or a close friend what they'd like to do together, and do it. | 2 / 5 |   |
 | Week 6 | Re-rate my top 10. Plan a trip or shared project with Liu. | 2 / 5 |   |
 | Week 7 | Hold, plus reach out to 2 people I've drifted from. | 2 / 5 |   |
-| Week 8 | **Deload:** floor only (Billie + Mom). | 2 |   |
+| Week 8 | **Deload:** floor only (family/close friends + Mom). | 2 |   |
 | Week 9 | One conversation with Liu entirely in Spanish, however clumsy. | 2 / 5 |   |
-| Week 10 | Movement or creative time with Billie (counts for Goal 1 or 4 too). | 2 / 5 |   |
+| Week 10 | Movement or creative time with family or close friends (counts for Goal 1 or 4 too). Book the France trip. | 2 / 5 |   |
 | Week 11 | Hold, plus 2 list reach-outs. | 2 / 5 |   |
 | Week 12 | Re-rate everyone. Write one sentence per person about what changed. | 2 |   |
 
-| By 30 Days | 4 Billie times. 4 real calls with Mom. 3+ intentional conversations with Liu. 4+ list reach-outs. |
+| By 30 Days | 4 family/close-friend times. 4 real calls with Mom. 3+ intentional conversations with Liu. 4+ list reach-outs. |
 | :---- | :---- |
-| By 60 Days | 8 Billie times. 8 calls with Mom. 6+ conversations with Liu. 10+ list reach-outs. First re-rating done. |
-| By 90 Days | 12 Billie times. 12 calls with Mom. 10+ conversations with Liu. 16+ list reach-outs. Second re-rating done. |
+| By 60 Days | 8 family/close-friend times. 8 calls with Mom. 6+ conversations with Liu. 10+ list reach-outs. First re-rating done. |
+| By 90 Days | 12 family/close-friend times. 12 calls with Mom. 10+ conversations with Liu. 16+ list reach-outs. Second re-rating done. Presence with Billie in France over Christmas (around Day 89): phone-free time, and an activity she chooses. |
 
 ---
 
