@@ -7,6 +7,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SummaryView from './SummaryView.astro';
 import WeekView from './WeekView.astro';
 import type { Dataset } from '../../lib/psp/load';
+import { currentWeek, todayIso } from '../../lib/psp/tracker';
+import { buildDynamicOgImageUrl } from '../../utils/og';
 import '../../styles/psp-dashboard.css';
 
 interface Props {
@@ -21,9 +23,16 @@ const title = week ? `PSP Dashboard · Week ${week}` : 'PSP Dashboard';
 const description = sample
   ? 'A sample 100-day Personal Strategic Plan dashboard, with fictional data, showing how daily habits roll up into weeks and Day 30/60/90 checkpoints.'
   : `${t.person}'s 100-day Personal Strategic Plan: habits scored weekly, outcomes scored at Day 30, 60, and 90.`;
+// Share card: the dynamic text card, naming the week (this one, or the current one).
+const shareWeek = week ?? currentWeek(t, todayIso(t));
+const shareImage = buildDynamicOgImageUrl({
+  title: 'PSP Dashboard',
+  subtitle: shareWeek > 0 ? `Week ${shareWeek}` : '100-Day Plan',
+  description: sample ? 'Sample data · Made with Hope AI' : 'Made with Hope AI',
+});
 ---
 
-<BaseLayout title={title} description={description} meta={{ title, description, subtitle: sample ? 'Sample data' : '100-Day Plan' }}>
+<BaseLayout title={title} description={description} meta={{ title, description, image: shareImage }}>
   <div class="mx-auto max-w-6xl px-6 py-8 space-y-6">
     <header class="space-y-2">
       <p class="pspd-eyebrow" style="font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;opacity:.75">

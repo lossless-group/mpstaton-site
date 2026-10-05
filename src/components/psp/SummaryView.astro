@@ -22,6 +22,8 @@ import {
   STATUS_LABEL,
   todayIso,
   totalWeeks,
+  weekDates,
+  weekday,
 } from '../../lib/psp/tracker';
 
 interface Props {
@@ -99,7 +101,7 @@ const pct = (d: number) => `${((d - 0.5) / len) * 100}%`;
       ))}
     </div>
     <p class="pt-5 text-sm text-muted-foreground">
-      Day 1 was {shortDate(t.day_one)}; Day {len} is {shortDate(dateOfDay(t, len))}. Weeks run seven days from Day 1.
+      Day 1 was {shortDate(t.day_one)}; Day {len} is {shortDate(dateOfDay(t, len))}. {t.week_starts ? `Weeks run ${weekday(weekDates(t, 2)[0])} to ${weekday(weekDates(t, 2)[6])}, on the cohort's clock.` : 'Weeks run seven days from Day 1.'}
       Habits are scored every week; outcomes are scored at Day {checkpoints.map((c) => c.day).join(', ')}.
     </p>
   </section>
