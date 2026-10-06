@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BrandMark from '../../components/promote/BrandMark.astro';
 import { getAllOpportunities, isProposalContent } from '../../lib/promote/opportunities';
+import { listEvents, eventUrl } from '../../lib/promote/events';
 
 export const prerender = false;
 
@@ -17,6 +18,16 @@ const proposals = getAllOpportunities()
     return { opportunity, href: `/proposals/${opportunity.slug}` };
   })
   .sort((a, b) => a.opportunity.company_name.localeCompare(b.opportunity.company_name));
+
+// Event plans ride under their proposal's URL, so the proposal's gate and
+// passcode cover them. The card shows; the plan stays locked until unlocked.
+const events = proposals.flatMap(({ opportunity }) =>
+  listEvents(opportunity.slug).map((event) => ({
+    opportunity,
+    event,
+    href: eventUrl(opportunity.slug, event.slug),
+  })),
+);
 
 const meta = {
   title: 'Proposals · Michael P. Staton',
@@ -74,5 +85,52 @@ const meta = {
         </a>
       ))}
     </div>
+
+    {events.length > 0 && (
+      <>
+        <header class="mb-6 mt-16">
+          <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Events</p>
+          <h2 class="mt-2 text-2xl font-semibold tracking-tight text-foreground">Event plans</h2>
+        </header>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {events.map(({ opportunity, event, href }) => (
+            <a
+              href={href}
+              class="group flex flex-col rounded-xl border border-border bg-card/40 p-7 transition hover:border-foreground/30 hover:bg-card/70"
+            >
+              {opportunity.logo?.symbol || opportunity.logo?.wordmark ? (
+                <span class="text-foreground">
+                  <BrandMark
+                    symbol={opportunity.logo?.symbol}
+                    wordmark={opportunity.logo?.wordmark}
+                    alt={opportunity.company_name}
+                    size={1.9}
+                  />
+                </span>
+              ) : (
+                <p class="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                  {opportunity.company_name}
+                </p>
+              )}
+              <p class="mt-4 text-2xl font-semibold leading-snug text-foreground">
+                {event.event ?? event.title}
+              </p>
+              {(event.dates || event.venue) && (
+                <p class="mt-1 text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                  {[event.dates, event.venue].filter(Boolean).join(' · ')}
+                </p>
+              )}
+              <p class="mt-3 flex-1 text-pretty text-sm leading-relaxed text-muted-foreground">
+                {event.summary}
+              </p>
+              <span class="mt-6 inline-flex items-center gap-2 text-sm text-foreground">
+                Open the event plan
+                <span class="transition group-hover:translate-x-0.5">→</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </>
+    )}
   </section>
 </BaseLayout>

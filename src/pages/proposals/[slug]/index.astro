@@ -29,6 +29,10 @@ if (!opportunity) return new Response('Not found', { status: 404 });
 
 const unlocked = Astro.locals.promote?.unlocked ?? false;
 const hasError = Astro.url.searchParams.get('e') === '1';
+// The middleware rewrites every locked /proposals/{slug}/... request here, so
+// the unlock form has to send the reader back to the page they asked for.
+const requested = Astro.originPathname;
+const redirectTo = requested.startsWith(`/proposals/${slug}/`) ? requested : '';
 
 const registry = getVariantsRegistry(slug);
 const available = listProposalVersions(slug);
@@ -64,7 +68,7 @@ const meta = {
     <section class="mx-auto max-w-3xl px-6 py-12">
       <PromotionHeader opportunity={opportunity} />
       <div class="mt-6">
-        <UnlockForm slug={opportunity.slug} hasError={hasError} />
+        <UnlockForm slug={opportunity.slug} redirectTo={redirectTo} hasError={hasError} />
       </div>
     </section>
   )}

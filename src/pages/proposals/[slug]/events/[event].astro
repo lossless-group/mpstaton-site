@@ -1,0 +1,48 @@
+---
+/**
+ * /proposals/[slug]/events/[event] — an event plan attached to a proposal.
+ *
+ * Gated by the middleware like every path under /proposals/{slug}/: without a
+ * session this route is never reached, the request is rewritten to the
+ * proposal's unlock form, which sends the reader back here once unlocked.
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import AstroMarkdown from '../../../../components/markdown/AstroMarkdown.astro';
+import Sources from '../../../../components/markdown/Sources.astro';
+import SessionToast from '../../../../components/promote/SessionToast.astro';
+import { getOpportunity, isProposalContent } from '../../../../lib/promote/opportunities';
+import { loadEvent } from '../../../../lib/promote/events';
+
+export const prerender = false;
+
+const { slug, event } = Astro.params;
+if (!slug || !event) return Astro.redirect('/proposals');
+
+const opportunity = getOpportunity(slug);
+if (!opportunity || !isProposalContent(slug)) return new Response('Not found', { status: 404 });
+
+const doc = await loadEvent(slug, event);
+if (!doc) return new Response('Not found', { status: 404 });
+
+const title = `${doc.meta.title} · ${opportunity.company_name}`;
+---
+<BaseLayout title={title} description={doc.meta.summary ?? opportunity.short_description}>
+  <meta name="robots" content="noindex, nofollow" slot="head" />
+  <article class="mx-auto max-w-3xl px-6 py-12">
+    <a
+      href="/proposals"
+      class="mb-6 inline-block text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"
+    >
+      ← Proposals
+    </a>
+    <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+      {opportunity.company_name} · Event{doc.meta.dates && ` · ${doc.meta.dates}`}
+    </p>
+    {doc.meta.venue && <p class="mt-1 text-sm text-muted-foreground">{doc.meta.venue}</p>}
+    <div class="prose prose-invert mt-6 max-w-none">
+      <AstroMarkdown node={doc.tree} />
+    </div>
+    <Sources citations={doc.citations} />
+  </article>
+  <SessionToast />
+</BaseLayout>

@@ -56,7 +56,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const section = slugMatch?.[1];
     const slug = slugMatch?.[2];
     if (section && slug) {
-      return context.rewrite(`/${section}/${slug}`);
+      return context.rewrite(`/${section}/${slug}${context.url.search}`);
     }
   }
 

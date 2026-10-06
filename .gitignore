@@ -30,9 +30,8 @@ src/content/proposals/*/
 # Shipped so the gated proposal renders on Vercel — a gitignored file does not
 # exist on the builder. Same reasoning as TRACK_RECORD_MARKUPS_JSON above.
 !src/content/proposals/link-freedom-group/
-# Working notes stay local: the repo is public, the proposal is gated.
+# Call notes stay local: the repo is public. Event plans ship, behind the gate.
 src/content/proposals/link-freedom-group/call-notes/
-src/content/proposals/link-freedom-group/events/
 !src/content/promote/_*/
 src/layouts/sections/promote/*/
 !src/layouts/sections/promote/_*/

@@ -24,8 +24,10 @@ export const POST: APIRoute = async ({ request }) => {
   if (!result.ok) {
     // Send them back where they came from. Bouncing a client proposal to the
     // /promote hub on a typo shows them the wrong surface entirely.
+    // A locked event plan rewrites to the proposal's form, so return to the
+    // exact page asked for; a retry then still lands there once it succeeds.
     const origin = redirectTo.startsWith(`/proposals/${slug}`)
-      ? `/proposals/${slug}`
+      ? redirectTo
       : hubUrl(slug);
     const back = new URL(origin, request.url);
     back.searchParams.set('e', '1');
