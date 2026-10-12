@@ -9,7 +9,7 @@
  * margins in the theme background, and drop the site header and footer.
  *
  *   pnpm event:pdf <slug> <event>
- *   pnpm event:pdf link-freedom-group cloudflare-connect-2026 --port 4330
+ *   pnpm event:pdf <slug> <event> --port 4330
  *
  * Output: public/proposals/<slug>/<slug>-<event>.pdf
  */
