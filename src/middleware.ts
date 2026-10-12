@@ -40,7 +40,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
     (typeof process !== 'undefined' ? process.env?.PROMOTE_EXPORT_TOKEN : undefined) ||
     (import.meta.env as Record<string, string | undefined>).PROMOTE_EXPORT_TOKEN ||
     undefined;
-  const isPrintRoute = /^\/proposals\/[^/]+\/print\/?$/.test(path);
+  // Event plans export the same way (scripts/export-event-pdf.mjs).
+  const isPrintRoute =
+    /^\/proposals\/[^/]+\/print\/?$/.test(path) ||
+    /^\/proposals\/[^/]+\/events\/[^/]+\/?$/.test(path);
   const tokenOk =
     isPrintRoute &&
     !!exportToken &&
