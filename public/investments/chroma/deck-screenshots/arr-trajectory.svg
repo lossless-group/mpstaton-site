@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 540" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <defs>
+    <linearGradient id="curveFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#3b82f6" stop-opacity="0.35"/>
+      <stop offset="60%"  stop-color="#3b82f6" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="curveStroke" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="540" fill="white"/>
+
+  <!-- Title -->
+  <text x="400" y="30" text-anchor="middle" font-size="18" font-weight="600" fill="#0f172a">ChromaDB ARR — Past 8 Months</text>
+  <text x="400" y="50" text-anchor="middle" font-size="12" fill="#64748b">Sep 2025 → May 2026  ·  $0 → $2.5M  ·  shifted-exponential fit (k = 0.4)</text>
+
+  <!-- Plot background -->
+  <rect x="80" y="80" width="680" height="390" fill="#fcfdff" stroke="#e2e8f0"/>
+
+  <!-- Horizontal grid lines -->
+  <g stroke="#eef2f7" stroke-dasharray="2,4">
+    <line x1="80" y1="80"  x2="760" y2="80"/>
+    <line x1="80" y1="158" x2="760" y2="158"/>
+    <line x1="80" y1="236" x2="760" y2="236"/>
+    <line x1="80" y1="314" x2="760" y2="314"/>
+    <line x1="80" y1="392" x2="760" y2="392"/>
+  </g>
+
+  <!-- Axes -->
+  <line x1="80" y1="80"  x2="80"  y2="470" stroke="#94a3b8"/>
+  <line x1="80" y1="470" x2="760" y2="470" stroke="#94a3b8"/>
+
+  <!-- Y-axis labels -->
+  <g font-size="11" fill="#64748b" text-anchor="end">
+    <text x="74" y="84">$2.5M</text>
+    <text x="74" y="162">$2.0M</text>
+    <text x="74" y="240">$1.5M</text>
+    <text x="74" y="318">$1.0M</text>
+    <text x="74" y="396">$0.5M</text>
+    <text x="74" y="474">$0</text>
+  </g>
+
+  <!-- X-axis tick marks -->
+  <g stroke="#cbd5e1">
+    <line x1="80"  y1="470" x2="80"  y2="475"/>
+    <line x1="165" y1="470" x2="165" y2="475"/>
+    <line x1="250" y1="470" x2="250" y2="475"/>
+    <line x1="335" y1="470" x2="335" y2="475"/>
+    <line x1="420" y1="470" x2="420" y2="475"/>
+    <line x1="505" y1="470" x2="505" y2="475"/>
+    <line x1="590" y1="470" x2="590" y2="475"/>
+    <line x1="675" y1="470" x2="675" y2="475"/>
+    <line x1="760" y1="470" x2="760" y2="475"/>
+  </g>
+
+  <!-- X-axis month labels -->
+  <g font-size="11" fill="#64748b" text-anchor="middle">
+    <text x="80"  y="490">Sep ’25</text>
+    <text x="165" y="490">Oct</text>
+    <text x="250" y="490">Nov</text>
+    <text x="335" y="490">Dec</text>
+    <text x="420" y="490">Jan ’26</text>
+    <text x="505" y="490">Feb</text>
+    <text x="590" y="490">Mar</text>
+    <text x="675" y="490">Apr</text>
+    <text x="760" y="490">May</text>
+  </g>
+
+  <!-- Exponential curve — area fill (gradient) -->
+  <path d="M 80,470 L 80,470 L 101.25,468.26 L 122.5,466.33 L 143.75,464.2 L 165,461.85 L 186.25,459.25 L 207.5,456.38 L 228.75,453.2 L 250,449.69 L 271.25,445.81 L 292.5,441.53 L 313.75,436.79 L 335,431.55 L 356.25,425.77 L 377.5,419.37 L 398.75,412.3 L 420,404.49 L 441.25,395.86 L 462.5,386.32 L 483.75,375.78 L 505,364.12 L 526.25,351.24 L 547.5,337.01 L 568.75,321.28 L 590,303.9 L 611.25,284.68 L 632.5,263.45 L 653.75,240.02 L 675,214.05 L 696.25,185.39 L 717.5,153.71 L 738.75,118.7 L 760,80 L 760,470 Z"
+        fill="url(#curveFill)"/>
+
+  <!-- Exponential curve — line with subtle glow -->
+  <path d="M 80,470 L 101.25,468.26 L 122.5,466.33 L 143.75,464.2 L 165,461.85 L 186.25,459.25 L 207.5,456.38 L 228.75,453.2 L 250,449.69 L 271.25,445.81 L 292.5,441.53 L 313.75,436.79 L 335,431.55 L 356.25,425.77 L 377.5,419.37 L 398.75,412.3 L 420,404.49 L 441.25,395.86 L 462.5,386.32 L 483.75,375.78 L 505,364.12 L 526.25,351.24 L 547.5,337.01 L 568.75,321.28 L 590,303.9 L 611.25,284.68 L 632.5,263.45 L 653.75,240.02 L 675,214.05 L 696.25,185.39 L 717.5,153.71 L 738.75,118.7 L 760,80"
+        fill="none"
+        stroke="url(#curveStroke)"
+        stroke-width="3"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+       />
+
+  <!-- Anchor dots -->
+  <circle cx="80"  cy="470" r="6" fill="#2563eb" stroke="white" stroke-width="2.5"/>
+  <circle cx="760" cy="80"  r="6" fill="#7c3aed" stroke="white" stroke-width="2.5"/>
+
+  <!-- Anchor labels -->
+  <g font-size="11" fill="#0f172a">
+    <text x="94" y="463" font-weight="600">$0 ARR</text>
+    <text x="94" y="476" fill="#64748b">8 months ago (Sep ’25)</text>
+
+    <text x="746" y="72" text-anchor="end" font-weight="600">$2.5M ARR</text>
+    <text x="746" y="85" text-anchor="end" fill="#64748b">today (May ’26)</text>
+  </g>
+
+  <!-- Equation box -->
+  <g>
+    <rect x="105" y="110" width="305" height="68" fill="white" stroke="#e2e8f0" rx="6"/>
+    <text x="115" y="131" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="#0f172a">ARR(t) = A · (e^(k·t) − 1)</text>
+    <text x="115" y="150" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="#475569">A ≈ $106,228    k ≈ 0.40</text>
+    <text x="115" y="168" font-size="10" fill="#64748b" font-style="italic">t in months from start; the “− 1” lets the curve sit at exactly 0 when t = 0</text>
+  </g>
+</svg>
