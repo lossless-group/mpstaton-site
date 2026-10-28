@@ -1,4 +1,27 @@
 User-agent: *
 Allow: /
 
+# AI crawlers and agents: everything except the portfolio and investment memos.
+# The track record is unaudited and estimated; keep it out of training and answers.
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
+User-agent: ClaudeBot
+User-agent: Claude-User
+User-agent: Claude-SearchBot
+User-agent: anthropic-ai
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: CCBot
+User-agent: Bytespider
+User-agent: meta-externalagent
+User-agent: Amazonbot
+User-agent: cohere-ai
+User-agent: Diffbot
+Disallow: /portfolio
+Disallow: /investments
+Allow: /
+
 Sitemap: https://mpstaton.com/sitemap-index.xml
