@@ -21,6 +21,7 @@ tags:
   - Build-Performance
   - Vercel
   - Astro
+type: Issues
 ---
 
 # Build Time Too Long

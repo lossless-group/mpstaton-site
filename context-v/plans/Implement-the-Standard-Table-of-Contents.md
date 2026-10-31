@@ -20,6 +20,7 @@ tags:
   - Markdown-Rendering
   - Content-Collections
   - Accessibility
+type: Plans
 ---
 
 # Implement the Standard Table of Contents on mpstaton-site
