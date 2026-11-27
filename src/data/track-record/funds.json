@@ -121,6 +121,17 @@
     "exit": "FMV"
   },
   {
+    "id": "humain-protofund-2026",
+    "fund": "Humain Protofund",
+    "role": "General Partner",
+    "countries": "US",
+    "sector": "AI, HealthTech",
+    "initialInvestmentDate": 2026,
+    "costOfInvestment": 6000000,
+    "stages": "Seed to Pre-Series A",
+    "exit": "FMV"
+  },
+  {
     "id": "angel-portfolio-2013-2023",
     "fund": "Angel Portfolio",
     "role": "Principal",

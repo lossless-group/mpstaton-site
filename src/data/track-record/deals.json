@@ -1272,5 +1272,53 @@
     "stage": "Series A",
     "exit": "FMV",
     "tags": []
+  },
+  {
+    "id": "chroma-2026-1",
+    "company": "Chroma",
+    "vehicle": "Humain Protofund",
+    "countries": "US",
+    "sector": "AI Infrastructure, Retrieval Database",
+    "initialInvestmentDate": 2026,
+    "costOfInvestment": 50000,
+    "stage": "Pre-Series A",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "id": "chroma-2026-2",
+    "company": "Chroma",
+    "vehicle": "AngelList Syndicate Lead",
+    "countries": "US",
+    "sector": "AI Infrastructure, Retrieval Database",
+    "initialInvestmentDate": 2026,
+    "costOfInvestment": 100000,
+    "stage": "Pre-Series A",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "id": "trustedrouter-2026",
+    "company": "TrustedRouter",
+    "vehicle": "Syndicate",
+    "countries": "US",
+    "sector": "AI Infrastructure, Privacy, AI Gateway",
+    "initialInvestmentDate": 2026,
+    "costOfInvestment": 280000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
+  },
+  {
+    "id": "profilehealth-2026",
+    "company": "ProfileHealth",
+    "vehicle": "Humain Protofund",
+    "countries": "US",
+    "sector": "HealthTech, Clinical AI",
+    "initialInvestmentDate": 2026,
+    "costOfInvestment": 400000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
   }
 ]
