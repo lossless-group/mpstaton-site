@@ -1320,5 +1320,17 @@
     "stage": "Seed",
     "exit": "FMV",
     "tags": []
+  },
+  {
+    "id": "reactosome-2026",
+    "company": "Reactosome",
+    "vehicle": "Humain Protofund",
+    "countries": "US",
+    "sector": "Biotech, Genetic Medicine, Gene Delivery",
+    "initialInvestmentDate": 2026,
+    "costOfInvestment": 200000,
+    "stage": "Pre-Seed",
+    "exit": "FMV",
+    "tags": []
   }
 ]
