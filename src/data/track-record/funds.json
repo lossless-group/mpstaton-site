@@ -121,14 +121,14 @@
     "exit": "FMV"
   },
   {
-    "id": "humain-protofund-2026",
+    "id": "humain-protofund-2024",
     "fund": "Humain Protofund",
     "role": "General Partner",
     "countries": "US",
-    "sector": "AI, HealthTech",
-    "initialInvestmentDate": 2026,
+    "sector": "AI, HealthTech, Biotech",
+    "initialInvestmentDate": 2024,
     "costOfInvestment": 6000000,
-    "stages": "Seed to Pre-Series A",
+    "stages": "Pre-Seed to Pre-Series A",
     "exit": "FMV"
   },
   {

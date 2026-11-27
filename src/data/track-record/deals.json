@@ -1332,5 +1332,17 @@
     "stage": "Pre-Seed",
     "exit": "FMV",
     "tags": []
+  },
+  {
+    "id": "cognitive-scientific-ai-2024",
+    "company": "Cognitive Scientific AI",
+    "vehicle": "Humain Protofund",
+    "countries": "US",
+    "sector": "AI, Brain-Inspired Computer Vision",
+    "initialInvestmentDate": 2024,
+    "costOfInvestment": 200000,
+    "stage": "Seed",
+    "exit": "FMV",
+    "tags": []
   }
 ]
